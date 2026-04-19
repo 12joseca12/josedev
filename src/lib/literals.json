@@ -1,0 +1,357 @@
+{
+  "app": {
+    "metadata": {
+      "title": "Full Stack · Mobile · Arquitectura",
+      "description": "Portfolio: ingeniería web y móvil de alto rendimiento, código limpio e infraestructura escalable."
+    }
+  },
+  "nav": {
+    "brand": "Jose Dev",
+    "home": "Inicio",
+    "stack": "Stack",
+    "portfolio": "Portfolio",
+    "services": "Services",
+    "blog": "Blog",
+    "faq": "FAQ",
+    "contact": "Contacto",
+    "skipToContent": "Saltar al contenido",
+    "terminalAria": "Abrir terminal",
+    "hireMe": "Contrátame",
+    "openMenu": "Abrir menú de navegación",
+    "closeMenu": "Cerrar menú de navegación",
+    "profileAria": "Ir a iniciar sesión o registrarse",
+    "profileLink": "Acceso"
+  },
+  "hero": {
+    "badge": "Disponible para proyectos globales",
+    "line1": "Ingeniería",
+    "line2Highlight": "el futuro",
+    "line3": "de Web y Mobile",
+    "description": "Arquitectura de ecosistemas digitales de alto rendimiento mediante código limpio, infraestructura escalable y experiencias móviles intuitivas.",
+    "ctaPrimary": "Mi portfolio",
+    "ctaSecondary": "Ver stack",
+    "ctaPrimaryAria": "Ir a mi portfolio",
+    "stackFocus": "Stack",
+    "icons": {
+      "react": "React",
+      "typescript": "TypeScript",
+      "aws": "AWS",
+      "swift": "Swift"
+    },
+    "code": {
+      "const": "const",
+      "engineer": "ingeniero",
+      "nameKey": "nombre",
+      "nameVal": "Dev.Architect",
+      "roleKey": "rol",
+      "roleVal": "Full Stack / Mobile",
+      "focusKey": "enfoque",
+      "focusPerformance": "Rendimiento",
+      "focusScalability": "Escalabilidad",
+      "stackKey": "stack",
+      "stackLambda": "t",
+      "stackExpr": "t.NextJS && t.SwiftUI"
+    },
+    "preview": {
+      "title": "FINTECH_UI.OS",
+      "status": "ACTIVO",
+      "imageAlt": "Interfaz móvil de alta fidelidad con tema oscuro y acentos cian"
+    }
+  },
+  "bento": {
+    "services": {
+      "eyebrow": "Planes de servicio",
+      "title": "Arquitecturas enterprise escalables",
+      "description": "Infraestructuras robustas que soportan millones de peticiones sin perder estabilidad.",
+      "cta": "Ver planes",
+      "ctaAria": "Ver planes de servicio"
+    },
+    "stats": {
+      "value": "99.9",
+      "label": "Fiabilidad de uptime"
+    },
+    "blog": {
+      "title": "Blog técnico",
+      "description": "Análisis profundos sobre sistemas distribuidos y patrones SwiftUI.",
+      "cta": "LEER BLOG",
+      "ctaAria": "Ir al blog"
+    },
+    "caseStudy": {
+      "eyebrow": "Caso destacado",
+      "title": "The Neural Engine Interface",
+      "description": "Integración de IA en el dispositivo en apps móviles para análisis visual en tiempo real.",
+      "cta": "Explorar proyecto",
+      "ctaAria": "Explorar proyecto destacado",
+      "imageAlt": "Visualización de datos con red neuronal y acentos azules sobre fondo oscuro"
+    },
+    "performance": {
+      "title": "Optimizado para rendimiento"
+    }
+  },
+  "servicesSummary": {
+    "eyebrow": "Servicios resumidos",
+    "title": "Lo esencial, sin letra pequeña",
+    "subtitle": "Un resumen claro de lo que puedo construir contigo, de la idea al lanzamiento y más allá.",
+    "listAria": "Lista de servicios resumidos",
+    "items": {
+      "ui": {
+        "title": "Diseño UI",
+        "description": "Interfaces modernas, consistentes y accesibles, pensadas para convertir y escalar."
+      },
+      "frontend": {
+        "title": "Frontend",
+        "description": "Experiencias rápidas y responsive con React/Next, animaciones sutiles y buenas prácticas."
+      },
+      "backend": {
+        "title": "Backend y APIs",
+        "description": "Arquitectura limpia, seguridad y endpoints robustos para productos reales."
+      },
+      "supabase": {
+        "title": "Supabase / base de datos",
+        "description": "Auth, RLS, datos y realtime bien integrados, con foco en rendimiento y seguridad."
+      },
+      "seo": {
+        "title": "SEO",
+        "description": "Estructura, metadatos y contenido preparado para buscadores sin sacrificar UX."
+      },
+      "performance": {
+        "title": "Rendimiento",
+        "description": "Optimización de carga, imágenes y Core Web Vitals para una web ágil."
+      },
+      "automations": {
+        "title": "Automatizaciones",
+        "description": "Procesos internos, integraciones y flujos que ahorran tiempo y evitan errores."
+      },
+      "maintenance": {
+        "title": "Mantenimiento",
+        "description": "Soporte, mejoras y evolución del producto después del lanzamiento."
+      }
+    }
+  },
+  "differentials": {
+    "eyebrow": "Valores agregados",
+    "title": "Diferenciales",
+    "subtitle": "Cómo trabajo para que el proyecto salga bien: claridad, rigor técnico y foco en negocio.",
+    "listAria": "Lista de diferenciales",
+    "items": {
+      "transparency": {
+        "tag": "01_TRANSPARENCY",
+        "title": "Seguimiento claro del proyecto",
+        "description": "Mantente informado en cada etapa con reportes, hitos y comunicación directa sin intermediarios."
+      },
+      "customDev": {
+        "tag": "02_CUSTOM_DEV",
+        "title": "Desarrollo a medida",
+        "description": "Sin plantillas. Soluciones específicas que se adaptan a tus objetivos y a la complejidad real del producto."
+      },
+      "trifecta": {
+        "tag": "03_TRIFECTA",
+        "title": "Diseño + Negocio + Rendimiento",
+        "description": "Equilibrio entre estética moderna, objetivos comerciales y una ejecución técnica sólida y rápida."
+      },
+      "futureProof": {
+        "tag": "04_FUTURE_PROOF",
+        "title": "Escalabilidad y mantenimiento",
+        "description": "Arquitecturas diseñadas para crecer. Código modular que facilita evolucionar la plataforma con el tiempo."
+      }
+    }
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "title": "Preguntas frecuentes",
+    "subtitle": "Respuestas directas antes de escribirme. Si necesitas más detalle, el formulario de abajo está pensado para eso.",
+    "listAria": "Lista de preguntas frecuentes",
+    "expand": "Expandir respuesta",
+    "collapse": "Contraer respuesta",
+    "q": {
+      "projectTypes": "¿Qué tipo de proyectos aceptas?",
+      "cost": "¿Cuánto puede costar un proyecto?",
+      "timeline": "¿Cuánto tardas en desarrollar un proyecto?",
+      "maintenance": "¿También ofreces mantenimiento o mejoras después de la entrega?",
+      "remote": "¿Trabajas con clientes en remoto?"
+    },
+    "a": {
+      "projectTypes": "Trabajo en webs, aplicaciones y soluciones a medida, desde landings y webs corporativas hasta plataformas más completas con backend, paneles y automatizaciones.",
+      "cost": "Depende del alcance, complejidad y necesidades concretas. Tras revisar tu idea, te preparo una propuesta clara con tiempos, coste y qué incluye.",
+      "timeline": "Varía según el tipo de trabajo. Una landing puede estar lista en poco tiempo, mientras que una plataforma o app más completa requiere una planificación mayor.",
+      "maintenance": "Sí. Puedo encargarme de soporte, mejoras, optimización, nuevas funcionalidades y mantenimiento continuado tras el lanzamiento.",
+      "remote": "Sí. Trabajo de forma remota y organizada, manteniendo una comunicación clara y un seguimiento continuo del proyecto."
+    }
+  },
+  "contact": {
+    "eyebrow": "Contacto",
+    "title": "Cuéntame qué necesitas",
+    "subtitle": "Tres caminos según el tipo de consulta. Elige la pestaña que mejor encaje.",
+    "submit": "Enviar solicitud",
+    "submitting": "Enviando…",
+    "successTitle": "Formulario preparado",
+    "successBody": "Cuando conectes un backend, este envío llegará a tu canal. Mientras tanto, puedes usar el email del pie de página.",
+    "reset": "Enviar otro mensaje",
+    "tabsListAria": "Tipo de formulario de contacto",
+    "panelGeneralAria": "Consulta general",
+    "panelProjectAria": "Proyecto y presupuesto",
+    "panelWorkAria": "Trabajo y colaboración",
+    "tabs": {
+      "general": "Información general",
+      "generalDesc": "Para quien solo quiere preguntar algo sin demasiada fricción.",
+      "project": "Proyecto / presupuesto",
+      "projectDesc": "El más completo: ideal para cotizar con contexto.",
+      "work": "Trabajo / colaboración",
+      "workDesc": "Recruiters, empresas o colaboradores."
+    },
+    "field": {
+      "name": "Nombre",
+      "email": "Email",
+      "company": "Empresa o marca",
+      "companyOptional": "Empresa o marca (opcional)",
+      "companyBrand": "Empresa / marca",
+      "reason": "Motivo de la consulta",
+      "message": "Mensaje",
+      "projectType": "Tipo de proyecto",
+      "status": "Estado actual del proyecto",
+      "budget": "Presupuesto estimado",
+      "timeline": "Plazo deseado",
+      "services": "Servicios que necesita",
+      "hasDesign": "¿Tiene diseño ya hecho?",
+      "maintenance": "¿Necesita mantenimiento?",
+      "description": "Descripción del proyecto",
+      "descriptionHint": "Qué quieres construir, objetivo de negocio, referencias y funcionalidades clave.",
+      "opportunity": "Tipo de oportunidad",
+      "modality": "Modalidad",
+      "technologies": "Tecnologías",
+      "technologiesHint": "Selecciona stack o detalla en el mensaje.",
+      "techOther": "Otras tecnologías (opcional)",
+      "salaryBudget": "Rango salarial / presupuesto (opcional)",
+      "messageWork": "Mensaje",
+      "selectPlaceholder": "Selecciona una opción",
+      "multiHint": "Puedes marcar varias opciones."
+    },
+    "general": {
+      "reason": {
+        "services": "Quiero más información sobre tus servicios",
+        "pricing": "Quiero saber precios orientativos",
+        "technical": "Tengo una duda técnica",
+        "meeting": "Quiero una reunión",
+        "other": "Otro"
+      }
+    },
+    "project": {
+      "type": {
+        "landing": "Landing page",
+        "corporate": "Web corporativa",
+        "ecommerce": "Ecommerce",
+        "webapp": "Aplicación web",
+        "mobile": "Aplicación móvil",
+        "automation": "Automatización / sistema interno",
+        "redesign": "Rediseño de web existente",
+        "other": "Otro"
+      },
+      "status": {
+        "idea": "Solo es una idea",
+        "briefing": "Ya tengo briefing",
+        "design": "Ya tengo diseño",
+        "improve": "Ya tengo una web/app y quiero mejorarla",
+        "partial": "Ya tengo parte desarrollada"
+      },
+      "budget": {
+        "b1": "Menos de 1.000 €",
+        "b2": "1.000 € – 3.000 €",
+        "b3": "3.000 € – 6.000 €",
+        "b4": "6.000 € – 10.000 €",
+        "b5": "Más de 10.000 €",
+        "discuss": "Prefiero comentarlo"
+      },
+      "timeline": {
+        "asap": "Lo antes posible",
+        "w2_4": "En 2–4 semanas",
+        "m1_2": "En 1–2 meses",
+        "open": "Sin fecha cerrada"
+      },
+      "services": {
+        "ui": "Diseño UI",
+        "fe": "Desarrollo frontend",
+        "be": "Desarrollo backend",
+        "supabase": "Integración con Supabase / base de datos",
+        "seo": "SEO",
+        "perf": "Optimización de rendimiento",
+        "admin": "Panel admin",
+        "maint": "Mantenimiento",
+        "auto": "Automatizaciones",
+        "cms": "Blog / CMS"
+      },
+      "design": {
+        "yes": "Sí",
+        "no": "No",
+        "partial": "Parcialmente"
+      },
+      "maintenance": {
+        "yes": "Sí",
+        "no": "No",
+        "maybe": "Quizá más adelante"
+      }
+    },
+    "work": {
+      "opportunity": {
+        "employment": "Empleo",
+        "freelance": "Freelance",
+        "collab": "Colaboración puntual",
+        "partner": "Partnership",
+        "sub": "Subcontratación",
+        "other": "Otro"
+      },
+      "modality": {
+        "remote": "Remoto",
+        "hybrid": "Híbrido",
+        "onsite": "Presencial"
+      },
+      "tech": {
+        "react": "React",
+        "next": "Next.js",
+        "rn": "React Native",
+        "ts": "TypeScript",
+        "supabase": "Supabase",
+        "node": "Node.js",
+        "other": "Otro"
+      }
+    }
+  },
+  "auth": {
+    "metadataTitle": "Acceso · Jose Dev",
+    "metadataDescription": "Inicia sesión o crea una cuenta para acceder al área privada.",
+    "backHome": "Volver al inicio",
+    "backHomeAria": "Volver a la página de inicio",
+    "eyebrow": "Gateway",
+    "loginTitle": "Iniciar sesión",
+    "registerTitle": "Crear cuenta",
+    "tabsListAria": "Modo de acceso",
+    "loginTab": "Iniciar sesión",
+    "registerTab": "Registrarse",
+    "orEmail": "o continúa con email",
+    "google": "Google",
+    "github": "GitHub",
+    "socialSoon": "Disponible próximamente",
+    "email": "Email",
+    "password": "Contraseña",
+    "remember": "Mantener sesión en este dispositivo",
+    "lostPassword": "¿Olvidaste la contraseña?",
+    "submitLogin": "Entrar",
+    "submitRegister": "Crear cuenta",
+    "name": "Nombre",
+    "companyOptional": "Empresa (opcional)",
+    "roleOptional": "Cargo (opcional)",
+    "switchToRegister": "¿Nuevo? Crear cuenta",
+    "switchToLogin": "¿Ya tienes cuenta? Iniciar sesión",
+    "registerHint": "El nombre es obligatorio. Empresa y cargo son opcionales.",
+    "brandPanelTitle": "Acceso seguro",
+    "brandPanelSubtitle": "Misma precisión técnica que en el producto: identidad clara, flujos ordenados y foco en lo esencial."
+  },
+  "footer": {
+    "brand": "ARCHITECTURAL LOGIC",
+    "socialNav": "Redes sociales y contacto",
+    "github": "GitHub",
+    "linkedin": "LinkedIn",
+    "twitter": "Twitter",
+    "email": "Email",
+    "copyright": "© 2024 ARCHITECTURAL LOGIC. TODOS LOS DERECHOS RESERVADOS."
+  }
+}

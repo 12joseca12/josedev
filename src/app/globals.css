@@ -1,0 +1,105 @@
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap");
+@import "tailwindcss";
+
+/*
+  Portfolio theme: semantic colors (Stitch / Material-style).
+  Values mirror `src/lib/stylesVariables.ts` → `portfolioThemeColors`.
+*/
+@theme inline {
+  /* next/font sets --font-space-grotesk / --font-inter on <html> */
+  --font-headline: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-label: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --color-background: #111316;
+  --color-surface: #111316;
+  --color-inverse-on-surface: #2f3034;
+  --color-on-surface: #e2e2e6;
+  --color-primary-container: #00e5ff;
+  --color-outline: #849396;
+  --color-on-tertiary-fixed: #002117;
+  --color-tertiary-fixed: #45fec9;
+  --color-outline-variant: #3b494c;
+  --color-on-secondary: #002d6e;
+  --color-surface-dim: #111316;
+  --color-on-secondary-fixed-variant: #00429b;
+  --color-surface-container-highest: #333538;
+  --color-error-container: #93000a;
+  --color-inverse-primary: #006875;
+  --color-on-secondary-fixed: #001945;
+  --color-secondary-fixed-dim: #b0c6ff;
+  --color-on-tertiary: #003829;
+  --color-on-secondary-container: #f2f3ff;
+  --color-primary: #c3f5ff;
+  --color-surface-container-lowest: #0c0e11;
+  --color-on-tertiary-fixed-variant: #00513d;
+  --color-primary-fixed-dim: #00daf3;
+  --color-primary-fixed: #9cf0ff;
+  --color-tertiary-container: #23ebb8;
+  --color-surface-container-high: #282a2d;
+  --color-tertiary: #a1ffdc;
+  --color-secondary-container: #0068ed;
+  --color-surface-container: #1e2023;
+  --color-on-tertiary-container: #00654d;
+  --color-secondary-fixed: #d9e2ff;
+  --color-on-primary-container: #00626e;
+  --color-surface-variant: #333538;
+  --color-surface-tint: #00daf3;
+  --color-surface-container-low: #1a1c1f;
+  --color-on-primary-fixed: #001f24;
+  --color-tertiary-fixed-dim: #00e1ae;
+  --color-on-background: #e2e2e6;
+  --color-on-primary: #00363d;
+  --color-error: #ffb4ab;
+  --color-on-error: #690005;
+  --color-secondary: #b0c6ff;
+  --color-inverse-surface: #e2e2e6;
+  --color-on-surface-variant: #bac9cc;
+  --color-on-primary-fixed-variant: #004f58;
+  --color-surface-bright: #37393d;
+  --color-on-error-container: #ffdad6;
+
+  --radius-DEFAULT: 0.125rem;
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.5rem;
+  --radius-full: 0.75rem;
+}
+
+/*
+  overflow-x: hidden fuerza overflow-y: auto en algunos navegadores cuando un eje
+  no es "visible", creando scrollbars anidadas. clip recorta sin ese efecto secundario.
+*/
+html {
+  overflow-x: clip;
+}
+
+body {
+  @apply bg-background text-on-surface font-body antialiased overflow-x-clip selection:bg-primary-container selection:text-on-primary-container;
+}
+
+/* Global background (like /auth): static cyber grid + soft glows */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.22;
+  background-image:
+    linear-gradient(rgba(0, 229, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 229, 255, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(520px 520px at 10% -10%, rgba(195, 245, 255, 0.12), transparent 70%),
+    radial-gradient(520px 520px at 110% 110%, rgba(161, 255, 220, 0.10), transparent 70%),
+    radial-gradient(680px 680px at 50% 0%, rgba(0, 229, 255, 0.06), transparent 72%);
+  filter: blur(0px);
+}
