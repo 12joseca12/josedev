@@ -52,6 +52,25 @@ export const portfolioThemeColors = {
   "on-primary-fixed-variant": "#004f58",
   "surface-bright": "#37393d",
   "on-error-container": "#ffdad6",
+
+  // Chrome/mockup colors (macOS traffic lights, terminal/device/preview surfaces).
+  // Not part of the semantic Material palette above — literal brand/hardware colors
+  // used only by the terminal and device-mockup components.
+  "mac-close": "#ff5f57",
+  "mac-close-icon": "#4a0f0c",
+  "mac-minimize": "#febc2e",
+  "mac-minimize-icon": "#5a4a0a",
+  "mac-maximize": "#28c840",
+  "mac-maximize-icon": "#0a4a14",
+  "terminal-panel": "#0a0e12",
+  "terminal-footer": "#06090c",
+  "hero-terminal-surface": "#08090c",
+  "app-preview-surface": "#0c1014",
+  "app-preview-accent": "#00b8a8",
+  "app-preview-surface-deep": "#041412",
+  "app-preview-surface-dim": "#080a0d",
+  "device-frame-bezel": "#050608",
+  "forum-composer-surface": "#06080a",
 } as const satisfies Record<string, string>;
 
 export const styleTokens = {
@@ -128,6 +147,21 @@ export function getGlobalUiCss(): string {
   background-size: 40px 40px;
 }
 
+/* Chat terminal: ocultar scrollbar nativa (refuerzo junto a globals.css). */
+.terminal-chat-scroll {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+.terminal-chat-scroll::-webkit-scrollbar,
+.terminal-chat-scroll::-webkit-scrollbar-thumb,
+.terminal-chat-scroll::-webkit-scrollbar-track,
+.terminal-chat-scroll::-webkit-scrollbar-corner {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+  background: transparent !important;
+}
+
 .auth-cyber-grid {
   background-image:
     linear-gradient(rgba(0, 229, 255, 0.05) 1px, transparent 1px),
@@ -202,6 +236,7 @@ export function getGlobalUiCss(): string {
 /*
   Hover labels (tooltips) for clickable elements.
   Use: add 'data-hover-label="..."' to <a>, <button>, etc.
+  Optional: data-hover-label-placement="below" (default: above).
   Shows on hover AND keyboard focus (focus-visible).
 */
 [data-hover-label] {
@@ -258,6 +293,37 @@ export function getGlobalUiCss(): string {
 [data-hover-label]:focus-visible::before {
   opacity: 1;
   transform: translate(-50%, -10px) scale(1);
+}
+
+[data-hover-label][data-hover-label-placement="below"]::after,
+[data-hover-label][data-hover-label-placement="below"]::before {
+  top: auto;
+  bottom: -10px;
+  transform: translate(-50%, 6px) scale(0.98);
+}
+
+[data-hover-label][data-hover-label-placement="below"]::after {
+  translate: 0 100%;
+}
+
+[data-hover-label][data-hover-label-placement="below"]::before {
+  translate: 0 2px;
+  border-left: none;
+  border-top: none;
+  border-right: 1px solid rgba(59, 73, 76, 0.55);
+  border-bottom: 1px solid rgba(59, 73, 76, 0.55);
+}
+
+[data-hover-label][data-hover-label-placement="below"]:hover::after,
+[data-hover-label][data-hover-label-placement="below"]:focus-visible::after {
+  opacity: 1;
+  transform: translate(-50%, 10px) scale(1);
+}
+
+[data-hover-label][data-hover-label-placement="below"]:hover::before,
+[data-hover-label][data-hover-label-placement="below"]:focus-visible::before {
+  opacity: 1;
+  transform: translate(-50%, 10px) rotate(45deg) scale(1);
 }
 `;
 }

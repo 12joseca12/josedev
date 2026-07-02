@@ -6,6 +6,7 @@ import {
   Smartphone,
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import type { Locale } from "@/lib/types";
 import { t } from "@/services/literals";
 
@@ -25,18 +26,19 @@ const stackIcons = [
 
 export function HeroSection({ locale }: Props) {
   return (
-    <section className="relative mx-auto flex w-full max-w-[90rem] flex-col justify-center overflow-x-clip px-4 pb-8 pt-4 sm:min-h-0 sm:px-6 sm:pb-10 sm:pt-6 lg:min-h-0 lg:px-8 lg:pb-12 lg:pt-8">
+    <section className="relative isolate w-full overflow-x-clip pb-8 pt-4 sm:pb-10 sm:pt-6 lg:pb-12 lg:pt-8">
       <div
-        className="pointer-events-none absolute -left-24 -top-24 h-[280px] w-[280px] max-w-full rounded-full bg-primary/10 blur-[80px] sm:-left-32 sm:-top-32 sm:h-[400px] sm:w-[400px] sm:blur-[100px] lg:-left-40 lg:-top-40 lg:h-[600px] lg:w-[600px] lg:blur-[120px]"
+        className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[min(92vh,56rem)] w-[100dvw] min-w-full -translate-x-1/2 overflow-visible"
         aria-hidden
-      />
-      <div
-        className="pointer-events-none absolute -right-16 top-1/3 h-[220px] w-[220px] max-w-full rounded-full bg-tertiary/10 blur-[70px] sm:-right-24 sm:top-1/2 sm:h-[320px] sm:w-[320px] sm:blur-[90px] lg:-right-40 lg:h-[400px] lg:w-[400px]"
-        aria-hidden
-      />
+      >
+        <div className="absolute -top-[10%] left-[clamp(-4rem,8vw,6rem)] aspect-square w-[min(78vw,28rem)] max-w-[36rem] rounded-full bg-primary/[0.11] blur-[min(5.5rem,14vw)] sm:-top-[12%] sm:w-[min(72vw,34rem)] sm:max-w-[40rem] sm:blur-[min(6.5rem,11vw)] lg:left-[clamp(0rem,12vw,10rem)] lg:w-[min(58vw,42rem)] lg:max-w-[42rem] lg:blur-[min(8.75rem,9vw)]" />
+        <div className="absolute right-[clamp(-3rem,8vw,5rem)] top-[28%] aspect-square w-[min(62vw,22rem)] max-w-[30rem] rounded-full bg-tertiary/[0.11] blur-[min(4.5rem,12vw)] sm:top-[32%] sm:w-[min(56vw,26rem)] sm:max-w-[34rem] sm:blur-[min(5.75rem,10vw)] lg:right-[clamp(0rem,10vw,8rem)] lg:top-[30%] lg:w-[min(48vw,32rem)] lg:max-w-[36rem] lg:blur-[min(7.5rem,8vw)]" />
+        <div className="absolute inset-x-0 bottom-0 h-[45%] bg-gradient-to-t from-background via-background/40 to-transparent opacity-90" />
+      </div>
 
-      <div className="relative z-10 grid min-w-0 items-center gap-6 sm:gap-8 lg:grid-cols-12 lg:gap-10">
-        <div className="min-w-0 lg:col-span-7">
+      <div className="relative z-10 mx-auto w-full max-w-[90rem] min-w-0 px-4 sm:px-6 lg:px-8">
+        <div className="grid min-w-0 items-center gap-6 sm:gap-8 lg:grid-cols-12 lg:gap-10">
+          <div className="min-w-0 lg:col-span-6 xl:col-span-7">
           <div className="group/badge mb-4 inline-flex max-w-full items-center gap-2 rounded-full border border-outline-variant/20 bg-surface-container-low px-3 py-1.5 transition-all duration-300 hover:border-primary/30 hover:shadow-[0_0_20px_rgba(0,229,255,0.12)] sm:mb-5">
             <span className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-tertiary" />
             <span className="font-label text-[9px] font-medium uppercase leading-tight tracking-[0.1em] text-tertiary sm:text-[10px]">
@@ -76,29 +78,34 @@ export function HeroSection({ locale }: Props) {
                 strokeWidth={2.25}
               />
             </a>
-            <a
+            <Link
               data-hover-label={t(locale, "hero.ctaSecondary")}
+              aria-label={t(locale, "hero.ctaSecondaryAria")}
               className="inline-flex w-full items-center justify-center rounded-xl border border-outline-variant/25 bg-surface-variant/20 px-6 py-3.5 font-headline text-sm font-bold text-on-surface backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/35 hover:bg-surface-variant/45 hover:shadow-[0_0_28px_rgba(195,245,255,0.12)] active:translate-y-0 sm:w-auto sm:px-8 sm:py-4 sm:text-base"
-              href="#stack"
+              href="/sobre-mi"
             >
               {t(locale, "hero.ctaSecondary")}
-            </a>
+            </Link>
           </div>
 
           <div
-            id="stack"
+            id="stack-preview"
             className="mt-12 scroll-mt-24 opacity-50 grayscale transition-all hover:opacity-100 hover:grayscale-0 sm:mt-16"
           >
             <div className="flex flex-col gap-2">
               <span className="font-label text-[9px] uppercase tracking-widest text-outline sm:text-[10px]">
-                {t(locale, "hero.stackFocus")}
+                {t(locale, "hero.aboutFocus")}
               </span>
               <ul className="flex flex-wrap gap-3 sm:gap-4">
                 {stackIcons.map(({ Icon, key }) => (
                   <li key={key} aria-label={t(locale, `hero.icons.${key}`)} className="list-none">
-                    <span className="inline-flex rounded-lg p-1.5 text-on-surface-variant transition-all duration-300 hover:scale-110 hover:text-primary hover:drop-shadow-[0_0_10px_rgba(0,229,255,0.35)]">
+                    <Link
+                      href="/sobre-mi"
+                      aria-label={t(locale, `hero.icons.${key}`)}
+                      className="inline-flex rounded-lg p-1.5 text-on-surface-variant transition-all duration-300 hover:scale-110 hover:text-primary hover:drop-shadow-[0_0_10px_rgba(0,229,255,0.35)]"
+                    >
                       <Icon className="size-7 sm:size-8" aria-hidden strokeWidth={1.75} />
-                    </span>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -106,72 +113,77 @@ export function HeroSection({ locale }: Props) {
           </div>
         </div>
 
-        <div className="relative mt-4 min-w-0 lg:col-span-5 lg:mt-0 lg:pb-14">
-          <div className="glass-card group/code relative z-20 rounded-2xl border border-outline-variant/20 p-4 shadow-2xl transition-all duration-500 hover:border-primary/25 hover:shadow-[0_0_48px_rgba(0,229,255,0.12)] sm:p-6">
-            <div className="mb-4 flex items-center gap-2">
-              <div className="h-3 w-3 rounded-full bg-error/40" aria-hidden />
-              <div className="h-3 w-3 rounded-full bg-tertiary/40" aria-hidden />
-              <div className="h-3 w-3 rounded-full bg-primary/40" aria-hidden />
-            </div>
-            <div className="min-w-0 font-mono text-[11px] leading-relaxed sm:text-xs md:text-sm">
-              <div className="min-w-0 space-y-2 break-words [overflow-wrap:anywhere] whitespace-normal">
-                <p className="text-tertiary">
-                  <span className="text-on-surface-variant">{t(locale, "hero.code.const")}</span>{" "}
-                  {t(locale, "hero.code.engineer")} = {"{"}
-                </p>
-                <p className="pl-3 text-primary sm:pl-4">
-                  {t(locale, "hero.code.nameKey")}:{" "}
-                  <span className="text-on-surface">&quot;{t(locale, "hero.code.nameVal")}&quot;</span>,
-                </p>
-                <p className="pl-3 text-primary sm:pl-4">
-                  {t(locale, "hero.code.roleKey")}:{" "}
-                  <span className="text-on-surface">&quot;{t(locale, "hero.code.roleVal")}&quot;</span>,
-                </p>
-                <p className="pl-3 text-primary sm:pl-4">
-                  {t(locale, "hero.code.focusKey")}: [
-                  <span className="text-on-surface">
-                    &quot;{t(locale, "hero.code.focusPerformance")}&quot;
-                  </span>
-                  ,{" "}
-                  <span className="text-on-surface">
-                    &quot;{t(locale, "hero.code.focusScalability")}&quot;
-                  </span>
-                  ],
-                </p>
-                <p className="pl-3 text-primary sm:pl-4">
-                  {t(locale, "hero.code.stackKey")}: ({t(locale, "hero.code.stackLambda")}) =&gt;{" "}
-                  <span className="text-on-surface">{t(locale, "hero.code.stackExpr")}</span>
-                </p>
-                <p className="text-tertiary">{"}"};</p>
-              </div>
-            </div>
-          </div>
+        <div className="relative mt-4 min-w-0 pb-12 sm:pb-14 lg:col-span-6 lg:mt-0 lg:pb-16 xl:col-span-5 xl:pb-20">
+          <div className="relative flex w-full flex-col items-center gap-8 sm:gap-10 lg:px-0">
+            <div
+              className="pointer-events-none absolute left-1/2 top-[40%] -z-10 h-[min(24rem,85vw)] w-[min(28rem,110vw)] -translate-x-1/2 -translate-y-1/2 rounded-[40%] bg-gradient-to-b from-primary/[0.1] via-tertiary/[0.06] to-transparent opacity-70 blur-3xl sm:top-[42%] sm:h-[min(28rem,75vw)] sm:w-[min(32rem,95vw)] sm:opacity-80 lg:inset-0 lg:h-full lg:w-full lg:translate-x-0 lg:translate-y-0 lg:rounded-[2rem] lg:bg-gradient-to-br lg:from-primary/[0.07] lg:via-tertiary/[0.04] lg:to-transparent lg:opacity-[0.5] lg:blur-3xl"
+              aria-hidden
+            />
 
-          <div className="relative z-30 mt-8 w-full max-w-[280px] sm:max-w-sm lg:absolute lg:bottom-[-3rem] lg:right-0 lg:mt-0 lg:max-w-[min(16rem,100%)] lg:w-64">
-            <div className="glass-card rounded-3xl border border-outline-variant/20 p-3 shadow-2xl transition-all duration-500 hover:border-tertiary/25 hover:shadow-[0_0_40px_rgba(69,254,201,0.1)] sm:p-4">
-              <Image
-                src={PREVIEW_IMG}
-                alt={t(locale, "hero.preview.imageAlt")}
-                width={256}
-                height={400}
-                className="mb-3 aspect-[9/16] w-full rounded-2xl object-cover sm:mb-4"
-                sizes="(max-width: 1024px) 90vw, 256px"
-              />
-              <div className="flex items-center justify-between px-1 sm:px-2">
-                <span className="font-headline text-[10px] font-bold tracking-tighter sm:text-xs">
-                  {t(locale, "hero.preview.title")}
-                </span>
-                <span className="font-label text-[9px] text-tertiary sm:text-[10px]">
-                  {t(locale, "hero.preview.status")}
-                </span>
+            <div className="glass-card group/terminal relative z-10 mx-auto flex w-full max-w-[min(36rem,100%)] flex-col overflow-hidden rounded-2xl border border-outline-variant/25 bg-surface-container-low/25 p-1 shadow-[0_8px_48px_rgba(0,0,0,0.42),0_0_0_1px_rgba(0,229,255,0.06),inset_0_1px_0_rgba(255,255,255,0.06)] ring-1 ring-white/[0.03] backdrop-blur-xl transition-[border-color,box-shadow] duration-500 sm:max-w-[min(40rem,100%)] sm:rounded-2xl sm:shadow-[0_12px_56px_rgba(0,0,0,0.45),0_0_0_1px_rgba(0,229,255,0.08)] lg:mx-0 lg:max-w-none lg:min-h-[18rem] lg:shadow-[0_20px_72px_rgba(0,0,0,0.5),0_0_0_1px_rgba(0,229,255,0.1),inset_0_1px_0_rgba(255,255,255,0.07)] hover:border-primary/30 hover:shadow-[0_12px_56px_rgba(0,0,0,0.45),0_0_40px_rgba(0,229,255,0.1),inset_0_1px_0_rgba(255,255,255,0.08)]">
+              <div className="flex items-center justify-between gap-3 rounded-t-xl border-b border-outline-variant/20 bg-surface-container/40 px-3 py-2.5 sm:px-4 sm:py-3">
+                <div className="flex items-center gap-2" aria-hidden>
+                  <div className="size-2.5 rounded-full bg-mac-close/90 shadow-[0_0_6px_rgba(255,95,87,0.45)] sm:size-3" />
+                  <div className="size-2.5 rounded-full bg-mac-minimize/90 shadow-[0_0_6px_rgba(254,188,46,0.35)] sm:size-3" />
+                  <div className="size-2.5 rounded-full bg-mac-maximize/90 shadow-[0_0_6px_rgba(40,200,64,0.35)] sm:size-3" />
+                </div>
+                <div />
+              </div>
+
+              <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-3 p-2 sm:flex-row sm:items-stretch sm:gap-4 sm:p-3 lg:gap-5 lg:p-4 xl:flex-col xl:items-stretch">
+                <div className="flex min-h-0 min-w-0 flex-1 flex-col rounded-xl border border-outline-variant/15 bg-hero-terminal-surface px-3 py-3 font-mono text-[11px] leading-relaxed shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04)] sm:order-1 sm:px-4 sm:py-3.5 sm:text-xs md:text-sm lg:text-[13px] lg:leading-relaxed xl:order-2 xl:flex-none xl:min-h-[14rem] xl:text-sm">
+                  <div className="min-h-0 min-w-0 flex-1 space-y-2 break-words [overflow-wrap:anywhere] whitespace-normal">
+                      <p className="text-tertiary">
+                        <span className="text-on-surface-variant">{t(locale, "hero.code.const")}</span>{" "}
+                        {t(locale, "hero.code.engineer")} = {"{"}
+                      </p>
+                      <p className="pl-3 text-primary sm:pl-4">
+                        {t(locale, "hero.code.nameKey")}:{" "}
+                        <span className="text-on-surface">&quot;{t(locale, "hero.code.nameVal")}&quot;</span>,
+                      </p>
+                      <p className="pl-3 text-primary sm:pl-4">
+                        {t(locale, "hero.code.roleKey")}:{" "}
+                        <span className="text-on-surface">&quot;{t(locale, "hero.code.roleVal")}&quot;</span>,
+                      </p>
+                      <p className="pl-3 text-primary sm:pl-4">
+                        {t(locale, "hero.code.statusKey")}:{" "}
+                        <span className="text-on-surface">&quot;{t(locale, "hero.preview.status")}&quot;</span>,
+                      </p>
+                      <p className="pl-3 text-primary sm:pl-4">
+                        {t(locale, "hero.code.phoneKey")}:{" "}
+                        <span className="text-on-surface">&quot;{t(locale, "hero.code.phoneVal")}&quot;</span>,
+                      </p>
+                      <p className="pl-3 text-primary sm:pl-4">
+                        {t(locale, "hero.code.emailKey")}:{" "}
+                        <span className="text-on-surface">&quot;{t(locale, "hero.code.emailVal")}&quot;</span>,
+                      </p>
+                      <p className="text-tertiary">{"}"};</p>
+                    </div>
+                </div>
+
+                <div className="flex w-full min-w-0 justify-center sm:order-2 sm:w-auto sm:shrink-0 sm:justify-end xl:order-1 xl:justify-end">
+                  <div className="glass-card flex w-full max-w-[18rem] flex-col overflow-hidden rounded-xl border border-outline-variant/20 bg-black/20 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.03)] sm:w-64 sm:max-w-none lg:w-72 xl:w-72">
+                    <div className="relative aspect-square w-full overflow-hidden bg-black">
+                      <Image
+                        src={PREVIEW_IMG}
+                        alt={t(locale, "hero.preview.imageAlt")}
+                        width={420}
+                        height={420}
+                        className="h-full w-full object-cover opacity-90 transition-opacity duration-500 group-hover/terminal:opacity-100"
+                        sizes="(max-width: 640px) 72vw, (max-width: 1023px) 40vw, (max-width: 1535px) 240px, 288px"
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
           <div
-            className="pointer-events-none absolute right-0 top-0 -z-10 hidden h-full w-full rounded-full bg-gradient-to-br from-primary/5 to-transparent blur-3xl sm:block"
+            className="pointer-events-none absolute -inset-x-[min(40%,8rem)] -inset-y-[12%] -z-10 hidden rounded-[45%] bg-gradient-to-br from-primary/[0.07] via-primary/[0.02] to-transparent blur-3xl sm:block"
             aria-hidden
           />
+        </div>
         </div>
       </div>
     </section>

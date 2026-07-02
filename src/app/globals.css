@@ -59,6 +59,23 @@
   --color-surface-bright: #37393d;
   --color-on-error-container: #ffdad6;
 
+  /* Chrome/mockup colors (mirror of stylesVariables.ts portfolioThemeColors) */
+  --color-mac-close: #ff5f57;
+  --color-mac-close-icon: #4a0f0c;
+  --color-mac-minimize: #febc2e;
+  --color-mac-minimize-icon: #5a4a0a;
+  --color-mac-maximize: #28c840;
+  --color-mac-maximize-icon: #0a4a14;
+  --color-terminal-panel: #0a0e12;
+  --color-terminal-footer: #06090c;
+  --color-hero-terminal-surface: #08090c;
+  --color-app-preview-surface: #0c1014;
+  --color-app-preview-accent: #00b8a8;
+  --color-app-preview-surface-deep: #041412;
+  --color-app-preview-surface-dim: #080a0d;
+  --color-device-frame-bezel: #050608;
+  --color-forum-composer-surface: #06080a;
+
   --radius-DEFAULT: 0.125rem;
   --radius-lg: 0.25rem;
   --radius-xl: 0.5rem;
@@ -71,10 +88,86 @@
 */
 html {
   overflow-x: clip;
+  /* Ocultar scrollbar del viewport; el progreso lo indica `ScrollProgressBar`. */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
 }
 
 body {
   @apply bg-background text-on-surface font-body antialiased overflow-x-clip selection:bg-primary-container selection:text-on-primary-container;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+/* Capa interna del progreso: refuerzo de brillo sin depender solo de Tailwind arbitrary */
+.scroll-progress-fill {
+  box-shadow:
+    0 0 14px rgba(0, 229, 255, 0.45),
+    0 0 28px rgba(161, 255, 220, 0.22),
+    inset 0 0 12px rgba(255, 255, 255, 0.12);
+}
+
+/* Chat terminal: sin scrollbar nativa; barra custom vertical (`ScrollProgressIndicator`). */
+.terminal-chat-scroll {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.terminal-chat-scroll::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+  background: transparent !important;
+}
+
+.terminal-chat-scroll::-webkit-scrollbar-thumb,
+.terminal-chat-scroll::-webkit-scrollbar-track,
+.terminal-chat-scroll::-webkit-scrollbar-corner {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+@keyframes terminal-chat-typing-bounce {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.45;
+  }
+  30% {
+    transform: translateY(-0.45rem);
+    opacity: 1;
+  }
+}
+
+/* Longhand: el shorthand `animation` resetea animation-delay del inline. */
+.terminal-chat-typing-dot {
+  animation-name: terminal-chat-typing-bounce;
+  animation-duration: 1.1s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .terminal-chat-typing-dot {
+    animation: none;
+    opacity: 0.75;
+  }
 }
 
 /* Global background (like /auth): static cyber grid + soft glows */
