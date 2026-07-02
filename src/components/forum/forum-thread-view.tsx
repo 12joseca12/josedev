@@ -264,7 +264,7 @@ export function ForumThreadView({ locale, thematicSlug, entrySlug, initialDetail
         </header>
 
         {seed ? (
-          <article className="rounded-2xl border border-primary/35 bg-surface-container-low/60 p-5 shadow-[0_0_40px_rgba(0,229,255,0.08)]">
+          <article className="rounded-2xl border border-primary/35 bg-surface-container-low/60 p-5 shadow-[0_0_40px_color-mix(in_srgb,var(--color-primary-container)_8%,transparent)]">
             <ForumSegmentsDisplay segments={seed.segments} />
             <CommentToolbar
               locale={locale}

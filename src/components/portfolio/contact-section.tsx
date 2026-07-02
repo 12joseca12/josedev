@@ -169,7 +169,7 @@ export function ContactSection({ locale }: Props) {
                 }}
                 className={`flex flex-1 flex-col rounded-xl border px-4 py-3 text-left transition-all duration-300 sm:min-w-[min(100%,220px)] sm:flex-[1_1_200px] lg:max-w-sm ${
                   selected
-                    ? "border-primary/40 bg-surface-container-high shadow-[0_0_28px_rgba(0,229,255,0.12)]"
+                    ? "border-primary/40 bg-surface-container-high shadow-[0_0_28px_color-mix(in_srgb,var(--color-primary-container)_12%,transparent)]"
                     : "border-outline-variant/20 bg-surface-container-low/40 hover:border-outline-variant/40 hover:bg-surface-container-low"
                 }`}
               >
@@ -295,7 +295,7 @@ export function ContactSection({ locale }: Props) {
                   type="submit"
                   disabled={busy}
                   data-hover-label={busy ? t(locale, "contact.submitting") : t(locale, "contact.submit")}
-                  className="signature-glow w-full rounded-xl px-6 py-3.5 font-headline text-sm font-bold text-on-primary-fixed shadow-[0_8px_28px_rgba(0,229,255,0.2)] transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_12px_36px_rgba(0,229,255,0.35)] disabled:opacity-60 sm:w-auto sm:min-w-[200px]"
+                  className="signature-glow w-full rounded-xl px-6 py-3.5 font-headline text-sm font-bold text-on-primary-fixed shadow-[0_8px_28px_color-mix(in_srgb,var(--color-primary-container)_20%,transparent)] transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_12px_36px_color-mix(in_srgb,var(--color-primary-container)_35%,transparent)] disabled:opacity-60 sm:w-auto sm:min-w-[200px]"
                 >
                   {busy ? t(locale, "contact.submitting") : t(locale, "contact.submit")}
                 </button>
@@ -535,7 +535,7 @@ export function ContactSection({ locale }: Props) {
                   type="submit"
                   disabled={busy}
                   data-hover-label={busy ? t(locale, "contact.submitting") : t(locale, "contact.submit")}
-                  className="signature-glow w-full rounded-xl px-6 py-3.5 font-headline text-sm font-bold text-on-primary-fixed shadow-[0_8px_28px_rgba(0,229,255,0.2)] transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_12px_36px_rgba(0,229,255,0.35)] disabled:opacity-60 sm:w-auto sm:min-w-[200px]"
+                  className="signature-glow w-full rounded-xl px-6 py-3.5 font-headline text-sm font-bold text-on-primary-fixed shadow-[0_8px_28px_color-mix(in_srgb,var(--color-primary-container)_20%,transparent)] transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_12px_36px_color-mix(in_srgb,var(--color-primary-container)_35%,transparent)] disabled:opacity-60 sm:w-auto sm:min-w-[200px]"
                 >
                   {busy ? t(locale, "contact.submitting") : t(locale, "contact.submit")}
                 </button>
@@ -708,7 +708,7 @@ export function ContactSection({ locale }: Props) {
                   type="submit"
                   disabled={busy}
                   data-hover-label={busy ? t(locale, "contact.submitting") : t(locale, "contact.submit")}
-                  className="signature-glow w-full rounded-xl px-6 py-3.5 font-headline text-sm font-bold text-on-primary-fixed shadow-[0_8px_28px_rgba(0,229,255,0.2)] transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_12px_36px_rgba(0,229,255,0.35)] disabled:opacity-60 sm:w-auto sm:min-w-[200px]"
+                  className="signature-glow w-full rounded-xl px-6 py-3.5 font-headline text-sm font-bold text-on-primary-fixed shadow-[0_8px_28px_color-mix(in_srgb,var(--color-primary-container)_20%,transparent)] transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_12px_36px_color-mix(in_srgb,var(--color-primary-container)_35%,transparent)] disabled:opacity-60 sm:w-auto sm:min-w-[200px]"
                 >
                   {busy ? t(locale, "contact.submitting") : t(locale, "contact.submit")}
                 </button>

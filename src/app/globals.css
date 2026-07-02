@@ -114,8 +114,8 @@ body::-webkit-scrollbar {
 /* Capa interna del progreso: refuerzo de brillo sin depender solo de Tailwind arbitrary */
 .scroll-progress-fill {
   box-shadow:
-    0 0 14px rgba(0, 229, 255, 0.45),
-    0 0 28px rgba(161, 255, 220, 0.22),
+    0 0 14px color-mix(in srgb, var(--color-primary-container) 45%, transparent),
+    0 0 28px color-mix(in srgb, var(--color-tertiary) 22%, transparent),
     inset 0 0 12px rgba(255, 255, 255, 0.12);
 }
 
@@ -179,8 +179,8 @@ body::before {
   z-index: -1;
   opacity: 0.22;
   background-image:
-    linear-gradient(rgba(0, 229, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 229, 255, 0.05) 1px, transparent 1px);
+    linear-gradient(color-mix(in srgb, var(--color-primary-container) 5%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--color-primary-container) 5%, transparent) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 
@@ -191,8 +191,8 @@ body::after {
   pointer-events: none;
   z-index: -1;
   background:
-    radial-gradient(520px 520px at 10% -10%, rgba(195, 245, 255, 0.12), transparent 70%),
-    radial-gradient(520px 520px at 110% 110%, rgba(161, 255, 220, 0.10), transparent 70%),
-    radial-gradient(680px 680px at 50% 0%, rgba(0, 229, 255, 0.06), transparent 72%);
+    radial-gradient(520px 520px at 10% -10%, color-mix(in srgb, var(--color-primary) 12%, transparent), transparent 70%),
+    radial-gradient(520px 520px at 110% 110%, color-mix(in srgb, var(--color-tertiary) 10%, transparent), transparent 70%),
+    radial-gradient(680px 680px at 50% 0%, color-mix(in srgb, var(--color-primary-container) 6%, transparent), transparent 72%);
   filter: blur(0px);
 }

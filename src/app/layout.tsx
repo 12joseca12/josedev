@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
+import { EmulatorWarmupClient } from "@/components/layout/emulator-warmup-client";
+import { ScrollProgressBar } from "@/components/layout/scroll-progress-bar";
 import { getRootStyleBlockCss } from "@/lib/stylesVariables";
 import { getDefaultLocale, t } from "@/services/literals";
 
@@ -52,9 +54,11 @@ export default function RootLayout({
         />
       </head>
       <body className="flex min-h-full flex-col">
+        <ScrollProgressBar />
+        <EmulatorWarmupClient />
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-xl focus:border focus:border-primary/40 focus:bg-surface-container-low focus:px-4 focus:py-2 focus:font-headline focus:text-sm focus:font-semibold focus:text-on-surface focus:shadow-[0_0_32px_rgba(0,229,255,0.18)]"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-xl focus:border focus:border-primary/40 focus:bg-surface-container-low focus:px-4 focus:py-2 focus:font-headline focus:text-sm focus:font-semibold focus:text-on-surface focus:shadow-[0_0_32px_color-mix(in_srgb,var(--color-primary-container)_18%,transparent)]"
         >
           {t(locale, "nav.skipToContent")}
         </a>

@@ -62,7 +62,7 @@ export function FaqSection({ locale }: Props) {
               key={key}
               className={`group/item rounded-2xl border transition-all duration-300 ${
                 isOpen
-                  ? "border-primary/35 bg-surface-container-low shadow-[0_0_40px_rgba(0,229,255,0.08)]"
+                  ? "border-primary/35 bg-surface-container-low shadow-[0_0_40px_color-mix(in_srgb,var(--color-primary-container)_8%,transparent)]"
                   : "border-outline-variant/20 bg-surface-container-low/30 hover:border-primary/25 hover:bg-surface-container-low/60 hover:shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
               }`}
             >
@@ -85,7 +85,7 @@ export function FaqSection({ locale }: Props) {
                   <span
                     className={`mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-xl border transition-all duration-300 ${
                       isOpen
-                        ? "border-primary/40 bg-primary/10 text-primary shadow-[0_0_20px_rgba(0,229,255,0.2)]"
+                        ? "border-primary/40 bg-primary/10 text-primary shadow-[0_0_20px_color-mix(in_srgb,var(--color-primary-container)_20%,transparent)]"
                         : "border-outline-variant/30 bg-surface-container-high/50 text-on-surface-variant group-hover/item:border-primary/30 group-hover/item:text-primary"
                     }`}
                     aria-hidden

@@ -39,7 +39,7 @@ export function HeroSection({ locale }: Props) {
       <div className="relative z-10 mx-auto w-full max-w-[90rem] min-w-0 px-4 sm:px-6 lg:px-8">
         <div className="grid min-w-0 items-center gap-6 sm:gap-8 lg:grid-cols-12 lg:gap-10">
           <div className="min-w-0 lg:col-span-6 xl:col-span-7">
-          <div className="group/badge mb-4 inline-flex max-w-full items-center gap-2 rounded-full border border-outline-variant/20 bg-surface-container-low px-3 py-1.5 transition-all duration-300 hover:border-primary/30 hover:shadow-[0_0_20px_rgba(0,229,255,0.12)] sm:mb-5">
+          <div className="group/badge mb-4 inline-flex max-w-full items-center gap-2 rounded-full border border-outline-variant/20 bg-surface-container-low px-3 py-1.5 transition-all duration-300 hover:border-primary/30 hover:shadow-[0_0_20px_color-mix(in_srgb,var(--color-primary-container)_12%,transparent)] sm:mb-5">
             <span className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-tertiary" />
             <span className="font-label text-[9px] font-medium uppercase leading-tight tracking-[0.1em] text-tertiary sm:text-[10px]">
               {t(locale, "hero.badge")}
@@ -67,7 +67,7 @@ export function HeroSection({ locale }: Props) {
           <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
             <a
               data-hover-label={t(locale, "hero.ctaPrimaryAria")}
-              className="signature-glow group inline-flex w-full items-center justify-center gap-3 rounded-xl px-6 py-3.5 font-headline text-sm font-bold text-on-primary-fixed shadow-[0_8px_32px_rgba(0,229,255,0.15)] transition-all duration-300 hover:scale-[1.02] hover:opacity-95 hover:shadow-[0_12px_40px_rgba(0,229,255,0.35)] active:scale-[0.98] sm:w-auto sm:px-8 sm:py-4 sm:text-base"
+              className="signature-glow group inline-flex w-full items-center justify-center gap-3 rounded-xl px-6 py-3.5 font-headline text-sm font-bold text-on-primary-fixed shadow-[0_8px_32px_color-mix(in_srgb,var(--color-primary-container)_15%,transparent)] transition-all duration-300 hover:scale-[1.02] hover:opacity-95 hover:shadow-[0_12px_40px_color-mix(in_srgb,var(--color-primary-container)_35%,transparent)] active:scale-[0.98] sm:w-auto sm:px-8 sm:py-4 sm:text-base"
               href="#portfolio"
               aria-label={t(locale, "hero.ctaPrimaryAria")}
             >
@@ -81,7 +81,7 @@ export function HeroSection({ locale }: Props) {
             <Link
               data-hover-label={t(locale, "hero.ctaSecondary")}
               aria-label={t(locale, "hero.ctaSecondaryAria")}
-              className="inline-flex w-full items-center justify-center rounded-xl border border-outline-variant/25 bg-surface-variant/20 px-6 py-3.5 font-headline text-sm font-bold text-on-surface backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/35 hover:bg-surface-variant/45 hover:shadow-[0_0_28px_rgba(195,245,255,0.12)] active:translate-y-0 sm:w-auto sm:px-8 sm:py-4 sm:text-base"
+              className="inline-flex w-full items-center justify-center rounded-xl border border-outline-variant/25 bg-surface-variant/20 px-6 py-3.5 font-headline text-sm font-bold text-on-surface backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/35 hover:bg-surface-variant/45 hover:shadow-[0_0_28px_color-mix(in_srgb,var(--color-primary)_12%,transparent)] active:translate-y-0 sm:w-auto sm:px-8 sm:py-4 sm:text-base"
               href="/sobre-mi"
             >
               {t(locale, "hero.ctaSecondary")}
@@ -102,7 +102,7 @@ export function HeroSection({ locale }: Props) {
                     <Link
                       href="/sobre-mi"
                       aria-label={t(locale, `hero.icons.${key}`)}
-                      className="inline-flex rounded-lg p-1.5 text-on-surface-variant transition-all duration-300 hover:scale-110 hover:text-primary hover:drop-shadow-[0_0_10px_rgba(0,229,255,0.35)]"
+                      className="inline-flex rounded-lg p-1.5 text-on-surface-variant transition-all duration-300 hover:scale-110 hover:text-primary hover:drop-shadow-[0_0_10px_color-mix(in_srgb,var(--color-primary-container)_35%,transparent)]"
                     >
                       <Icon className="size-7 sm:size-8" aria-hidden strokeWidth={1.75} />
                     </Link>
@@ -120,7 +120,7 @@ export function HeroSection({ locale }: Props) {
               aria-hidden
             />
 
-            <div className="glass-card group/terminal relative z-10 mx-auto flex w-full max-w-[min(36rem,100%)] flex-col overflow-hidden rounded-2xl border border-outline-variant/25 bg-surface-container-low/25 p-1 shadow-[0_8px_48px_rgba(0,0,0,0.42),0_0_0_1px_rgba(0,229,255,0.06),inset_0_1px_0_rgba(255,255,255,0.06)] ring-1 ring-white/[0.03] backdrop-blur-xl transition-[border-color,box-shadow] duration-500 sm:max-w-[min(40rem,100%)] sm:rounded-2xl sm:shadow-[0_12px_56px_rgba(0,0,0,0.45),0_0_0_1px_rgba(0,229,255,0.08)] lg:mx-0 lg:max-w-none lg:min-h-[18rem] lg:shadow-[0_20px_72px_rgba(0,0,0,0.5),0_0_0_1px_rgba(0,229,255,0.1),inset_0_1px_0_rgba(255,255,255,0.07)] hover:border-primary/30 hover:shadow-[0_12px_56px_rgba(0,0,0,0.45),0_0_40px_rgba(0,229,255,0.1),inset_0_1px_0_rgba(255,255,255,0.08)]">
+            <div className="glass-card group/terminal relative z-10 mx-auto flex w-full max-w-[min(36rem,100%)] flex-col overflow-hidden rounded-2xl border border-outline-variant/25 bg-surface-container-low/25 p-1 shadow-[0_8px_48px_rgba(0,0,0,0.42),0_0_0_1px_color-mix(in_srgb,var(--color-primary-container)_6%,transparent),inset_0_1px_0_rgba(255,255,255,0.06)] ring-1 ring-white/[0.03] backdrop-blur-xl transition-[border-color,box-shadow] duration-500 sm:max-w-[min(40rem,100%)] sm:rounded-2xl sm:shadow-[0_12px_56px_rgba(0,0,0,0.45),0_0_0_1px_color-mix(in_srgb,var(--color-primary-container)_8%,transparent)] lg:mx-0 lg:max-w-none lg:min-h-[18rem] lg:shadow-[0_20px_72px_rgba(0,0,0,0.5),0_0_0_1px_color-mix(in_srgb,var(--color-primary-container)_10%,transparent),inset_0_1px_0_rgba(255,255,255,0.07)] hover:border-primary/30 hover:shadow-[0_12px_56px_rgba(0,0,0,0.45),0_0_40px_color-mix(in_srgb,var(--color-primary-container)_10%,transparent),inset_0_1px_0_rgba(255,255,255,0.08)]">
               <div className="flex items-center justify-between gap-3 rounded-t-xl border-b border-outline-variant/20 bg-surface-container/40 px-3 py-2.5 sm:px-4 sm:py-3">
                 <div className="flex items-center gap-2" aria-hidden>
                   <div className="size-2.5 rounded-full bg-mac-close/90 shadow-[0_0_6px_rgba(255,95,87,0.45)] sm:size-3" />
