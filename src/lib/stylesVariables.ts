@@ -108,16 +108,6 @@ export const styleTokens = {
 
 export type StyleTokens = typeof styleTokens;
 
-/**
- * Injects `--color-*` for every portfolio token so Tailwind utilities (`bg-background`, `text-on-surface`, …) resolve at runtime.
- */
-export function getPortfolioThemeCss(): string {
-  const lines = (
-    Object.entries(portfolioThemeColors) as [string, string][]
-  ).map(([key, value]) => `  --color-${key}: ${value};`);
-  return `:root {\n${lines.join("\n")}\n}`;
-}
-
 /** Extra non-token utilities (glass, gradients, Material icon tuning). */
 export function getGlobalUiCss(): string {
   const primaryContainer = portfolioThemeColors["primary-container"];
@@ -347,7 +337,8 @@ export function getGlobalUiCss(): string {
 
 /**
  * Extra CSS for `layout.tsx` `<style />` (glass, gradients).
- * Color tokens live in `globals.css` `@theme inline` (kept in sync with `portfolioThemeColors`).
+ * Color tokens live in `globals.css` `@theme inline`, generated from
+ * `portfolioThemeColors` by `scripts/generate-theme-css.ts` (`pnpm generate:theme`).
  */
 export function getRootStyleBlockCss(): string {
   return getGlobalUiCss();

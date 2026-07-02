@@ -3,7 +3,10 @@
 
 /*
   Portfolio theme: semantic colors (Stitch / Material-style).
-  Values mirror `src/lib/stylesVariables.ts` → `portfolioThemeColors`.
+  Values are generated from `src/lib/stylesVariables.ts` → `portfolioThemeColors`
+  by `scripts/generate-theme-css.ts` (`pnpm generate:theme`) — do not hand-edit
+  the block between the markers below, edit portfolioThemeColors instead and
+  regenerate. `pnpm test` fails if this block drifts from that source.
 */
 @theme inline {
   /* next/font sets --font-space-grotesk / --font-inter on <html> */
@@ -11,6 +14,7 @@
   --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-label: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
+  /* BEGIN GENERATED COLORS */
   --color-background: #111316;
   --color-surface: #111316;
   --color-inverse-on-surface: #2f3034;
@@ -58,8 +62,6 @@
   --color-on-primary-fixed-variant: #004f58;
   --color-surface-bright: #37393d;
   --color-on-error-container: #ffdad6;
-
-  /* Chrome/mockup colors (mirror of stylesVariables.ts portfolioThemeColors) */
   --color-mac-close: #ff5f57;
   --color-mac-close-icon: #4a0f0c;
   --color-mac-minimize: #febc2e;
@@ -75,6 +77,7 @@
   --color-app-preview-surface-dim: #080a0d;
   --color-device-frame-bezel: #050608;
   --color-forum-composer-surface: #06080a;
+  /* END GENERATED COLORS */
 
   --radius-DEFAULT: 0.125rem;
   --radius-lg: 0.25rem;

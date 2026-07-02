@@ -3,13 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "pnpm generate:theme",
     "dev": "next dev",
     "dev:api:mock": "pnpm -C josecoded-api dev -- --mock",
+    "prebuild": "pnpm generate:theme",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "test": "jest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "generate:theme": "node --experimental-strip-types scripts/generate-theme-css.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.105.4",
