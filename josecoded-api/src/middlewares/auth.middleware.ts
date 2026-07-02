@@ -40,10 +40,14 @@ export const requireUser: MiddlewareHandler<AuthContext> = async (c, next) => {
     c.set('user', user);
     return next();
   } catch (e) {
-    return c.json(
-      fail('unauthorized', 'Invalid or expired session', e instanceof Error ? e.message : undefined),
-      401,
+    console.error(
+      JSON.stringify({
+        scope: 'auth',
+        action: 'require-user-failed',
+        message: e instanceof Error ? e.message : 'unknown',
+      }),
     );
+    return c.json(fail('unauthorized', 'Invalid or expired session'), 401);
   }
 };
 

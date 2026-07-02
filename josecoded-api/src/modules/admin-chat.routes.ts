@@ -32,7 +32,8 @@ adminChatRoutes.get('/thread', requireUser, async (c) => {
     if (msg.includes('SUPABASE_SERVICE_ROLE_KEY')) {
       return c.json(fail('internal_error', 'Chat database not configured'), 503);
     }
-    return c.json(fail('internal_error', msg), 500);
+    console.error(JSON.stringify({ scope: 'admin-chat', action: 'thread-failed', message: msg }));
+    return c.json(fail('internal_error', 'Chat unavailable'), 500);
   }
 });
 
@@ -77,7 +78,8 @@ adminChatRoutes.post('/messages', requireUser, async (c) => {
     return c.json(ok({ userMessage, thread }), 201);
   } catch (e) {
     const msg = e instanceof Error ? e.message : 'Failed to send message';
-    return c.json(fail('internal_error', msg), 500);
+    console.error(JSON.stringify({ scope: 'admin-chat', action: 'messages-failed', message: msg }));
+    return c.json(fail('internal_error', 'Failed to send message'), 500);
   }
 });
 
@@ -109,7 +111,8 @@ adminChatRoutes.post('/meeting', requireUser, async (c) => {
     return c.json(ok({ message: updated, thread }));
   } catch (e) {
     const msg = e instanceof Error ? e.message : 'Failed to schedule meeting';
-    return c.json(fail('internal_error', msg), 500);
+    console.error(JSON.stringify({ scope: 'admin-chat', action: 'meeting-failed', message: msg }));
+    return c.json(fail('internal_error', 'Failed to schedule meeting'), 500);
   }
 });
 
@@ -133,6 +136,7 @@ adminChatRoutes.post('/n8n/inbound', optionalUser, async (c) => {
     return c.json(ok({ accepted: true }));
   } catch (e) {
     const msg = e instanceof Error ? e.message : 'Inbound failed';
-    return c.json(fail('internal_error', msg), 500);
+    console.error(JSON.stringify({ scope: 'admin-chat', action: 'n8n-inbound-failed', message: msg }));
+    return c.json(fail('internal_error', 'Inbound failed'), 500);
   }
 });
