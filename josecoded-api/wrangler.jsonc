@@ -1,0 +1,12 @@
+{
+    "name": "josecoded-api",
+    "main": "src/index.ts",
+    "compatibility_date": "2026-05-03",
+    "vars": {
+      "API_MODE": "development",
+      "WORKER_URL": "https://unselfish-underrate-wad.ngrok-free.dev",
+      "CORS_ORIGINS": "http://localhost:3000,https://josecoded.com",
+      "ADMIN_SUPERUSER_ID": "25486629-4071-42bb-9447-0ea776ea53ec",
+      "ADMIN_SUPERUSER_EMAIL": "sanchezgaricajosecarlos12@gmail.com"
+    }
+  }

@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Wrangler dev/build output for josecoded-api — not source, do not lint.
+    "josecoded-api/.wrangler/**",
   ]),
 ]);
 

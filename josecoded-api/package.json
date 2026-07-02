@@ -1,0 +1,30 @@
+{
+  "name": "josecoded-api",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node ./scripts/wrangler-dev.mjs",
+    "deploy": "wrangler deploy",
+    "test": "jest",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.32.1",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.1",
+    "hono": "^4.12.16",
+    "zod": "^4.4.2"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260503.1",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^22.15.3",
+    "jest": "^30.4.2",
+    "ts-jest": "^29.4.11",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.3",
+    "wrangler": "^4.87.0"
+  }
+}

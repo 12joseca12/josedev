@@ -1,0 +1,34 @@
+# Copia este archivo a `.dev.vars` en esta misma carpeta (`josecoded-api/`).
+# Wrangler lo carga al ejecutar `pnpm -C josecoded-api dev`.
+# No subas `.dev.vars` a git (contiene secretos).
+
+# --- Supabase (Dashboard → Project Settings → API) ---
+# Misma URL que NEXT_PUBLIC_SUPABASE_URL en `.env.local`
+SUPABASE_URL=https://TU_PROYECTO.supabase.co
+# Misma clave "anon" / publishable que NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+SUPABASE_ANON_KEY=eyJ...
+# Misma clave que NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY (recomendado si el front usa publishable)
+SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
+# Clave "service_role" (secreta). Obligatoria para foro en BD y chat terminal.
+SUPABASE_SERVICE_ROLE_KEY=eyJ...
+
+# --- Worker / API local ---
+# URL donde corre `wrangler dev` (puerto por defecto 8787)
+PUBLIC_API_BASE_URL=http://127.0.0.1:8787
+# Debe coincidir con WORKER_URL de wrangler.jsonc si usas IA/moderación externa
+# URL del Fastify worker (Omen). NO es la URL de wrangler (8787).
+WORKER_URL=https://tu-tunel-ngrok.ngrok-free.dev
+# Debe ser EXACTAMENTE el mismo valor que BACKEND_INTERNAL_TOKEN en el servidor.
+WORKER_INTERNAL_TOKEN=pega_aqui_el_token_hex_del_backend
+
+# --- Chat terminal (opcional) ---
+ADMIN_SUPERUSER_EMAIL=tu-email@ejemplo.com
+ADMIN_SUPERUSER_ID=uuid-del-usuario-en-auth-users
+# Sin n8n el chat usa respuestas automáticas (fallback)
+# Chat terminal (Ollama + knowledge). n8n es opcional.
+ADMIN_CHAT_WORKER_PATH=/ai/admin-chat
+# ADMIN_CHAT_WORKER_TIMEOUT_MS=60000
+# Arranque del emulador Android: boot backend ≈ 120×2 s + margen (usar ≥ 360000)
+# EMULATOR_SESSION_TIMEOUT_MS=360000
+# N8N_CHAT_WEBHOOK_URL=https://tu-n8n.com/webhook/...
+# N8N_CHAT_WEBHOOK_SECRET=un-secreto-compartido-min-8-chars
