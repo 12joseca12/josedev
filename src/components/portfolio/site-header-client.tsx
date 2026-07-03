@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useId, useState } from "react";
 import { createPortal } from "react-dom";
 
+import { LanguageSwitcher } from "@/components/nav/language-switcher";
 import { NavProfileControl } from "@/components/nav/nav-profile-control";
 import dynamic from "next/dynamic";
 
@@ -123,6 +124,7 @@ export function SiteHeaderClient({
         </div>
 
         <div className="flex items-center gap-2 sm:gap-4">
+          <LanguageSwitcher locale={locale} />
           <NavProfileControl
             variant="icon"
             hoverLabelPlacement="below"
@@ -202,6 +204,9 @@ export function SiteHeaderClient({
                   className="max-h-[calc(100dvh-env(safe-area-inset-top)-env(safe-area-inset-bottom)-5.75rem)] overflow-y-auto overscroll-contain px-4 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-4"
                 >
                   <div className="flex flex-col gap-1">
+                    <div className="mb-1 flex justify-center">
+                      <LanguageSwitcher locale={locale} />
+                    </div>
                     <NavProfileControl
                       variant="menu"
                       hoverLabelPlacement="below"

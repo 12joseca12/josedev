@@ -8,7 +8,7 @@ import { useEffect, useMemo, useState, type KeyboardEvent } from "react";
 import { resolveActiveThematicSlug, syncExpandedWithActive, toggleExpandedSlug } from "@/lib/forum-nav-state";
 import type { ForumEntrySummaryDTO, ForumThematicDTO, Locale } from "@/lib/types";
 import { forumEntryTitle, forumThematicTitle } from "@/services/forum-api";
-import { t } from "@/services/literals";
+import { localizedHref, t } from "@/services/literals";
 
 type Props = {
   locale: Locale;
@@ -32,7 +32,7 @@ export function ForumThematicsNav({ locale, thematics, entriesBySlug }: Props) {
   const onFolderClick = (slug: string) => {
     setExpanded((prev) => toggleExpandedSlug(prev, slug));
     if (activeSlug !== slug) {
-      router.push(`/foro/${slug}`);
+      router.push(localizedHref(locale, `/foro/${slug}`));
     }
   };
 
@@ -93,7 +93,7 @@ export function ForumThematicsNav({ locale, thematics, entriesBySlug }: Props) {
                 ) : (
                   <ul className="space-y-0.5 py-1">
                     {entries.map((e) => {
-                      const entryHref = `/foro/${e.thematicSlug}/${e.slug}`;
+                      const entryHref = localizedHref(locale, `/foro/${e.thematicSlug}/${e.slug}`);
                       const entryActive = pathname === entryHref;
                       return (
                         <li key={e.id}>

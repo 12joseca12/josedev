@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
-import "./globals.css";
+import "@/app/globals.css";
 import { EmulatorWarmupClient } from "@/components/layout/emulator-warmup-client";
 import { ScrollProgressBar } from "@/components/layout/scroll-progress-bar";
 import { getRootStyleBlockCss } from "@/lib/stylesVariables";
-import { getDefaultLocale, t } from "@/services/literals";
+import type { Locale } from "@/lib/types";
+import { SUPPORTED_LOCALES, resolveLocaleParam, t } from "@/services/literals";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -18,30 +19,41 @@ const inter = Inter({
   weight: ["300", "400", "500", "600"],
 });
 
-const locale = getDefaultLocale();
-
-export const metadata: Metadata = {
-  title: t(locale, "app.metadata.title"),
-  description: t(locale, "app.metadata.description"),
-  robots: { index: true, follow: true },
-  alternates: { canonical: "/" },
-  openGraph: {
-    title: t(locale, "app.metadata.title"),
-    description: t(locale, "app.metadata.description"),
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: t(locale, "app.metadata.title"),
-    description: t(locale, "app.metadata.description"),
-  },
+type LayoutProps = {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export function generateStaticParams(): { locale: Locale }[] {
+  return SUPPORTED_LOCALES.map((locale) => ({ locale }));
+}
+
+export async function generateMetadata({ params }: Pick<LayoutProps, "params">): Promise<Metadata> {
+  const locale = resolveLocaleParam((await params).locale);
+  return {
+    title: t(locale, "app.metadata.title"),
+    description: t(locale, "app.metadata.description"),
+    robots: { index: true, follow: true },
+    alternates: {
+      canonical: `/${locale}`,
+      languages: { es: "/es", en: "/en" },
+    },
+    openGraph: {
+      title: t(locale, "app.metadata.title"),
+      description: t(locale, "app.metadata.description"),
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: t(locale, "app.metadata.title"),
+      description: t(locale, "app.metadata.description"),
+    },
+  };
+}
+
+export default async function RootLayout({ children, params }: LayoutProps) {
+  const locale = resolveLocaleParam((await params).locale);
+
   return (
     <html
       lang={locale}

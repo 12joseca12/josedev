@@ -8,7 +8,7 @@ import { slugFromTitleNoSpaces } from "@/lib/forum-slug";
 import type { ApiFail } from "@/services/forum-api";
 import { forumPostJson, forumThematicTitle } from "@/services/forum-api";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
-import { t } from "@/services/literals";
+import { localizedHref, t } from "@/services/literals";
 
 type Props = {
   locale: Locale;
@@ -63,7 +63,7 @@ export function ForumNewEntryForm({ locale, thematics }: Props) {
       const { data } = await supabase.auth.getSession();
       const token = data.session?.access_token;
       if (!token) {
-        router.push(buildAuthHref(authNextPath()));
+        router.push(buildAuthHref(locale, authNextPath()));
         return;
       }
 
@@ -102,7 +102,7 @@ export function ForumNewEntryForm({ locale, thematics }: Props) {
         }
         return;
       }
-      router.push(`/foro/${res.data.thematicSlug}/${res.data.slug}`);
+      router.push(localizedHref(locale, `/foro/${res.data.thematicSlug}/${res.data.slug}`));
     } catch {
       setError(t(locale, "forum.ui.errorGeneric"));
     } finally {

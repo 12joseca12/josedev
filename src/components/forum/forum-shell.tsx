@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useId, useState, type FormEvent, type ReactNode } from "react";
 import type { ForumEntrySummaryDTO, ForumThematicDTO, Locale } from "@/lib/types";
 import { forumEntryTitle } from "@/services/forum-api";
-import { t } from "@/services/literals";
+import { localizedHref, t } from "@/services/literals";
 import { ForumThematicsNav } from "./forum-thematics-nav";
 
 type Props = {
@@ -27,10 +27,10 @@ export function ForumShell({ locale, thematics, entriesBySlug, popular, configur
     e.preventDefault();
     const v = q.trim();
     if (!v) {
-      router.push("/foro");
+      router.push(localizedHref(locale, "/foro"));
       return;
     }
-    router.push(`/foro?q=${encodeURIComponent(v)}`);
+    router.push(`${localizedHref(locale, "/foro")}?q=${encodeURIComponent(v)}`);
   };
 
   return (
@@ -73,13 +73,13 @@ export function ForumShell({ locale, thematics, entriesBySlug, popular, configur
 
         <div className="space-y-2">
           <Link
-            href="/foro/new"
+            href={localizedHref(locale, "/foro/new")}
             className="flex w-full items-center justify-center rounded-xl bg-primary px-3 py-2.5 text-center text-xs font-bold uppercase tracking-wide text-on-primary-fixed shadow-[0_0_24px_color-mix(in_srgb,var(--color-primary-container)_20%,transparent)] transition-opacity hover:opacity-95"
           >
             {t(locale, "forum.ui.navNewEntry")}
           </Link>
           <Link
-            href="/foro#popular"
+            href={`${localizedHref(locale, "/foro")}#popular`}
             className="block rounded-lg border border-outline-variant/30 px-3 py-2 text-center text-xs font-semibold uppercase tracking-wide text-on-surface-variant transition-colors hover:border-primary/35 hover:text-primary"
           >
             {t(locale, "forum.ui.navPopular")}
@@ -94,7 +94,7 @@ export function ForumShell({ locale, thematics, entriesBySlug, popular, configur
             {popular.slice(0, 6).map((e) => (
               <li key={e.id}>
                 <Link
-                  href={`/foro/${e.thematicSlug}/${e.slug}`}
+                  href={localizedHref(locale, `/foro/${e.thematicSlug}/${e.slug}`)}
                   className="line-clamp-2 text-xs leading-snug text-on-surface-variant transition-colors hover:text-primary"
                 >
                   {forumEntryTitle(e, (key) => t(locale, key))}

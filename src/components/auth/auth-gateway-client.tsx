@@ -67,7 +67,7 @@ export function AuthGatewayClient({ locale, redirectAfterAuth = null }: Props) {
   }, [redirectAfterAuth]);
 
   const finishAuthRedirect = () => {
-    navigateAfterAuth(resolvePostAuthPath(redirectAfterAuth));
+    navigateAfterAuth(resolvePostAuthPath(locale, redirectAfterAuth));
   };
 
   const focusTab = (next: Mode) => {

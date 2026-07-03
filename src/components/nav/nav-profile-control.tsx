@@ -2,12 +2,14 @@
 
 import { UserCircle } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 
 import { AuthEntryLink } from "@/components/auth/auth-entry-link";
 import { displayNameFromAuthUser, initialsFromDisplayName } from "@/lib/user-initials";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
+import { isSupportedLocale, localizedHref } from "@/services/literals";
 
 type Variant = "icon" | "menu";
 
@@ -45,6 +47,9 @@ function NavProfileControlInner({
   const hoverLabelPlacementAttr = hoverLabelPlacement
     ? ({ "data-hover-label-placement": hoverLabelPlacement } as const)
     : {};
+  const pathname = usePathname();
+  const firstSegment = pathname.split("/")[1] ?? "";
+  const locale = isSupportedLocale(firstSegment) ? firstSegment : "es";
   const [user, setUser] = useState<User | null>(null);
   const [ready, setReady] = useState(false);
 
@@ -125,7 +130,7 @@ function NavProfileControlInner({
   if (variant === "menu") {
     return (
       <Link
-        href="/perfil"
+        href={localizedHref(locale, "/perfil")}
         data-hover-label={profileAriaSignedIn}
         {...hoverLabelPlacementAttr}
         aria-label={profileAriaSignedIn}
@@ -140,7 +145,7 @@ function NavProfileControlInner({
 
   return (
     <Link
-      href="/perfil"
+      href={localizedHref(locale, "/perfil")}
       data-hover-label={profileAriaSignedIn}
       {...hoverLabelPlacementAttr}
       aria-label={profileAriaSignedIn}

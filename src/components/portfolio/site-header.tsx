@@ -1,6 +1,6 @@
 import type { Locale } from "@/lib/types";
 import { styleTokens } from "@/lib/stylesVariables";
-import { t } from "@/services/literals";
+import { localizedHref, t } from "@/services/literals";
 
 import { SiteHeaderClient } from "./site-header-client";
 
@@ -10,9 +10,11 @@ type Props = {
 
 export function SiteHeader({ locale }: Props) {
   const links = [
-    { href: "#main", label: t(locale, "nav.home") },
-    { href: "#services", label: t(locale, "nav.services") },
-    { href: "#blog", label: t(locale, "nav.blog") },
+    { href: localizedHref(locale, "/"), label: t(locale, "nav.home") },
+    { href: localizedHref(locale, "/sobre-mi"), label: t(locale, "nav.sobreMi") },
+    { href: localizedHref(locale, "/services"), label: t(locale, "nav.services") },
+    { href: localizedHref(locale, "/blog"), label: t(locale, "nav.blog") },
+    { href: localizedHref(locale, "/foro"), label: t(locale, "nav.forum") },
   ];
 
   return (
@@ -22,14 +24,18 @@ export function SiteHeader({ locale }: Props) {
       style={{ boxShadow: styleTokens.layout.navShadow }}
     >
       <SiteHeaderClient
+        locale={locale}
         brand={t(locale, "nav.brand")}
         links={links}
         profileAria={t(locale, "nav.profileAria")}
+        profileAriaSignedIn={t(locale, "nav.profileAriaSignedIn")}
         profileMenuLabel={t(locale, "nav.profileLink")}
+        profileMenuLabelSignedIn={t(locale, "nav.profileLinkSignedIn")}
         terminalAria={t(locale, "nav.terminalAria")}
         hireMe={t(locale, "nav.hireMe")}
         openMenuLabel={t(locale, "nav.openMenu")}
         closeMenuLabel={t(locale, "nav.closeMenu")}
+        currentPageLabel={t(locale, "nav.currentPage")}
       />
     </nav>
   );

@@ -8,7 +8,7 @@ import { buildAuthHref } from "@/lib/auth-return-path";
 import type { Locale } from "@/lib/types";
 import { displayNameFromAuthUser, initialsFromDisplayName } from "@/lib/user-initials";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
-import { t } from "@/services/literals";
+import { localizedHref, t } from "@/services/literals";
 
 type Props = {
   locale: Locale;
@@ -31,7 +31,7 @@ export function ProfileScreen({ locale }: Props) {
       setUser(current);
       setReady(true);
       if (!current) {
-        router.replace(buildAuthHref("/perfil"));
+        router.replace(buildAuthHref(locale, localizedHref(locale, "/perfil")));
       }
     })();
 
@@ -40,7 +40,7 @@ export function ProfileScreen({ locale }: Props) {
       setUser(next);
       setReady(true);
       if (!next) {
-        router.replace(buildAuthHref("/perfil"));
+        router.replace(buildAuthHref(locale, localizedHref(locale, "/perfil")));
       }
     });
 
@@ -48,14 +48,14 @@ export function ProfileScreen({ locale }: Props) {
       mounted = false;
       sub.subscription.unsubscribe();
     };
-  }, [router]);
+  }, [router, locale]);
 
   const onSignOut = async () => {
     setSigningOut(true);
     try {
       const supabase = getSupabaseBrowserClient();
       await supabase.auth.signOut();
-      router.replace("/");
+      router.replace(localizedHref(locale, "/"));
     } finally {
       setSigningOut(false);
     }

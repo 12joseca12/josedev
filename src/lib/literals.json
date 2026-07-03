@@ -1,17 +1,18 @@
 {
   "app": {
     "metadata": {
-      "title": "Full Stack · Mobile · Arquitectura",
+      "title": "JoseCoded",
       "description": "Portfolio: ingeniería web y móvil de alto rendimiento, código limpio e infraestructura escalable."
     }
   },
   "nav": {
     "brand": "Jose Dev",
     "home": "Inicio",
-    "stack": "Stack",
+    "sobreMi": "Sobre mí",
     "portfolio": "Portfolio",
     "services": "Services",
     "blog": "Blog",
+    "forum": "Foro",
     "faq": "FAQ",
     "contact": "Contacto",
     "skipToContent": "Saltar al contenido",
@@ -20,7 +21,198 @@
     "openMenu": "Abrir menú de navegación",
     "closeMenu": "Cerrar menú de navegación",
     "profileAria": "Ir a iniciar sesión o registrarse",
-    "profileLink": "Acceso"
+    "profileAriaSignedIn": "Ir a tu perfil",
+    "profileLink": "Acceso",
+    "profileLinkSignedIn": "Perfil",
+    "currentPage": "página actual",
+    "languageSwitcherAria": "Cambiar idioma"
+  },
+  "terminalChat": {
+    "panelAria": "Chat con el administrador",
+    "closeAria": "Cerrar terminal de chat",
+    "trafficLightsAria": "Controles de ventana",
+    "fullscreenAria": "Pantalla completa",
+    "restoreAria": "Restaurar tamaño de ventana",
+    "pipAria": "Minimizar a picture in picture",
+    "pipRestoreAria": "Salir de picture in picture",
+    "pipPanelAria": "Chat en picture in picture",
+    "headerTitle": "BASH -- SESIÓN: ENGINEER_CHAT",
+    "headerConnection": "SSH://SECURE_NODE_12",
+    "sysLabel": "SYS",
+    "usrLabel": "USR",
+    "sysPrompt": "ENGINEER@PRODUCTION:~$",
+    "usrPrompt": "Nodo local: 127.0.0.1 ROOT@{host}:~$",
+    "inputLabel": "Mensaje para el administrador",
+    "inputPrompt": "user@{host}:~$",
+    "inputPlaceholder": "Escribe un comando o mensaje…",
+    "sendAria": "Enviar mensaje",
+    "footerUtf8": "UTF-8",
+    "footerIns": "INS",
+    "footerProtocol": "PROTOCOL: L4-ENCRYPTED-MESH",
+    "loading": "Cargando sesión segura…",
+    "emptyHint": "Escribe para contactar con el administrador. Las respuestas representan sus intereses y criterio técnico.",
+    "waitingReply": "Procesando respuesta…",
+    "typingAria": "El asistente está escribiendo",
+    "assistantTimeout": "La respuesta está tardando más de lo habitual. Hemos actualizado el hilo; si no ves respuesta, inténtalo de nuevo.",
+    "meetingTitle": "Agendar reunión",
+    "meetingDate": "Fecha",
+    "meetingTime": "Hora",
+    "meetingSubmit": "Confirmar franja",
+    "meetingSubmitting": "Enviando…",
+    "meetingFormAria": "Formulario de fecha y hora para reunión",
+    "meetingScheduled": "Solicitud registrada:",
+    "signInTitle": "Sesión requerida",
+    "signInBody": "Inicia sesión para abrir el canal seguro con el administrador.",
+    "signInCta": "Iniciar sesión"
+  },
+  "screens": {
+    "sobreMi": {
+      "metadataTitle": "Sobre mí · Stack técnico · Jose Dev",
+      "metadataDescription": "Portfolio de stack técnico: apps móviles, web moderna, backend, datos, calidad y operaciones.",
+      "title": "Sobre mí"
+    },
+    "services": {
+      "metadataTitle": "Servicios",
+      "metadataDescription": "Servicios y planes disponibles.",
+      "title": "Servicios"
+    },
+    "blog": {
+      "metadataTitle": "Blog",
+      "metadataDescription": "Artículos y notas técnicas.",
+      "title": "Blog",
+      "listIntro": "Notas publicadas desde la base de datos. Los borradores solo los ve el autor cuando exista panel de edición."
+    },
+    "forum": {
+      "metadataTitle": "Foro",
+      "metadataDescription": "Foro técnico: temáticas, hilos y ramas.",
+      "title": "Foro"
+    }
+  },
+  "blog": {
+    "ui": {
+      "readMore": "Leer artículo",
+      "readArticleAria": "Leer artículo",
+      "backToIndex": "Volver al blog",
+      "emptyList": "Aún no hay artículos publicados en este idioma.",
+      "supabaseUnavailable": "Falta configurar Supabase (URL y clave publicable) para cargar el blog.",
+      "postNotFoundTitle": "Artículo no encontrado",
+      "postNotFoundBody": "El enlace puede ser antiguo o el artículo no está publicado.",
+      "articleLabel": "Artículo",
+      "jsonLdAuthorName": "Jose Dev"
+    }
+  },
+  "forum": {
+    "thematics": {
+      "architecture": {
+        "title": "Arquitectura",
+        "description": "Diseño de sistemas, rendimiento y RFCs."
+      },
+      "infrastructure": {
+        "title": "Infraestructura",
+        "description": "Observabilidad, despliegue y plataforma."
+      }
+    },
+    "entries": {
+      "rfcDistributedCache": {
+        "title": "RFC: optimización de invalidación de caché distribuida",
+        "body": "Hilo principal sobre coalescing y versionado por shard."
+      },
+      "branchFromC2": {
+        "title": "Rama: cola asíncrona de invalidación",
+        "body": "Continuación desde el comentario de cola asíncrona."
+      },
+      "observabilityBasics": {
+        "title": "Observabilidad mínima viable",
+        "body": "Métricas RED y trazas correlacionadas."
+      }
+    },
+    "participants": {
+      "alex": "Alex Mercer",
+      "chen": "Dra. Chen",
+      "you": "Tú",
+      "member": "Miembro"
+    },
+    "branch": {
+      "label": "rama/foro"
+    },
+    "ui": {
+      "navThematics": "Temáticas",
+      "navPopular": "Más populares",
+      "navNewEntry": "Nueva entrada",
+      "searchPlaceholder": "Buscar en temáticas, títulos, cuerpos y comentarios…",
+      "searchAria": "Buscar en el foro",
+      "searchSubmit": "Buscar",
+      "emptyThematic": "No hay entradas en esta temática.",
+      "emptySearch": "Sin resultados.",
+      "popularTitle": "Entradas populares",
+      "backToThematic": "Volver a la temática",
+      "threadOpened": "abrió este hilo",
+      "usefulSectionTitle": "Destacados (útil)",
+      "participantsTitle": "Participantes del hilo",
+      "branchesTitle": "Ramas activas",
+      "branchFromComment": "Crear rama desde comentario",
+      "branchExists": "Ya existe una rama para este comentario. Redirigiendo…",
+      "reply": "Responder",
+      "like": "Me gusta",
+      "unlike": "Quitar me gusta",
+      "useful": "Útil",
+      "unuseful": "Quitar útil",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "signInToComment": "Inicia sesión para comentar",
+      "composerSectionTitle": "Añadir comentario",
+      "composerPlaceholder": "Escribe tu comentario… (texto plano; sin archivos)",
+      "composerSubmit": "Publicar",
+      "addCodeBlock": "Añadir fragmento de código",
+      "codeLabel": "Etiqueta (opcional)",
+      "codeLanguage": "Lenguaje (opcional)",
+      "codeContent": "Código",
+      "removeBlock": "Quitar bloque",
+      "apiUnavailable": "El servicio del foro no está configurado (URL de API).",
+      "loading": "Cargando…",
+      "errorGeneric": "No se pudo completar la acción.",
+      "errorContentRejected": "El texto no cumple las normas de contenido (contenido ofensivo o delicado).",
+      "errorModerationUnavailable": "No pudimos validar el contenido ahora mismo. Inténtalo de nuevo en unos minutos.",
+      "errorRateLimited": "Demasiadas acciones seguidas. Espera un minuto e inténtalo de nuevo.",
+      "authorUnknown": "Participante",
+      "roleAuthor": "Autor",
+      "roleParticipant": "Participante",
+      "newEntryTitle": "Nueva entrada",
+      "newEntrySlug": "Slug URL",
+      "newEntryThematic": "Temática",
+      "newEntrySubmit": "Crear entrada",
+      "breadcrumbForum": "Foro",
+      "thematicNotFound": "No encontramos esta temática o no hay datos disponibles.",
+      "entriesListHeading": "Entradas del foro",
+      "threadNotFound": "No encontramos esta entrada del foro.",
+      "newEntryBody": "Contenido inicial (texto)",
+      "newEntryTitlePage": "Nueva entrada en el foro",
+      "newEntryIntro": "Define título, slug y mensaje inicial. Tras crearla podrás añadir fragmentos de código en los comentarios.",
+      "newEntryValidation": "Completa título del hilo, contenido y temática (existente o nueva).",
+      "newEntryThematicSection": "Temática",
+      "newEntryThematicModeExisting": "Usar temática existente",
+      "newEntryThematicModeNew": "Crear nueva temática",
+      "newThematicTitle": "Nombre de la nueva temática",
+      "newThematicDescription": "Descripción de la temática (opcional)",
+      "entrySlugPreview": "URL del hilo (automática)",
+      "slugFromTitleHint": "Se genera desde el título del hilo: minúsculas, sin espacios ni signos.",
+      "thematicSlugPreview": "URL de la temática (automática)",
+      "conflictThematicSlug": "Ya existe una temática con esa URL. Cambia el nombre de la temática.",
+      "noThematics": "No hay temáticas todavía: crea una nueva temática abajo.",
+      "slugHint": "Solo minúsculas, números y guiones (por ejemplo: mi-rfc-cache).",
+      "deleteConfirmTitle": "Eliminar comentario",
+      "deleteConfirmBody": "Esta acción no se puede deshacer. ¿Seguro que quieres eliminar este comentario?",
+      "deleteConfirmSubmit": "Eliminar",
+      "deleteConfirmCancel": "Volver",
+      "searchResultsTitle": "Resultados",
+      "thematicsIntro": "Elige una temática para ver los hilos o usa el buscador del panel izquierdo.",
+      "indexHeading": "Temáticas",
+      "expandThematic": "Expandir temática",
+      "collapseThematic": "Contraer temática",
+      "homeEmptyHint": "Abre una temática en el panel izquierdo o crea la primera desde «Nueva entrada»."
+    }
   },
   "hero": {
     "badge": "Disponible para proyectos globales",
@@ -29,9 +221,10 @@
     "line3": "de Web y Mobile",
     "description": "Arquitectura de ecosistemas digitales de alto rendimiento mediante código limpio, infraestructura escalable y experiencias móviles intuitivas.",
     "ctaPrimary": "Mi portfolio",
-    "ctaSecondary": "Ver stack",
+    "ctaSecondary": "Sobre mí",
     "ctaPrimaryAria": "Ir a mi portfolio",
-    "stackFocus": "Stack",
+    "ctaSecondaryAria": "Ir a la página sobre mí",
+    "aboutFocus": "Sobre mí",
     "icons": {
       "react": "React",
       "typescript": "TypeScript",
@@ -57,6 +250,183 @@
       "status": "ACTIVO",
       "imageAlt": "Interfaz móvil de alta fidelidad con tema oscuro y acentos cian"
     }
+  },
+  "sobreMiStack": {
+    "hero": {
+      "eyebrow": "Arquitectura · Ingeniería",
+      "title": "Portfolio técnico integral",
+      "subtitle": "Perspectiva arquitectónica del desarrollo full stack: primitivas modernas para infraestructura digital resiliente, escalable y experiencias móviles de alto rendimiento.",
+      "badge": "Disponible para proyectos complejos"
+    },
+    "primaryBadgesAria": "Tecnologías relacionadas",
+    "categories": {
+      "mobile": {
+        "index": "01",
+        "title": "Apps móviles multiplataforma"
+      },
+      "web": {
+        "index": "02",
+        "title": "Webs y plataformas modernas"
+      },
+      "backend": {
+        "index": "03",
+        "title": "Backend, datos e integraciones"
+      },
+      "quality": {
+        "index": "04",
+        "title": "Calidad, escalabilidad y mantenimiento"
+      }
+    },
+    "tech": {
+      "reactNative": {
+        "name": "React Native",
+        "tag": "Multiplataforma",
+        "description": "Elección principal para apps nativas en producción con base de código compartida entre iOS y Android."
+      },
+      "expo": { "name": "Expo", "tag": "Toolchain" },
+      "androidStudio": { "name": "Android Studio", "tag": "Android" },
+      "xcode": { "name": "Xcode", "tag": "iOS" },
+      "deepLinking": { "name": "Deep linking", "tag": "Navegación" },
+      "pushNotifications": { "name": "Push notifications", "tag": "Engagement" },
+      "appDeployment": { "name": "App deployment", "tag": "Release" },
+      "react": { "name": "React", "tag": "UI Library" },
+      "nextjs": {
+        "name": "React y Next.js",
+        "tag": "Web platform",
+        "description": "Aplicaciones React performantes con renderizado en servidor, estático e híbrido."
+      },
+      "vercel": { "name": "Vercel", "tag": "Deploy" },
+      "typescript": { "name": "TypeScript", "tag": "Tipado" },
+      "tailwind": { "name": "Tailwind CSS", "tag": "Estilos" },
+      "html5": { "name": "HTML", "tag": "Semántica" },
+      "css3": { "name": "CSS", "tag": "Layout" },
+      "accessibility": { "name": "Accesibilidad", "tag": "A11y" },
+      "nodejs": {
+        "name": "Node.js y NestJS",
+        "tag": "Backend",
+        "description": "Servicios escalables, APIs y arquitectura modular orientada a dominio."
+      },
+      "nestjs": { "name": "NestJS", "tag": "Framework" },
+      "apis": { "name": "APIs", "tag": "Integración" },
+      "supabase": { "name": "Supabase", "tag": "BaaS" },
+      "firebase": { "name": "Firebase", "tag": "Cloud" },
+      "postgresql": { "name": "PostgreSQL", "tag": "SQL" },
+      "mongodb": { "name": "MongoDB", "tag": "NoSQL" },
+      "redis": { "name": "Redis", "tag": "Cache" },
+      "jest": {
+        "name": "Testing y QA (Jest)",
+        "tag": "Calidad",
+        "description": "Calidad, fiabilidad y rendimiento mediante pruebas automatizadas y revisiones continuas."
+      },
+      "redux": { "name": "Redux", "tag": "Estado" },
+      "git": { "name": "Git", "tag": "Control de versiones" },
+      "github": { "name": "GitHub", "tag": "Colaboración" },
+      "agile": { "name": "Agile / Scrum", "tag": "Metodología" },
+      "jira": { "name": "JIRA", "tag": "Gestión" },
+      "itil": { "name": "ITIL v4", "tag": "Operaciones" }
+    }
+  },
+  "sobreMiShowcase": {
+    "index": "03",
+    "title": "Engineering showcase",
+    "catinfo": {
+      "name": "3catinfo",
+      "description": "App multiplataforma de noticias e información con actualizaciones en tiempo real, pensada para escalar y rendir bien. Incluye modo offline, feeds personalizados y sincronización fluida entre dispositivos.",
+      "techSpecsLabel": "Tech Specs",
+      "viewSource": "Ver código",
+      "liveDemo": "Live demo",
+      "liveDemoShort": "Demo",
+      "liveDemoLoading": "Arrancando emulador Android…",
+      "liveDemoLoadingShort": "Conectando…",
+      "liveDemoPreparing": "Preparando demo Android…",
+      "liveDemoStartingContainer": "Encendiendo contenedor Android…",
+      "liveDemoBootingAndroid": "Arrancando Android en el servidor…",
+      "liveDemoPreparingApp": "Preparando la app 3catinfo…",
+      "liveDemoError": "No se pudo iniciar el emulador. Comprueba que la API y el worker estén activos.",
+      "liveDemoConflict": "El emulador ya se está iniciando. Espera un minuto y vuelve a pulsar Live demo.",
+      "liveDemoUnauthorized": "No autorizado hacia el backend. Revisa que WORKER_INTERNAL_TOKEN coincida con BACKEND_INTERNAL_TOKEN.",
+      "liveDemoBootTimeout": "El emulador Android no terminó de arrancar a tiempo en el servidor. Revisa Docker (contenedor android-emulator) y los logs del backend.",
+      "liveDemoGatewayTimeout": "La API cortó la espera, pero el emulador puede seguir arrancando en el servidor. Espera y vuelve a intentar una sola vez.",
+      "liveDemoHint": "Live demo conecta con el emulador Android del backend e inyecta la app 3catinfo en el marco del móvil.",
+      "backToPreview": "Volver a la vista estática",
+      "phonePreviewAria": "Vista previa estática de la app 3catinfo en un marco de móvil",
+      "phoneEmulatorAria": "Emulador Android en vivo con la app 3catinfo",
+      "emulatorIframeTitle": "Emulador Android — app 3catinfo",
+      "preview": {
+        "appName": "3catinfo",
+        "searchLabel": "Buscar",
+        "searchPlaceholder": "Search",
+        "tabsAria": "Pestañas de navegación",
+        "feedAria": "Listado de noticias",
+        "tabs": {
+          "news": "News",
+          "categories": "Categories",
+          "newsId": "News id",
+          "favorites": "Favorites"
+        },
+        "articles": {
+          "article1": {
+            "title": "Actualización regional: resumen del día en Catalunya",
+            "tag": "Política"
+          },
+          "article2": {
+            "title": "Mercados locales abren con tendencia alcista moderada",
+            "tag": "Economía"
+          },
+          "article3": {
+            "title": "Nueva ronda de inversión en startups del ecosistema mobile",
+            "tag": "Tech"
+          }
+        }
+      }
+    }
+  },
+  "stack": {
+    "eyebrow": "Stack técnico",
+    "title": "Full stack con base sólida",
+    "subtitle": "Del frontend al dato, con despliegue en la nube y foco en rendimiento, experiencia de desarrollo y seguridad.",
+    "cards": {
+      "frontend": {
+        "title": "Frontend",
+        "description": "Interfaces React y Next.js responsivas, accesibles y rápidas, con diseño coherente y tipado estricto."
+      },
+      "backend": {
+        "title": "Backend",
+        "description": "APIs y lógica de negocio en TypeScript: contratos claros, validación y pruebas donde aportan valor."
+      },
+      "cloud": {
+        "title": "Cloud",
+        "description": "Infraestructura en AWS y edge: despliegues reproducibles, escalado y observabilidad desde el primer día."
+      },
+      "data": {
+        "title": "Datos",
+        "description": "PostgreSQL y Supabase: modelado, RLS, migraciones y consultas alineadas con el producto."
+      },
+      "dx": {
+        "title": "Developer experience",
+        "description": "Tooling, convenciones y automatización para iterar rápido sin sacrificar calidad ni mantenibilidad."
+      },
+      "security": {
+        "title": "Seguridad",
+        "description": "Autenticación, permisos, validación de entrada y mínima exposición de datos en cliente y servidor."
+      }
+    },
+    "chipsLabel": "Tecnologías clave",
+    "chips": {
+      "nextjs": "Next.js",
+      "react": "React",
+      "typescript": "TypeScript",
+      "tailwind": "Tailwind CSS",
+      "aws": "AWS",
+      "supabase": "Supabase",
+      "performance": "Rendimiento"
+    },
+    "noteStrong": "Enfoque práctico:",
+    "note": "Elijo la herramienta según el problema, no al revés. Cada stack queda documentado y mantenible.",
+    "ctaTitle": "¿Quieres el detalle?",
+    "ctaDescription": "Capacidades, casos de uso y cómo encajo en tu hoja de ruta técnica.",
+    "ctaButton": "Conocer más sobre mí",
+    "ctaButtonAria": "Ir a la página sobre mí"
   },
   "bento": {
     "services": {
@@ -315,6 +685,21 @@
       }
     }
   },
+  "profilePage": {
+    "metadataTitle": "Perfil · Jose Dev",
+    "metadataDescription": "Tu cuenta y datos de acceso.",
+    "h1": "Perfil",
+    "name": "Nombre",
+    "email": "Correo",
+    "signOut": "Cerrar sesión",
+    "signOutAria": "Cerrar sesión y volver al inicio",
+    "signingOut": "Cerrando sesión…"
+  },
+  "clientAreaPage": {
+    "metadataTitle": "Área de clientes · Jose Dev",
+    "metadataDescription": "Espacio privado para clientes.",
+    "h1": "Área de clientes"
+  },
   "auth": {
     "metadataTitle": "Acceso · Jose Dev",
     "metadataDescription": "Inicia sesión o crea una cuenta para acceder al área privada.",
@@ -343,7 +728,32 @@
     "switchToLogin": "¿Ya tienes cuenta? Iniciar sesión",
     "registerHint": "El nombre es obligatorio. Empresa y cargo son opcionales.",
     "brandPanelTitle": "Acceso seguro",
-    "brandPanelSubtitle": "Misma precisión técnica que en el producto: identidad clara, flujos ordenados y foco en lo esencial."
+    "brandPanelSubtitle": "Misma precisión técnica que en el producto: identidad clara, flujos ordenados y foco en lo esencial.",
+    "emailPlaceholder": "tu@email.com",
+    "submitting": "Procesando…",
+    "errorGeneric": "No pudimos completar el acceso. Comprueba los datos e inténtalo de nuevo.",
+    "registerSuccess": "Cuenta creada. Ya puedes entrar con tu correo y contraseña.",
+    "requiredLegend": "Los campos marcados con asterisco son obligatorios.",
+    "errors": {
+      "emailExists": "Ya tienes una cuenta con este correo. Inicia sesión para continuar.",
+      "invalidCredentials": "Correo o contraseña incorrectos. Si aún no tienes cuenta, regístrate.",
+      "emailNotConfirmed": "Tu cuenta aún no está activa. Revisa tu correo o contacta con soporte.",
+      "weakPassword": "La contraseña es demasiado débil. Usa al menos 8 caracteres con letras y números.",
+      "rateLimited": "Demasiados intentos seguidos. Espera un momento e inténtalo de nuevo.",
+      "signupDisabled": "El registro no está disponible en este momento.",
+      "validationFailed": "Revisa que el correo y la contraseña sean válidos."
+    }
+  },
+  "finalCta": {
+    "eyebrow": "Siguiente paso",
+    "title": "¿Hablamos de tu proyecto?",
+    "subtitle": "Accede a tu área privada o escríbeme por WhatsApp. Te respondo con claridad sobre alcance, plazos y encaje técnico.",
+    "login": "Iniciar sesión",
+    "loginAria": "Ir a iniciar sesión o crear cuenta",
+    "whatsapp": "WhatsApp",
+    "whatsappAria": "Abrir conversación en WhatsApp",
+    "whatsappNumberE164": "+34600000000",
+    "whatsappPrefill": "Hola, me gustaría hablar contigo sobre un proyecto."
   },
   "footer": {
     "brand": "ARCHITECTURAL LOGIC",

@@ -175,7 +175,7 @@ export function TerminalChatPanel({ locale, open, onClose }: Props) {
             <div className="space-y-2 rounded border border-primary/25 bg-primary/5 p-2 text-center">
               <p className="font-mono text-[10px] text-outline">{t(locale, "terminalChat.signInBody")}</p>
               <Link
-                href={buildAuthHref(pathname)}
+                href={buildAuthHref(locale, pathname)}
                 className="inline-block rounded border border-primary/50 bg-primary/20 px-2 py-1 font-mono text-[10px] text-primary"
               >
                 {t(locale, "terminalChat.signInCta")}
@@ -300,7 +300,7 @@ export function TerminalChatPanel({ locale, open, onClose }: Props) {
                 {t(locale, "terminalChat.signInBody")}
               </p>
               <Link
-                href={buildAuthHref(pathname)}
+                href={buildAuthHref(locale, pathname)}
                 onClick={onClose}
                 className="rounded-md border border-primary/50 bg-primary/20 px-4 py-2 font-headline text-xs font-bold uppercase tracking-wide text-primary transition-colors hover:bg-primary/30"
               >

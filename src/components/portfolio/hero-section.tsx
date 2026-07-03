@@ -8,7 +8,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import type { Locale } from "@/lib/types";
-import { t } from "@/services/literals";
+import { localizedHref, t } from "@/services/literals";
 
 type Props = {
   locale: Locale;
@@ -82,7 +82,7 @@ export function HeroSection({ locale }: Props) {
               data-hover-label={t(locale, "hero.ctaSecondary")}
               aria-label={t(locale, "hero.ctaSecondaryAria")}
               className="inline-flex w-full items-center justify-center rounded-xl border border-outline-variant/25 bg-surface-variant/20 px-6 py-3.5 font-headline text-sm font-bold text-on-surface backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/35 hover:bg-surface-variant/45 hover:shadow-[0_0_28px_color-mix(in_srgb,var(--color-primary)_12%,transparent)] active:translate-y-0 sm:w-auto sm:px-8 sm:py-4 sm:text-base"
-              href="/sobre-mi"
+              href={localizedHref(locale, "/sobre-mi")}
             >
               {t(locale, "hero.ctaSecondary")}
             </Link>
@@ -100,7 +100,7 @@ export function HeroSection({ locale }: Props) {
                 {stackIcons.map(({ Icon, key }) => (
                   <li key={key} aria-label={t(locale, `hero.icons.${key}`)} className="list-none">
                     <Link
-                      href="/sobre-mi"
+                      href={localizedHref(locale, "/sobre-mi")}
                       aria-label={t(locale, `hero.icons.${key}`)}
                       className="inline-flex rounded-lg p-1.5 text-on-surface-variant transition-all duration-300 hover:scale-110 hover:text-primary hover:drop-shadow-[0_0_10px_color-mix(in_srgb,var(--color-primary-container)_35%,transparent)]"
                     >

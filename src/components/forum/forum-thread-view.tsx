@@ -14,7 +14,7 @@ import {
   forumPostJson,
   forumPutJson,
 } from "@/services/forum-api";
-import { t } from "@/services/literals";
+import { localizedHref, t } from "@/services/literals";
 import { buildAuthHref } from "@/lib/auth-return-path";
 import { forumAuthorLine } from "@/lib/forum-author-display";
 import { ForumAsideBranches } from "./forum-aside-branches";
@@ -89,7 +89,7 @@ export function ForumThreadView({ locale, thematicSlug, entrySlug, initialDetail
   };
 
   const requireAuth = () => {
-    router.push(buildAuthHref(authNextPath(thematicSlug, entrySlug)));
+    router.push(buildAuthHref(locale, authNextPath(thematicSlug, entrySlug)));
   };
 
   const onSubmitComment = async () => {
@@ -212,13 +212,13 @@ export function ForumThreadView({ locale, thematicSlug, entrySlug, initialDetail
           : undefined;
       if (redir) {
         setBranchFor(null);
-        router.push(`/foro/${redir.thematicSlug}/${redir.entrySlug}`);
+        router.push(localizedHref(locale, `/foro/${redir.thematicSlug}/${redir.entrySlug}`));
       }
       return;
     }
     const data = res.data;
     setBranchFor(null);
-    router.push(`/foro/${data.thematicSlug}/${data.slug}`);
+    router.push(localizedHref(locale, `/foro/${data.thematicSlug}/${data.slug}`));
   };
 
   if (!detail) {
@@ -237,13 +237,13 @@ export function ForumThreadView({ locale, thematicSlug, entrySlug, initialDetail
     <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
       <div className="min-w-0 flex-1 space-y-8">
         <nav className="font-label text-[10px] uppercase tracking-widest text-outline">
-          <Link href="/foro" className="text-primary hover:underline">
+          <Link href={localizedHref(locale, "/foro")} className="text-primary hover:underline">
             {t(locale, "forum.ui.breadcrumbForum")}
           </Link>
           <span aria-hidden className="mx-2 text-outline-variant">
             /
           </span>
-          <Link href={`/foro/${thematicSlug}`} className="text-primary hover:underline">
+          <Link href={localizedHref(locale, `/foro/${thematicSlug}`)} className="text-primary hover:underline">
             {thematicSlug}
           </Link>
           <span aria-hidden className="mx-2 text-outline-variant">

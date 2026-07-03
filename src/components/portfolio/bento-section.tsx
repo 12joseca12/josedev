@@ -1,7 +1,8 @@
 import { ArrowRight, BookOpen, Database, Zap } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import type { Locale } from "@/lib/types";
-import { t } from "@/services/literals";
+import { localizedHref, t } from "@/services/literals";
 
 type Props = {
   locale: Locale;
@@ -30,7 +31,7 @@ export function BentoSection({ locale }: Props) {
             </p>
             <a
               className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-primary transition-all group-hover:gap-4"
-              href="#plans"
+              href="#contact"
               aria-label={t(locale, "bento.services.ctaAria")}
             >
               {t(locale, "bento.services.cta")}
@@ -63,13 +64,13 @@ export function BentoSection({ locale }: Props) {
           <div>
             <h3 className="mb-2 font-headline text-lg font-bold sm:text-xl">{t(locale, "bento.blog.title")}</h3>
             <p className="mb-4 text-xs text-on-surface-variant">{t(locale, "bento.blog.description")}</p>
-            <a
+            <Link
               className="font-label text-[10px] font-bold text-on-surface transition-colors group-hover:text-tertiary"
-              href="#blog-posts"
               aria-label={t(locale, "bento.blog.ctaAria")}
+              href={localizedHref(locale, "/blog")}
             >
               {t(locale, "bento.blog.cta")}
-            </a>
+            </Link>
           </div>
         </div>
 

@@ -37,3 +37,21 @@ export function getDefaultLocale(): Locale {
 export function getLiteralsRoot(locale: Locale): LiteralsTree {
   return LITERALS_BY_LOCALE[locale];
 }
+
+export const SUPPORTED_LOCALES: readonly Locale[] = ["es", "en"];
+
+export function isSupportedLocale(value: string): value is Locale {
+  return (SUPPORTED_LOCALES as readonly string[]).includes(value);
+}
+
+/** Narrows a raw `[locale]` route param (typed `string` by Next.js) to a supported `Locale`, falling back to the default. */
+export function resolveLocaleParam(value: string): Locale {
+  return isSupportedLocale(value) ? value : getDefaultLocale();
+}
+
+/** Prefixes an internal absolute path with the current locale, e.g. `localizedHref("en", "/blog")` -> `/en/blog`. */
+export function localizedHref(locale: Locale, path: string): string {
+  if (/^https?:\/\//.test(path)) return path;
+  const normalized = path.startsWith("/") ? path : `/${path}`;
+  return `/${locale}${normalized === "/" ? "" : normalized}`;
+}

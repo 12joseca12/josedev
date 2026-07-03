@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import type { Locale } from "@/lib/types";
-import { t } from "@/services/literals";
+import { localizedHref, t } from "@/services/literals";
 
 type Props = {
   locale: Locale;
@@ -97,7 +97,7 @@ export function StackSection({ locale }: Props) {
                 {stackChips.map(({ key, Icon }) => (
                   <li key={key} className="list-none">
                     <Link
-                      href="/sobre-mi"
+                      href={localizedHref(locale, "/sobre-mi")}
                       aria-label={t(locale, `stack.chips.${key}`)}
                       className="inline-flex items-center gap-2 rounded-full border border-outline-variant/20 bg-surface-container-low/20 px-3 py-2 text-xs font-semibold text-on-surface transition-colors hover:border-primary/25 hover:text-primary"
                     >
@@ -124,7 +124,7 @@ export function StackSection({ locale }: Props) {
                 {t(locale, "stack.ctaDescription")}
               </p>
               <Link
-                href="/sobre-mi"
+                href={localizedHref(locale, "/sobre-mi")}
                 aria-label={t(locale, "stack.ctaButtonAria")}
                 className="signature-glow mt-4 inline-flex w-full items-center justify-center rounded-xl px-6 py-3 font-headline text-xs font-bold uppercase tracking-tight text-on-primary-fixed shadow-[0_10px_30px_color-mix(in_srgb,var(--color-primary-container)_15%,transparent)] transition-all duration-300 hover:opacity-95 hover:shadow-[0_12px_40px_color-mix(in_srgb,var(--color-primary-container)_28.000000000000004%,transparent)] active:scale-[0.99] sm:w-auto"
               >

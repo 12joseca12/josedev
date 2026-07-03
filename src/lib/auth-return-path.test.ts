@@ -3,26 +3,26 @@ import { sanitizeInternalNextPath } from "./safe-next-path";
 
 describe("buildAuthHref", () => {
   it("adds next for internal paths", () => {
-    const href = buildAuthHref("/foro/dev/hilo");
-    expect(href).toBe("/auth?next=%2Fforo%2Fdev%2Fhilo");
+    const href = buildAuthHref("es", "/foro/dev/hilo");
+    expect(href).toBe("/es/auth?next=%2Fforo%2Fdev%2Fhilo");
   });
 
   it("omits next for auth routes", () => {
-    expect(buildAuthHref("/auth")).toBe("/auth");
+    expect(buildAuthHref("es", "/es/auth")).toBe("/es/auth");
   });
 });
 
 describe("resolvePostAuthPath", () => {
   it("prefers explicit next", () => {
-    expect(resolvePostAuthPath("/foro/a/b")).toBe("/foro/a/b");
+    expect(resolvePostAuthPath("es", "/foro/a/b")).toBe("/foro/a/b");
   });
 
   it("falls back to home", () => {
-    expect(resolvePostAuthPath(null)).toBe("/");
+    expect(resolvePostAuthPath("es", null)).toBe("/es");
   });
 
   it("rejects open redirects", () => {
-    expect(resolvePostAuthPath("//evil.com")).toBe("/");
+    expect(resolvePostAuthPath("es", "//evil.com")).toBe("/es");
   });
 });
 
