@@ -21,7 +21,7 @@ const social: {
 export function SiteFooter({ locale }: Props) {
   return (
     <footer className="w-full border-t border-outline-variant/20 bg-background">
-      <div className="mx-auto flex max-w-[90rem] flex-col items-center justify-between gap-8 px-4 py-10 sm:gap-6 sm:px-6 md:flex-row md:py-12 lg:px-8">
+      <div className="mx-auto flex max-w-content flex-col items-center justify-between gap-8 px-4 py-10 sm:gap-6 sm:px-6 md:flex-row md:py-12 lg:px-8">
         <div className="text-center font-headline text-sm font-bold text-primary-container sm:text-left md:text-base">
           {t(locale, "footer.brand")}
         </div>

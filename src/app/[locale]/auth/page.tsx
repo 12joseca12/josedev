@@ -28,7 +28,7 @@ export default async function AuthPage({ params, searchParams }: AuthPageProps) 
   return (
     <>
       <header className="sticky top-0 z-50 border-b border-outline-variant/15 bg-background/80 backdrop-blur-lg">
-        <div className="mx-auto flex max-w-[90rem] items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-content items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
           <Link
             href={localizedHref(locale, "/")}
             className="inline-flex items-center gap-2.5 font-headline text-sm font-bold text-primary sm:text-base"

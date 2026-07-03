@@ -20,7 +20,7 @@ export default async function ClientAreaPage({ params }: PageProps) {
     <main
       id="main"
       tabIndex={-1}
-      className="mx-auto flex w-full max-w-[90rem] flex-1 items-center justify-center px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24"
+      className="mx-auto flex w-full max-w-content flex-1 items-center justify-center px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24"
     >
       <h1 className="font-headline text-3xl font-extrabold tracking-tight text-on-surface sm:text-4xl">
         {t(locale, "clientAreaPage.h1")}

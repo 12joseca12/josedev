@@ -83,6 +83,18 @@
   --radius-lg: 0.25rem;
   --radius-xl: 0.5rem;
   --radius-full: 0.75rem;
+
+  /* BEGIN GENERATED Z-INDEX */
+  --z-index-scroll-progress: 60;
+  --z-index-forum-modal-overlay: 60;
+  --z-index-skip-link: 100;
+  --z-index-mobile-menu-overlay: 200;
+  --z-index-chat-widget: 220;
+  /* END GENERATED Z-INDEX */
+
+  /* BEGIN GENERATED CONTAINER */
+  --container-content: 90rem;
+  /* END GENERATED CONTAINER */
 }
 
 /*

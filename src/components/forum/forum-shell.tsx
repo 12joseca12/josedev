@@ -34,7 +34,7 @@ export function ForumShell({ locale, thematics, entriesBySlug, popular, configur
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-[90rem] min-w-0 flex-1 flex-col gap-6 px-4 py-8 sm:px-6 lg:flex-row lg:gap-8 lg:px-8 lg:py-10">
+    <div className="mx-auto flex w-full max-w-content min-w-0 flex-1 flex-col gap-6 px-4 py-8 sm:px-6 lg:flex-row lg:gap-8 lg:px-8 lg:py-10">
       <aside className="w-full shrink-0 space-y-6 lg:sticky lg:top-24 lg:w-72 lg:self-start">
         {!configured ? (
           <p className="rounded-xl border border-outline-variant/30 bg-surface-container-low/50 p-4 text-sm text-on-surface-variant">

@@ -45,7 +45,7 @@ function toneClasses(tone: (typeof items)[number]["tone"]) {
 export function DifferentialsSection({ locale }: Props) {
   return (
     <section
-      className="relative mx-auto max-w-[90rem] border-t border-outline-variant/10 px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20"
+      className="relative mx-auto max-w-content border-t border-outline-variant/10 px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20"
       aria-labelledby="differentials-heading"
     >
       <div className="grid-overlay pointer-events-none absolute inset-0 opacity-20" aria-hidden />

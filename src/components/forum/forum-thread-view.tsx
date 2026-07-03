@@ -456,7 +456,7 @@ export function ForumThreadView({ locale, thematicSlug, entrySlug, initialDetail
 
       {pendingDeleteId ? (
         <div
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 p-4"
+          className="fixed inset-0 z-forum-modal-overlay flex items-center justify-center bg-black/60 p-4"
           role="dialog"
           aria-modal="true"
           aria-labelledby={`${baseId}-del-title`}

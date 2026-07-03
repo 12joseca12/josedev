@@ -100,7 +100,7 @@ export function SiteHeaderClient({
 
   return (
     <>
-      <div className="mx-auto flex max-w-[90rem] items-center justify-between gap-3 px-4 py-2.5 sm:px-6 sm:py-3 lg:px-8">
+      <div className="mx-auto flex max-w-content items-center justify-between gap-3 px-4 py-2.5 sm:px-6 sm:py-3 lg:px-8">
         <div className="min-w-0 cursor-default font-headline text-base font-bold tracking-tighter text-primary transition-[filter,text-shadow] duration-300 hover:drop-shadow-[0_0_14px_color-mix(in_srgb,var(--color-primary-container)_40%,transparent)] sm:text-xl">
           {brand}
         </div>
@@ -173,7 +173,7 @@ export function SiteHeaderClient({
 
       {open && typeof document !== "undefined"
         ? createPortal(
-            <div className="fixed inset-0 z-[200] md:hidden" role="presentation">
+            <div className="fixed inset-0 z-mobile-menu-overlay md:hidden" role="presentation">
               <button
                 type="button"
                 className="absolute inset-0 bg-background/75 backdrop-blur-md"

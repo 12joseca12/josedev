@@ -73,6 +73,15 @@ export const portfolioThemeColors = {
   "forum-composer-surface": "#06080a",
 } as const satisfies Record<string, string>;
 
+/** Stacking-order tokens. Values may repeat across names — the name documents *why*, the generator/@theme block is the single place the number lives. */
+export const zIndexTokens = {
+  "scroll-progress": 60,
+  "forum-modal-overlay": 60,
+  "skip-link": 100,
+  "mobile-menu-overlay": 200,
+  "chat-widget": 220,
+} as const satisfies Record<string, number>;
+
 /** Converts a `#rrggbb` token value to an `rgba(...)` string at the given alpha. */
 export function withAlpha(hex: string, alpha: number): string {
   const r = Number.parseInt(hex.slice(1, 3), 16);
@@ -83,6 +92,7 @@ export function withAlpha(hex: string, alpha: number): string {
 
 export const styleTokens = {
   color: portfolioThemeColors,
+  zIndex: zIndexTokens,
 
   radius: {
     DEFAULT: "0.125rem",

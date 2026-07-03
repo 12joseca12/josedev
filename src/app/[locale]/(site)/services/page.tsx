@@ -50,7 +50,7 @@ export default async function ServicesPage({ params }: PageProps) {
   const locale = resolveLocaleParam((await params).locale);
 
   return (
-    <main id="main" className="mx-auto w-full max-w-[90rem] px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
+    <main id="main" className="mx-auto w-full max-w-content px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
       <header className="mx-auto max-w-2xl text-center">
         <span className="font-label text-[10px] font-medium uppercase tracking-widest text-tertiary sm:text-[11px]">
           {t(locale, "screens.services.eyebrow")}

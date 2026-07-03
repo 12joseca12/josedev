@@ -33,7 +33,7 @@ export function HeroSection({ locale }: Props) {
         <div className="absolute inset-x-0 bottom-0 h-[45%] bg-gradient-to-t from-background via-background/40 to-transparent opacity-90" />
       </div>
 
-      <div className="relative z-10 mx-auto w-full max-w-[90rem] min-w-0 px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 mx-auto w-full max-w-content min-w-0 px-4 sm:px-6 lg:px-8">
         <div className="grid min-w-0 items-center gap-6 sm:gap-8 lg:grid-cols-12 lg:gap-10">
           <div className="min-w-0 lg:col-span-6 xl:col-span-7">
           <div className="group/badge mb-4 inline-flex max-w-full items-center gap-2 rounded-full border border-outline-variant/20 bg-surface-container-low px-3 py-1.5 transition-all duration-300 hover:border-primary/30 hover:shadow-[0_0_20px_color-mix(in_srgb,var(--color-primary-container)_12%,transparent)] sm:mb-5">

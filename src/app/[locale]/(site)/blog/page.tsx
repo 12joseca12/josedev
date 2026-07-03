@@ -33,7 +33,7 @@ export default async function BlogPage({ params }: PageProps) {
   const posts = supabaseReady ? await listPublishedBlogPosts(locale) : [];
 
   return (
-    <main id="main" className="mx-auto w-full max-w-[90rem] px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
+    <main id="main" className="mx-auto w-full max-w-content px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
       <header className="mx-auto max-w-3xl">
         <h1 className="font-headline text-3xl font-bold tracking-tight text-on-surface sm:text-4xl">
           {t(locale, "screens.blog.title")}

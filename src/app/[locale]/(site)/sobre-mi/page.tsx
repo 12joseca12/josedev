@@ -30,7 +30,7 @@ export default async function SobreMiPage({ params }: PageProps) {
     <main
       id="main"
       tabIndex={-1}
-      className="mx-auto w-full max-w-[90rem] flex-1 px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16"
+      className="mx-auto w-full max-w-content flex-1 px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16"
     >
       <SobreMiStackPortfolio locale={locale} />
       <SobreMiEngineeringShowcase locale={locale} sourceUrl={catinfoSourceUrl} />

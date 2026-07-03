@@ -30,7 +30,7 @@ export function ServicesSummarySection({ locale }: Props) {
   return (
     <section
       id="plans"
-      className="mx-auto max-w-[90rem] scroll-mt-24 px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20"
+      className="mx-auto max-w-content scroll-mt-24 px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20"
       aria-labelledby="services-summary-heading"
     >
       <div className="mx-auto mb-10 max-w-3xl text-center sm:mb-12">

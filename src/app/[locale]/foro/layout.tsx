@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Pick<LayoutProps, "params">):
 
 function ForumShellFallback({ locale }: { locale: Locale }) {
   return (
-    <div className="mx-auto flex w-full max-w-[90rem] flex-1 items-center justify-center px-4 py-24 sm:px-6 lg:px-8">
+    <div className="mx-auto flex w-full max-w-content flex-1 items-center justify-center px-4 py-24 sm:px-6 lg:px-8">
       <p className="text-sm text-on-surface-variant">{t(locale, "forum.ui.loading")}</p>
     </div>
   );

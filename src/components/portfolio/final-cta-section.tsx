@@ -24,7 +24,7 @@ export function FinalCtaSection({ locale }: Props) {
     <section
       id="cta"
       aria-labelledby="final-cta-heading"
-      className="relative mx-auto max-w-[90rem] scroll-mt-24 border-t border-outline-variant/10 px-4 py-14 sm:px-6 sm:py-18 lg:px-8 lg:py-22"
+      className="relative mx-auto max-w-content scroll-mt-24 border-t border-outline-variant/10 px-4 py-14 sm:px-6 sm:py-18 lg:px-8 lg:py-22"
     >
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden" aria-hidden>
         <div className="absolute left-1/2 top-0 h-[26rem] w-[60rem] -translate-x-1/2 rounded-full bg-primary/[0.10] blur-[110px]" />

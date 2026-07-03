@@ -15,7 +15,7 @@ export function BentoSection({ locale }: Props) {
   return (
     <section
       id="services"
-      className="mx-auto max-w-[90rem] scroll-mt-24 px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24"
+      className="mx-auto max-w-content scroll-mt-24 px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24"
     >
       <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-4">
         <div className="group relative flex min-h-[280px] flex-col justify-between overflow-hidden rounded-2xl bg-surface-container-low p-6 sm:min-h-0 sm:p-8 md:col-span-2 md:p-10">

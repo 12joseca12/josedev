@@ -84,7 +84,7 @@ export default async function BlogArticlePage(props: PageProps) {
   };
 
   return (
-    <main id="main" className="mx-auto w-full max-w-[90rem] px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
+    <main id="main" className="mx-auto w-full max-w-content px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
       <article className="mx-auto max-w-3xl">
         <nav aria-label={t(locale, "blog.ui.backToIndex")} className="font-label text-[10px] uppercase tracking-widest text-outline">
           <Link href={localizedHref(locale, "/blog")} className="text-primary hover:underline">

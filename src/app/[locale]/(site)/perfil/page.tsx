@@ -21,7 +21,7 @@ export default async function ProfilePage({ params }: PageProps) {
     <main
       id="main"
       tabIndex={-1}
-      className="mx-auto flex w-full max-w-[90rem] flex-1 justify-center px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24"
+      className="mx-auto flex w-full max-w-content flex-1 justify-center px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24"
     >
       <ProfileScreen locale={locale} />
     </main>

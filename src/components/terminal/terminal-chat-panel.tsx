@@ -154,7 +154,7 @@ export function TerminalChatPanel({ locale, open, onClose }: Props) {
         id={panelId}
         role="dialog"
         aria-label={t(locale, "terminalChat.pipPanelAria")}
-        className="pointer-events-auto fixed bottom-4 left-4 z-[220] flex w-[min(calc(100vw-2rem),20rem)] flex-col overflow-hidden rounded-lg border border-outline-variant/35 bg-terminal-panel shadow-[0_12px_40px_rgba(0,0,0,0.55)] sm:bottom-5 sm:left-5 sm:w-[22rem]"
+        className="pointer-events-auto fixed bottom-4 left-4 z-chat-widget flex w-[min(calc(100vw-2rem),20rem)] flex-col overflow-hidden rounded-lg border border-outline-variant/35 bg-terminal-panel shadow-[0_12px_40px_rgba(0,0,0,0.55)] sm:bottom-5 sm:left-5 sm:w-[22rem]"
         style={{ paddingBottom: "max(0px, env(safe-area-inset-bottom))" }}
         onMouseDown={(e) => e.stopPropagation()}
         onClick={(e) => e.stopPropagation()}
@@ -259,7 +259,7 @@ export function TerminalChatPanel({ locale, open, onClose }: Props) {
 
   return createPortal(
     <div
-      className={`fixed inset-0 z-[220] flex ${isFullscreen ? "" : "justify-end"}`}
+      className={`fixed inset-0 z-chat-widget flex ${isFullscreen ? "" : "justify-end"}`}
       role="presentation"
     >
       {!isFullscreen ? (

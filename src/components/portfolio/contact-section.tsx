@@ -105,7 +105,7 @@ export function ContactSection({ locale }: Props) {
   return (
     <section
       id="contact"
-      className="mx-auto max-w-[90rem] scroll-mt-24 px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20"
+      className="mx-auto max-w-content scroll-mt-24 px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20"
       aria-labelledby={`${baseId}-heading`}
     >
       <div className="mb-8 max-w-2xl sm:mb-10">

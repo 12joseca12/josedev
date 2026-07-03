@@ -41,7 +41,7 @@ export function StackSection({ locale }: Props) {
     <section
       id="stack"
       aria-labelledby="stack-heading"
-      className="mx-auto max-w-[90rem] scroll-mt-24 px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24"
+      className="mx-auto max-w-content scroll-mt-24 px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24"
     >
       <div className="mx-auto max-w-3xl text-center">
         <span className="mb-3 inline-flex items-center gap-2 rounded-full border border-outline-variant/25 bg-surface-container-low px-3 py-1.5 font-label text-[10px] uppercase tracking-widest text-primary">
