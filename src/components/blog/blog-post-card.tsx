@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BlogTagChips } from "@/components/blog/blog-tag-chips";
 import type { BlogPostListItemDTO, Locale } from "@/lib/types";
 import { localizedHref, t } from "@/services/literals";
 
@@ -30,6 +31,7 @@ export function BlogPostCard({ locale, post }: Props) {
         </Link>
       </h2>
       {post.excerpt ? <p className="mt-3 text-sm leading-relaxed text-on-surface-variant">{post.excerpt}</p> : null}
+      <BlogTagChips tags={post.tags} />
       <p className="mt-4">
         <Link
           href={localizedHref(locale, `/blog/${encodeURIComponent(post.slug)}`)}

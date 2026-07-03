@@ -125,7 +125,8 @@
       "postNotFoundTitle": "Article not found",
       "postNotFoundBody": "The link may be outdated or the article is not published.",
       "articleLabel": "Article",
-      "jsonLdAuthorName": "Jose Dev"
+      "jsonLdAuthorName": "Jose Dev",
+      "relatedPostsTitle": "Related posts"
     }
   },
   "forum": {

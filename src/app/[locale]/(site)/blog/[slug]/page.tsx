@@ -3,10 +3,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { BlogMarkdown } from "@/components/blog/blog-markdown";
+import { BlogPostCard } from "@/components/blog/blog-post-card";
+import { BlogTagChips } from "@/components/blog/blog-tag-chips";
 import { getSupabasePublicServerClient } from "@/lib/supabase/server-public";
 import type { Locale } from "@/lib/types";
 import { SUPPORTED_LOCALES, localizedHref, resolveLocaleParam, t } from "@/services/literals";
-import { getPublishedBlogPostBySlug, listPublishedBlogSlugs } from "@/services/blog-posts";
+import { getPublishedBlogPostBySlug, listPublishedBlogSlugs, listRelatedBlogPosts } from "@/services/blog-posts";
 
 export const revalidate = 120;
 
@@ -38,6 +40,7 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
   return {
     title: post.title,
     description,
+    keywords: post.tags.length > 0 ? post.tags : undefined,
     alternates: { canonical: `/${locale}/blog/${post.slug}` },
     openGraph: {
       title: post.title,
@@ -70,6 +73,8 @@ export default async function BlogArticlePage(props: PageProps) {
   const post = await getPublishedBlogPostBySlug(locale, slug);
   if (!post) notFound();
 
+  const relatedPosts = await listRelatedBlogPosts(locale, post.tags, post.slug);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -77,6 +82,7 @@ export default async function BlogArticlePage(props: PageProps) {
     inLanguage: post.locale,
     datePublished: post.publishedAt,
     dateModified: post.updatedAt,
+    keywords: post.tags.length > 0 ? post.tags.join(", ") : undefined,
     author: {
       "@type": "Person",
       name: t(locale, "blog.ui.jsonLdAuthorName"),
@@ -102,6 +108,7 @@ export default async function BlogArticlePage(props: PageProps) {
           <time className="mt-4 block text-sm text-outline" dateTime={post.publishedAt ?? undefined}>
             {formatPublished(post.publishedAt, locale)}
           </time>
+          <BlogTagChips tags={post.tags} />
         </header>
         <script
           type="application/ld+json"
@@ -112,6 +119,19 @@ export default async function BlogArticlePage(props: PageProps) {
           <BlogMarkdown markdown={post.bodyMd} />
         </div>
       </article>
+
+      {relatedPosts.length > 0 ? (
+        <section aria-labelledby="related-posts" className="mx-auto mt-16 max-w-3xl border-t border-outline-variant/20 pt-10">
+          <h2 id="related-posts" className="font-headline text-xl font-bold text-on-surface">
+            {t(locale, "blog.ui.relatedPostsTitle")}
+          </h2>
+          <div className="mt-6 grid gap-6">
+            {relatedPosts.map((relatedPost) => (
+              <BlogPostCard key={relatedPost.id} locale={locale} post={relatedPost} />
+            ))}
+          </div>
+        </section>
+      ) : null}
     </main>
   );
 }
