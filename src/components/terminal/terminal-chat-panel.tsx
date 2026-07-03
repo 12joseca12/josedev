@@ -11,6 +11,7 @@ import { TerminalChatHeader } from "@/components/terminal/terminal-chat-header";
 import { TerminalChatMessageBlock } from "@/components/terminal/terminal-chat-message-block";
 import { TerminalChatMeetingPicker } from "@/components/terminal/terminal-chat-meeting-picker";
 import { TerminalChatScrollRegion } from "@/components/terminal/terminal-chat-scroll-region";
+import { TerminalChatSuggestedPrompts } from "@/components/terminal/terminal-chat-suggested-prompts";
 import { TerminalChatTypingIndicator } from "@/components/terminal/terminal-chat-typing-indicator";
 import type { TerminalViewMode } from "@/components/terminal/terminal-chat-view-mode";
 import { useAdminChat } from "@/hooks/use-admin-chat";
@@ -111,6 +112,11 @@ export function TerminalChatPanel({ locale, open, onClose }: Props) {
       e.preventDefault();
       void handleSend();
     }
+  };
+
+  const onSuggestedPrompt = (prompt: string) => {
+    if (sending) return;
+    void sendMessage(prompt);
   };
 
   const onMeetingSubmit = async (date: string, time: string, messageId: string) => {
@@ -338,6 +344,10 @@ export function TerminalChatPanel({ locale, open, onClose }: Props) {
         </TerminalChatScrollRegion>
 
         {signedIn && awaitingReply ? <TerminalChatTypingIndicator locale={locale} /> : null}
+
+        {signedIn && !loading && !awaitingReply && thread?.messages.length === 0 ? (
+          <TerminalChatSuggestedPrompts locale={locale} onSelect={onSuggestedPrompt} disabled={composerDisabled} />
+        ) : null}
 
         {signedIn ? (
           <TerminalChatComposer

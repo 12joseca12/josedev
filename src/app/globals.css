@@ -144,35 +144,6 @@ body::-webkit-scrollbar {
   background: transparent !important;
 }
 
-@keyframes terminal-chat-typing-bounce {
-  0%,
-  60%,
-  100% {
-    transform: translateY(0);
-    opacity: 0.45;
-  }
-  30% {
-    transform: translateY(-0.45rem);
-    opacity: 1;
-  }
-}
-
-/* Longhand: el shorthand `animation` resetea animation-delay del inline. */
-.terminal-chat-typing-dot {
-  animation-name: terminal-chat-typing-bounce;
-  animation-duration: 1.1s;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-  animation-fill-mode: both;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .terminal-chat-typing-dot {
-    animation: none;
-    opacity: 0.75;
-  }
-}
-
 /* Global background (like /auth): static cyber grid + soft glows */
 body::before {
   content: "";

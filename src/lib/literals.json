@@ -51,6 +51,12 @@
     "footerProtocol": "PROTOCOL: L4-ENCRYPTED-MESH",
     "loading": "Cargando sesión segura…",
     "emptyHint": "Escribe para contactar con el administrador. Las respuestas representan sus intereses y criterio técnico.",
+    "suggestedPromptsLabel": "Sugerencias",
+    "suggestedPrompts": [
+      "¿Qué tecnologías manejas?",
+      "¿Cuánto cuesta una web?",
+      "¿Trabajas con empresas o autónomos?"
+    ],
     "waitingReply": "Procesando respuesta…",
     "typingAria": "El asistente está escribiendo",
     "assistantTimeout": "La respuesta está tardando más de lo habitual. Hemos actualizado el hilo; si no ves respuesta, inténtalo de nuevo.",

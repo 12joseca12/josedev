@@ -51,6 +51,12 @@
     "footerProtocol": "PROTOCOL: L4-ENCRYPTED-MESH",
     "loading": "Loading secure session…",
     "emptyHint": "Type to reach the administrator. Replies reflect their interests and technical judgment.",
+    "suggestedPromptsLabel": "Suggestions",
+    "suggestedPrompts": [
+      "What technologies do you work with?",
+      "How much does a website cost?",
+      "Do you work with companies or freelancers?"
+    ],
     "waitingReply": "Processing reply…",
     "typingAria": "The assistant is typing",
     "assistantTimeout": "The reply is taking longer than usual. We refreshed the thread; if you still see no answer, try again.",
