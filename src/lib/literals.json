@@ -72,9 +72,30 @@
       "title": "Sobre mí"
     },
     "services": {
-      "metadataTitle": "Servicios",
-      "metadataDescription": "Servicios y planes disponibles.",
-      "title": "Servicios"
+      "metadataTitle": "Servicios para negocios",
+      "metadataDescription": "Webs profesionales, rápidas y a medida para negocios locales: landing pages, webs a medida y mantenimiento continuo.",
+      "title": "Servicios",
+      "eyebrow": "PARA NEGOCIOS LOCALES",
+      "intro": "Webs profesionales, rápidas y a medida para tu negocio, sin la burocracia ni el coste de una agencia grande.",
+      "tiers": {
+        "landing": {
+          "title": "Landing page",
+          "description": "Presencia online rápida y efectiva: una página que comunica quién eres y convierte visitas en clientes. Ideal para restaurantes, tiendas y profesionales independientes.",
+          "features": ["Diseño a medida", "Optimizada para móvil", "Lista en días, no meses"]
+        },
+        "custom": {
+          "title": "Web a medida",
+          "description": "Para negocios con necesidades específicas: catálogo, reservas, formularios e integración con las herramientas que ya usas.",
+          "features": ["Catálogo o reservas online", "Integraciones a medida", "Panel de gestión si lo necesitas"]
+        },
+        "maintenance": {
+          "title": "Mantenimiento y soporte",
+          "description": "Actualizaciones, mejoras continuas y soporte técnico para que tu web siga funcionando perfectamente.",
+          "features": ["Actualizaciones de contenido", "Soporte técnico directo", "Mejoras continuas"]
+        }
+      },
+      "cta": "Cuéntame sobre tu proyecto",
+      "ctaAria": "Ir a la sección de contacto para hablar de tu proyecto"
     },
     "blog": {
       "metadataTitle": "Blog",
@@ -220,10 +241,10 @@
     "line2Highlight": "el futuro",
     "line3": "de Web y Mobile",
     "description": "Arquitectura de ecosistemas digitales de alto rendimiento mediante código limpio, infraestructura escalable y experiencias móviles intuitivas.",
-    "ctaPrimary": "Mi portfolio",
-    "ctaSecondary": "Sobre mí",
-    "ctaPrimaryAria": "Ir a mi portfolio",
-    "ctaSecondaryAria": "Ir a la página sobre mí",
+    "ctaPrimary": "Contrátame",
+    "ctaSecondary": "Necesito una web para mi negocio",
+    "ctaPrimaryAria": "Ir a la sección de contacto",
+    "ctaSecondaryAria": "Ir a servicios para negocios",
     "aboutFocus": "Sobre mí",
     "icons": {
       "react": "React",
@@ -247,8 +268,7 @@
     },
     "preview": {
       "title": "FINTECH_UI.OS",
-      "status": "ACTIVO",
-      "imageAlt": "Interfaz móvil de alta fidelidad con tema oscuro y acentos cian"
+      "status": "ACTIVO"
     }
   },
   "sobreMiStack": {

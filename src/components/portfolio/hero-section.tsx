@@ -5,7 +5,6 @@ import {
   Code2,
   Smartphone,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import type { Locale } from "@/lib/types";
 import { localizedHref, t } from "@/services/literals";
@@ -13,9 +12,6 @@ import { localizedHref, t } from "@/services/literals";
 type Props = {
   locale: Locale;
 };
-
-const PREVIEW_IMG =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuACz7VphIvcmKsVwdb5gf_3QvUhbPqKmnhVjHZrl_aiv248e2n_N1kmjoh-yhvhW-06D0DXuabBHa3BnrU77fmKESoim2CodXKLYIOrIJtmHPqCwLjxyr8vFP9_ex59chVWPyPXbSbxX6VASZELp6AN-GVnJD_GqNB_oolhq-A1xer37nNOqEu0zm4E7Gr7MTNm2im_Gbd_GRkDoLcyOF9CjEHnMh2vL3Wo6_EuZV5fLVcl95HnmiOtocLcw_YL66nEJstZoTbpDnP3";
 
 const stackIcons = [
   { Icon: Braces, key: "react" as const },
@@ -68,7 +64,7 @@ export function HeroSection({ locale }: Props) {
             <a
               data-hover-label={t(locale, "hero.ctaPrimaryAria")}
               className="signature-glow group inline-flex w-full items-center justify-center gap-3 rounded-xl px-6 py-3.5 font-headline text-sm font-bold text-on-primary-fixed shadow-[0_8px_32px_color-mix(in_srgb,var(--color-primary-container)_15%,transparent)] transition-all duration-300 hover:scale-[1.02] hover:opacity-95 hover:shadow-[0_12px_40px_color-mix(in_srgb,var(--color-primary-container)_35%,transparent)] active:scale-[0.98] sm:w-auto sm:px-8 sm:py-4 sm:text-base"
-              href="#portfolio"
+              href="#contact"
               aria-label={t(locale, "hero.ctaPrimaryAria")}
             >
               {t(locale, "hero.ctaPrimary")}
@@ -82,7 +78,7 @@ export function HeroSection({ locale }: Props) {
               data-hover-label={t(locale, "hero.ctaSecondary")}
               aria-label={t(locale, "hero.ctaSecondaryAria")}
               className="inline-flex w-full items-center justify-center rounded-xl border border-outline-variant/25 bg-surface-variant/20 px-6 py-3.5 font-headline text-sm font-bold text-on-surface backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/35 hover:bg-surface-variant/45 hover:shadow-[0_0_28px_color-mix(in_srgb,var(--color-primary)_12%,transparent)] active:translate-y-0 sm:w-auto sm:px-8 sm:py-4 sm:text-base"
-              href={localizedHref(locale, "/sobre-mi")}
+              href={localizedHref(locale, "/services")}
             >
               {t(locale, "hero.ctaSecondary")}
             </Link>
@@ -130,8 +126,8 @@ export function HeroSection({ locale }: Props) {
                 <div />
               </div>
 
-              <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-3 p-2 sm:flex-row sm:items-stretch sm:gap-4 sm:p-3 lg:gap-5 lg:p-4 xl:flex-col xl:items-stretch">
-                <div className="flex min-h-0 min-w-0 flex-1 flex-col rounded-xl border border-outline-variant/15 bg-hero-terminal-surface px-3 py-3 font-mono text-[11px] leading-relaxed shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04)] sm:order-1 sm:px-4 sm:py-3.5 sm:text-xs md:text-sm lg:text-[13px] lg:leading-relaxed xl:order-2 xl:flex-none xl:min-h-[14rem] xl:text-sm">
+              <div className="flex min-h-0 min-w-0 flex-1 flex-col p-2 sm:p-3 lg:p-4">
+                <div className="flex min-h-0 min-w-0 flex-1 flex-col rounded-xl border border-outline-variant/15 bg-hero-terminal-surface px-3 py-3 font-mono text-[11px] leading-relaxed shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04)] sm:px-4 sm:py-3.5 sm:text-xs md:text-sm lg:min-h-[16rem] lg:text-[13px] lg:leading-relaxed xl:min-h-[18rem] xl:text-sm">
                   <div className="min-h-0 min-w-0 flex-1 space-y-2 break-words [overflow-wrap:anywhere] whitespace-normal">
                       <p className="text-tertiary">
                         <span className="text-on-surface-variant">{t(locale, "hero.code.const")}</span>{" "}
@@ -159,21 +155,6 @@ export function HeroSection({ locale }: Props) {
                       </p>
                       <p className="text-tertiary">{"}"};</p>
                     </div>
-                </div>
-
-                <div className="flex w-full min-w-0 justify-center sm:order-2 sm:w-auto sm:shrink-0 sm:justify-end xl:order-1 xl:justify-end">
-                  <div className="glass-card flex w-full max-w-[18rem] flex-col overflow-hidden rounded-xl border border-outline-variant/20 bg-black/20 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.03)] sm:w-64 sm:max-w-none lg:w-72 xl:w-72">
-                    <div className="relative aspect-square w-full overflow-hidden bg-black">
-                      <Image
-                        src={PREVIEW_IMG}
-                        alt={t(locale, "hero.preview.imageAlt")}
-                        width={420}
-                        height={420}
-                        className="h-full w-full object-cover opacity-90 transition-opacity duration-500 group-hover/terminal:opacity-100"
-                        sizes="(max-width: 640px) 72vw, (max-width: 1023px) 40vw, (max-width: 1535px) 240px, 288px"
-                      />
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>

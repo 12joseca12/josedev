@@ -72,9 +72,30 @@
       "title": "About me"
     },
     "services": {
-      "metadataTitle": "Services",
-      "metadataDescription": "Available services and plans.",
-      "title": "Services"
+      "metadataTitle": "Services for businesses",
+      "metadataDescription": "Fast, professional, tailor-made websites for local businesses: landing pages, custom websites, and ongoing maintenance.",
+      "title": "Services",
+      "eyebrow": "FOR LOCAL BUSINESSES",
+      "intro": "Fast, professional, tailor-made websites for your business, without the overhead or cost of a big agency.",
+      "tiers": {
+        "landing": {
+          "title": "Landing page",
+          "description": "Fast, effective online presence: a page that tells visitors who you are and turns them into customers. Ideal for restaurants, shops, and independent professionals.",
+          "features": ["Custom design", "Mobile-optimized", "Live in days, not months"]
+        },
+        "custom": {
+          "title": "Custom website",
+          "description": "For businesses with specific needs: catalogs, bookings, forms, and integration with the tools you already use.",
+          "features": ["Catalog or online bookings", "Custom integrations", "Management panel if you need one"]
+        },
+        "maintenance": {
+          "title": "Maintenance & support",
+          "description": "Updates, ongoing improvements, and technical support so your website keeps running perfectly.",
+          "features": ["Content updates", "Direct technical support", "Ongoing improvements"]
+        }
+      },
+      "cta": "Tell me about your project",
+      "ctaAria": "Go to the contact section to talk about your project"
     },
     "blog": {
       "metadataTitle": "Blog",
@@ -220,10 +241,10 @@
     "line2Highlight": "the Future",
     "line3": "of Web & Mobile",
     "description": "Architecting high-performance digital ecosystems through clean code, scalable infrastructure, and intuitive mobile experiences.",
-    "ctaPrimary": "My Portfolio",
-    "ctaSecondary": "About me",
-    "ctaPrimaryAria": "Go to my portfolio",
-    "ctaSecondaryAria": "Go to the about me page",
+    "ctaPrimary": "Hire me",
+    "ctaSecondary": "I need a website for my business",
+    "ctaPrimaryAria": "Go to the contact section",
+    "ctaSecondaryAria": "Go to services for businesses",
     "aboutFocus": "About me",
     "icons": {
       "react": "React",
@@ -247,8 +268,7 @@
     },
     "preview": {
       "title": "FINTECH_UI.OS",
-      "status": "ACTIVE",
-      "imageAlt": "High fidelity mobile UI with dark theme and primary cyan accents"
+      "status": "ACTIVE"
     }
   },
   "sobreMiStack": {
