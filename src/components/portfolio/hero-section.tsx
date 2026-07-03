@@ -6,6 +6,7 @@ import {
   Smartphone,
 } from "lucide-react";
 import Link from "next/link";
+import { TerminalTrafficDots } from "@/components/terminal/terminal-traffic-dots";
 import type { Locale } from "@/lib/types";
 import { localizedHref, t } from "@/services/literals";
 
@@ -118,11 +119,7 @@ export function HeroSection({ locale }: Props) {
 
             <div className="glass-card group/terminal relative z-10 mx-auto flex w-full max-w-[min(36rem,100%)] flex-col overflow-hidden rounded-2xl border border-outline-variant/25 bg-surface-container-low/25 p-1 shadow-[0_8px_48px_rgba(0,0,0,0.42),0_0_0_1px_color-mix(in_srgb,var(--color-primary-container)_6%,transparent),inset_0_1px_0_rgba(255,255,255,0.06)] ring-1 ring-white/[0.03] backdrop-blur-xl transition-[border-color,box-shadow] duration-500 sm:max-w-[min(40rem,100%)] sm:rounded-2xl sm:shadow-[0_12px_56px_rgba(0,0,0,0.45),0_0_0_1px_color-mix(in_srgb,var(--color-primary-container)_8%,transparent)] lg:mx-0 lg:max-w-none lg:min-h-[18rem] lg:shadow-[0_20px_72px_rgba(0,0,0,0.5),0_0_0_1px_color-mix(in_srgb,var(--color-primary-container)_10%,transparent),inset_0_1px_0_rgba(255,255,255,0.07)] hover:border-primary/30 hover:shadow-[0_12px_56px_rgba(0,0,0,0.45),0_0_40px_color-mix(in_srgb,var(--color-primary-container)_10%,transparent),inset_0_1px_0_rgba(255,255,255,0.08)]">
               <div className="flex items-center justify-between gap-3 rounded-t-xl border-b border-outline-variant/20 bg-surface-container/40 px-3 py-2.5 sm:px-4 sm:py-3">
-                <div className="flex items-center gap-2" aria-hidden>
-                  <div className="size-2.5 rounded-full bg-mac-close/90 shadow-[0_0_6px_rgba(255,95,87,0.45)] sm:size-3" />
-                  <div className="size-2.5 rounded-full bg-mac-minimize/90 shadow-[0_0_6px_rgba(254,188,46,0.35)] sm:size-3" />
-                  <div className="size-2.5 rounded-full bg-mac-maximize/90 shadow-[0_0_6px_rgba(40,200,64,0.35)] sm:size-3" />
-                </div>
+                <TerminalTrafficDots />
                 <div />
               </div>
 
