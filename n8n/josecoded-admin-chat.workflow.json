@@ -1,0 +1,122 @@
+{
+  "name": "Josecoded Admin Chat",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "josecoded-admin-chat",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "f1a10001-0001-4000-8000-000000000001",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 300],
+      "webhookId": "josecoded-admin-chat"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f1a10002-a",
+              "name": "conversationId",
+              "value": "={{ $json.body?.conversationId ?? $json.conversationId }}",
+              "type": "string"
+            },
+            {
+              "id": "f1a10002-b",
+              "name": "messageId",
+              "value": "={{ $json.body?.messageId ?? $json.messageId }}",
+              "type": "string"
+            },
+            {
+              "id": "f1a10002-c",
+              "name": "userEmail",
+              "value": "={{ $json.body?.userEmail ?? $json.userEmail }}",
+              "type": "string"
+            },
+            {
+              "id": "f1a10002-d",
+              "name": "text",
+              "value": "={{ $json.body?.text ?? $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "f1a10002-e",
+              "name": "callbackUrl",
+              "value": "={{ $json.body?.callbackUrl ?? $json.callbackUrl }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f1a10002-0002-4000-8000-000000000002",
+      "name": "Normalize payload",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [260, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const payload = $('Normalize payload').first().json;\nconst apiKey = $env.OPENAI_API_KEY;\nif (!apiKey) {\n  throw new Error('Define OPENAI_API_KEY en Variables de entorno de n8n');\n}\n\nconst system = 'Eres el asistente del administrador de Jose Dev (ingeniería full stack). Representa sus intereses: calidad técnica, plazos realistas, encaje del proyecto, stack y servicios. Responde en el idioma del usuario, de forma concisa y profesional. Si piden reunión, llamada, videollamada o información muy extensa que requiera hablar en directo, responde con showMeetingPicker true. Devuelve SOLO JSON válido sin markdown: {\"reply\":\"...\",\"showMeetingPicker\":boolean}';\n\nconst response = await fetch('https://api.openai.com/v1/chat/completions', {\n  method: 'POST',\n  headers: {\n    Authorization: `Bearer ${apiKey}`,\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({\n    model: 'gpt-4o-mini',\n    temperature: 0.4,\n    messages: [\n      { role: 'system', content: system },\n      { role: 'user', content: `${payload.text}\\n\\nEmail visitante: ${payload.userEmail}` },\n    ],\n  }),\n});\n\nconst data = await response.json();\nif (!response.ok) {\n  throw new Error(data?.error?.message || `OpenAI HTTP ${response.status}`);\n}\n\nconst rawText = data.choices?.[0]?.message?.content ?? '';\nlet parsed;\ntry {\n  const cleaned = String(rawText).replace(/^```json\\n?|```$/g, '').trim();\n  parsed = JSON.parse(cleaned);\n} catch {\n  parsed = {\n    reply: String(rawText).slice(0, 4000) || 'Gracias por tu mensaje.',\n    showMeetingPicker: /reuni[oó]n|meet|llamada|agendar|videollamada/i.test(payload.text || ''),\n  };\n}\n\nreturn [{\n  json: {\n    conversationId: payload.conversationId,\n    reply: String(parsed.reply || 'Gracias por tu mensaje.'),\n    showMeetingPicker: Boolean(parsed.showMeetingPicker),\n    callbackUrl: payload.callbackUrl,\n  },\n}];"
+      },
+      "id": "f1a10003-0003-4000-8000-000000000003",
+      "name": "OpenAI reply",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [520, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.callbackUrl }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "x-n8n-chat-secret",
+              "value": "={{ $env.N8N_CHAT_WEBHOOK_SECRET }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ conversationId: $json.conversationId, reply: $json.reply, showMeetingPicker: $json.showMeetingPicker }) }}",
+        "options": {}
+      },
+      "id": "f1a10004-0004-4000-8000-000000000004",
+      "name": "Callback API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [780, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{ "node": "Normalize payload", "type": "main", "index": 0 }]]
+    },
+    "Normalize payload": {
+      "main": [[{ "node": "OpenAI reply", "type": "main", "index": 0 }]]
+    },
+    "OpenAI reply": {
+      "main": [[{ "node": "Callback API", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "josecoded-admin-chat-v1",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "tags": []
+}

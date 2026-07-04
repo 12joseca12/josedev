@@ -1,0 +1,6 @@
+# Configuración local de Supabase CLI.
+# En producción: Auth → Providers → Email → desactivar "Confirm email".
+
+[auth.email]
+enable_signup = true
+enable_confirmations = false
