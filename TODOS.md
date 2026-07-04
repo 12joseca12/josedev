@@ -33,3 +33,15 @@ Deferred work captured during planning/review, with enough context to pick up la
 **Depends on:** `leads` and `lead_assignments` tables existing with real historical data; `staff_members.comision` (commission rate) already in place.
 
 **Source:** `2026-07-04-full-site-redesign-design-v1.md` design doc, Leads/CRM architecture review (`/plan-eng-review`).
+
+## Enable Supabase Auth dashboard-only security settings
+
+**What:** Two settings flagged by `get_advisors` that have no MCP/API tool to set programmatically — must be toggled manually in the Supabase Dashboard for project `josecoded` (`nrgrmymsjtgayzejtawa`):
+1. **Leaked Password Protection** (Authentication → Policies) — checks new passwords against HaveIBeenPwned.
+2. **Rate limiting on the staff login** — Supabase Auth has native rate-limiting; confirm it's configured tightly enough for `/staff/login` specifically (this was Issue 9 in the Auth/Roles/MFA architecture review, the real gap the outside-voice review caught).
+
+**Why:** Both are cheap, real security controls (not theater) directly relevant to the staff auth surface that now handles real login attempts. Deferred only because no Supabase MCP tool exposes Auth config — this needs a human in the dashboard.
+
+**Context:** Found while applying the Layer 1 migration (2026-07-04) — `get_advisors(type="security")` flagged leaked-password-protection as disabled; rate-limiting was the architecture review's Issue 9 and was never confirmed enabled post-implementation.
+
+**Source:** Layer 1 (Auth/Roles/MFA) implementation, 2026-07-04.

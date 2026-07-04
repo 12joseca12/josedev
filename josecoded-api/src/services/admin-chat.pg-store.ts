@@ -84,7 +84,7 @@ async function findAuthUserIdByEmailExact(
   return null;
 }
 
-/** Resuelve el UUID del superusuario (chat admin) desde env, tabla `admin_superusers` o Auth. */
+/** Resuelve el UUID del superusuario (chat admin) desde env, tabla `staff_members` (role=admin) o Auth. */
 export async function resolveSuperuserId(env: Env): Promise<string> {
   const configuredId = env.ADMIN_SUPERUSER_ID?.trim();
   if (configuredId) return configuredId;
@@ -94,8 +94,9 @@ export async function resolveSuperuserId(env: Env): Promise<string> {
   const supabase = createSupabaseServiceClient(env);
 
   const { data: declaredRows, error: declaredError } = await supabase
-    .from('admin_superusers')
-    .select('user_id, email');
+    .from('staff_members')
+    .select('user_id, email')
+    .eq('role', 'admin');
 
   if (!declaredError && declaredRows?.length) {
     for (const row of declaredRows) {
@@ -112,8 +113,8 @@ export async function resolveSuperuserId(env: Env): Promise<string> {
   for (const email of emailCandidates) {
     const authUserId = await findAuthUserIdByEmailExact(supabase, email);
     if (authUserId) {
-      await supabase.from('admin_superusers').upsert(
-        { user_id: authUserId, email },
+      await supabase.from('staff_members').upsert(
+        { user_id: authUserId, email, role: 'admin', must_change_password: false },
         { onConflict: 'user_id' },
       );
       return authUserId;
@@ -121,7 +122,7 @@ export async function resolveSuperuserId(env: Env): Promise<string> {
   }
 
   throw new Error(
-    `Superuser not found for email: ${configuredEmail}. Use the Auth email (sanchezgaricajosecarlos12@gmail.com), set ADMIN_SUPERUSER_ID in wrangler.jsonc / .dev.vars, or add a row in admin_superusers.`,
+    `Superuser not found for email: ${configuredEmail}. Use the Auth email (sanchezgaricajosecarlos12@gmail.com), set ADMIN_SUPERUSER_ID in wrangler.jsonc / .dev.vars, or add a row in staff_members with role='admin'.`,
   );
 }
 

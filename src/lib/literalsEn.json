@@ -87,17 +87,29 @@
         "landing": {
           "title": "Landing page",
           "description": "Fast, effective online presence: a page that tells visitors who you are and turns them into customers. Ideal for restaurants, shops, and independent professionals.",
-          "features": ["Custom design", "Mobile-optimized", "Live in days, not months"]
+          "features": [
+            "Custom design",
+            "Mobile-optimized",
+            "Live in days, not months"
+          ]
         },
         "custom": {
           "title": "Custom website",
           "description": "For businesses with specific needs: catalogs, bookings, forms, and integration with the tools you already use.",
-          "features": ["Catalog or online bookings", "Custom integrations", "Management panel if you need one"]
+          "features": [
+            "Catalog or online bookings",
+            "Custom integrations",
+            "Management panel if you need one"
+          ]
         },
         "maintenance": {
           "title": "Maintenance & support",
           "description": "Updates, ongoing improvements, and technical support so your website keeps running perfectly.",
-          "features": ["Content updates", "Direct technical support", "Ongoing improvements"]
+          "features": [
+            "Content updates",
+            "Direct technical support",
+            "Ongoing improvements"
+          ]
         }
       },
       "cta": "Tell me about your project",
@@ -310,47 +322,125 @@
         "tag": "Cross-platform",
         "description": "The primary choice for production-grade native mobile apps with shared codebases across iOS and Android."
       },
-      "expo": { "name": "Expo", "tag": "Toolchain" },
-      "androidStudio": { "name": "Android Studio", "tag": "Android" },
-      "xcode": { "name": "Xcode", "tag": "iOS" },
-      "deepLinking": { "name": "Deep linking", "tag": "Navigation" },
-      "pushNotifications": { "name": "Push notifications", "tag": "Engagement" },
-      "appDeployment": { "name": "App deployment", "tag": "Release" },
-      "react": { "name": "React", "tag": "UI library" },
+      "expo": {
+        "name": "Expo",
+        "tag": "Toolchain"
+      },
+      "androidStudio": {
+        "name": "Android Studio",
+        "tag": "Android"
+      },
+      "xcode": {
+        "name": "Xcode",
+        "tag": "iOS"
+      },
+      "deepLinking": {
+        "name": "Deep linking",
+        "tag": "Navigation"
+      },
+      "pushNotifications": {
+        "name": "Push notifications",
+        "tag": "Engagement"
+      },
+      "appDeployment": {
+        "name": "App deployment",
+        "tag": "Release"
+      },
+      "react": {
+        "name": "React",
+        "tag": "UI library"
+      },
       "nextjs": {
         "name": "React & Next.js",
         "tag": "Web platform",
         "description": "Building performant React applications with server rendering, static generation, and hybrid delivery."
       },
-      "vercel": { "name": "Vercel", "tag": "Deploy" },
-      "typescript": { "name": "TypeScript", "tag": "Typing" },
-      "tailwind": { "name": "Tailwind CSS", "tag": "Styling" },
-      "html5": { "name": "HTML", "tag": "Semantics" },
-      "css3": { "name": "CSS", "tag": "Layout" },
-      "accessibility": { "name": "Accessibility", "tag": "A11y" },
+      "vercel": {
+        "name": "Vercel",
+        "tag": "Deploy"
+      },
+      "typescript": {
+        "name": "TypeScript",
+        "tag": "Typing"
+      },
+      "tailwind": {
+        "name": "Tailwind CSS",
+        "tag": "Styling"
+      },
+      "html5": {
+        "name": "HTML",
+        "tag": "Semantics"
+      },
+      "css3": {
+        "name": "CSS",
+        "tag": "Layout"
+      },
+      "accessibility": {
+        "name": "Accessibility",
+        "tag": "A11y"
+      },
       "nodejs": {
         "name": "Node.js & NestJS",
         "tag": "Backend",
         "description": "Scalable server-side applications, APIs, and modular domain-driven architecture."
       },
-      "nestjs": { "name": "NestJS", "tag": "Framework" },
-      "apis": { "name": "APIs", "tag": "Integration" },
-      "supabase": { "name": "Supabase", "tag": "BaaS" },
-      "firebase": { "name": "Firebase", "tag": "Cloud" },
-      "postgresql": { "name": "PostgreSQL", "tag": "SQL" },
-      "mongodb": { "name": "MongoDB", "tag": "NoSQL" },
-      "redis": { "name": "Redis", "tag": "Cache" },
+      "nestjs": {
+        "name": "NestJS",
+        "tag": "Framework"
+      },
+      "apis": {
+        "name": "APIs",
+        "tag": "Integration"
+      },
+      "supabase": {
+        "name": "Supabase",
+        "tag": "BaaS"
+      },
+      "firebase": {
+        "name": "Firebase",
+        "tag": "Cloud"
+      },
+      "postgresql": {
+        "name": "PostgreSQL",
+        "tag": "SQL"
+      },
+      "mongodb": {
+        "name": "MongoDB",
+        "tag": "NoSQL"
+      },
+      "redis": {
+        "name": "Redis",
+        "tag": "Cache"
+      },
       "jest": {
         "name": "Testing & QA (Jest)",
         "tag": "Quality",
         "description": "Ensuring code quality, reliability, and performance through automated testing and continuous review."
       },
-      "redux": { "name": "Redux", "tag": "State" },
-      "git": { "name": "Git", "tag": "Version control" },
-      "github": { "name": "GitHub", "tag": "Collaboration" },
-      "agile": { "name": "Agile / Scrum", "tag": "Methodology" },
-      "jira": { "name": "JIRA", "tag": "Delivery" },
-      "itil": { "name": "ITIL v4", "tag": "Operations" }
+      "redux": {
+        "name": "Redux",
+        "tag": "State"
+      },
+      "git": {
+        "name": "Git",
+        "tag": "Version control"
+      },
+      "github": {
+        "name": "GitHub",
+        "tag": "Collaboration"
+      },
+      "agile": {
+        "name": "Agile / Scrum",
+        "tag": "Methodology"
+      },
+      "jira": {
+        "name": "JIRA",
+        "tag": "Delivery"
+      },
+      "itil": {
+        "name": "ITIL v4",
+        "tag": "Operations"
+      }
     }
   },
   "sobreMiShowcase": {
@@ -790,5 +880,34 @@
     "twitter": "Twitter",
     "email": "Email",
     "copyright": "© 2024 ARCHITECTURAL LOGIC. ALL RIGHTS RESERVED."
+  },
+  "staffAuth": {
+    "metadataTitle": "Staff login · Jose Dev",
+    "metadataDescription": "Internal access for admin and sales team.",
+    "loginTitle": "Team access",
+    "loginSubtitle": "Internal panel — admin and closers.",
+    "email": "Email",
+    "password": "Password",
+    "submitLogin": "Sign in",
+    "submitting": "Verifying…",
+    "errorInvalid": "Invalid credentials.",
+    "mfaTitle": "Two-factor verification",
+    "mfaSubtitle": "Enter the code from your authenticator app.",
+    "mfaCodePlaceholder": "123456",
+    "mfaSubmit": "Verify",
+    "mfaErrorInvalid": "Incorrect code. Try again.",
+    "onboardingTitle": "Initial setup",
+    "onboardingPasswordStepTitle": "1. Change your temporary password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "passwordMismatch": "Passwords don't match.",
+    "passwordTooShort": "Use at least 8 characters.",
+    "continueButton": "Continue",
+    "onboardingMfaStepTitle": "2. Set up two-factor auth (required)",
+    "mfaScanInstructions": "Scan this QR code with your authenticator app (Google Authenticator, 1Password, Authy...).",
+    "mfaManualEntry": "Can't scan? Enter this key manually:",
+    "mfaVerifyCodeLabel": "6-digit code",
+    "mfaEnrollSubmit": "Confirm and activate",
+    "onboardingComplete": "Done — heading to your panel…"
   }
 }
