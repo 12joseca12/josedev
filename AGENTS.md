@@ -1,5 +1,14 @@
 # AGENTS.md
 
+## Repository layout
+This repo contains two deployables: the Next.js app (`src/`) and the
+`josecoded-api` Cloudflare Worker gateway (`josecoded-api/`, its own
+`package.json`/deploy). See `docs/ARCHITECTURE.md` for the full system map
+(this repo → `josecoded-api` → the internal `backend` at
+`/Volumes/JosecodedData/backend` → Supabase/n8n/knowledge/storage) and
+`CLAUDE.md` for how to explore all of it via `codebase-memory-mcp` before
+grep/find/broad file reads.
+
 ## Purpose
 This repository uses a coordinated multi-agent workflow. All agents and subagents must follow the same source of truth defined in this file and in `.cursor/rules/*`.
 

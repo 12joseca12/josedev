@@ -1,4 +1,23 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# josedev
+
+Public-facing Next.js portfolio/app for josecoded. Part of a 3-tier system:
+
+`browser → josedev (this repo, Next.js/Vercel) → josecoded-api (Cloudflare Worker gateway, in this repo under josecoded-api/) → backend (internal Fastify worker on the home server, /Volumes/JosecodedData/backend) → Ollama / Docker / n8n / local knowledge & storage`
+
+See `docs/ARCHITECTURE.md` for the full system map and `CLAUDE.md` for how to explore
+this codebase (and its siblings) with `codebase-memory-mcp` instead of broad file reads.
+
+Bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+## API Worker (`josecoded-api`)
+
+El foro en el Worker usa **Postgres (Supabase)** cuando en `.dev.vars` hay `SUPABASE_SERVICE_ROLE_KEY`. Para desarrollo **solo con datos en memoria (mock)**:
+
+```bash
+pnpm dev:api:mock
+```
+
+(equivalente a `pnpm -C josecoded-api dev -- --mock`). En la carpeta `josecoded-api`, `pnpm dev` arranca `wrangler dev` y el foro usa Postgres si `.dev.vars` incluye `SUPABASE_SERVICE_ROLE_KEY`. Ver `josecoded-api/README.md` para el detalle de rutas y variables de entorno.
 
 ## Getting Started
 
