@@ -44,9 +44,14 @@ Estados como enums libres estilo `leads.estado` (sin validación genérica de tr
 6. **`client_pack_extras`** — qué extras tiene cada cliente.
    `id, client_id (FK NOT NULL), pack_extra_id (FK NOT NULL), gratis (bool default false), monto (numeric nullable), estado (enum: incluido|solicitado|activo), source_lead_id (FK leads NULLABLE — si vino de un upsell cerrado), created_at, UNIQUE(client_id, pack_extra_id)`.
 
-### Ops
+### Alters de tablas existentes
 
 7. **`staff_members.telegram_chat_id`** (nullable) — alter de tabla existente (Fase 1).
+8. **`leads.pack_template_id`** (FK `pack_templates` nullable) — alter aditivo de Fase 2 (review A3). El closer elige el pack al cerrar la venta (junto al `monto`); el trigger de cierre lo **copia** a `clients.pack_template_id`. Una sola fuente de verdad venta↔entrega. No rompe nada existente en `leads`.
+
+### Índices (review P1 — pre-empt de `get_advisors(performance)`)
+
+`CREATE INDEX` explícito en la migración para toda FK nueva: `client_tasks.client_id`; `client_task_comments.client_id`, `.task_id`; `client_pack_extras.client_id`, `.pack_extra_id`, `.source_lead_id`; `clients.user_id`, `.pack_template_id`; `leads.pack_template_id`. (`clients.lead_id` es UNIQUE → ya indexado.) Fase 2 demostró que omitirlos los cachea `get_advisors` después; se ponen desde la migración inicial.
 
 ### Patrones aplicados (del ADR)
 
@@ -61,7 +66,7 @@ Todas las funciones **`SECURITY DEFINER` en schema `private`** (regla dura del A
 
 1. **`private.create_client_on_close`** — `AFTER UPDATE ON leads` cuando `estado → 'cerrado'`. Branch:
    - Si existe algún `client_pack_extras WHERE source_lead_id = NEW.id` (era upsell) → flipea esos extras a `estado='activo'`; **no** crea cliente.
-   - Si no (venta nueva) → `INSERT INTO clients (lead_id, ...) ON CONFLICT (lead_id) DO NOTHING`. `user_id` queda NULL.
+   - Si no (venta nueva) → `INSERT INTO clients (lead_id, pack_template_id, ...) VALUES (NEW.id, NEW.pack_template_id, ...) ON CONFLICT (lead_id) DO NOTHING`. Copia el pack desde el lead (review A3). `user_id` queda NULL.
    - En ambos casos emite el evento ops **`sale.closed`** a la Edge Function `notify` (`pg_net`) → Telegram al admin. Es el único emisor de ese evento.
 2. **`private.request_upgrade_to_lead`** — `AFTER INSERT ON client_pack_extras` cuando `estado='solicitado'`. Crea un **lead upsell** (dispara solo el auto-assign de Fase 2) y linkea `source_lead_id`. "Upgrade = venta", 100% automático.
 3. **`private.notify_on_comment`** — `AFTER INSERT ON client_task_comments` → `pg_net` POST a la Edge Function `notify` (Sección C). `comment.client` → Telegram admin; `comment.admin` (no-internal) → email cliente.
@@ -75,8 +80,8 @@ Cliente = dueño de su fila `clients`; admin = todo, vía `private.staff_role_of
 |---|---|---|
 | `clients` | SELECT `user_id = auth.uid()`. **Sin** UPDATE (la fase la controla el admin) | todo |
 | `client_tasks` | SELECT de su cliente. Sin insert/update/delete | todo |
-| `client_task_comments` | SELECT su cliente **`WHERE internal=false`**; INSERT scoped (`internal=false` + `author_user_id=auth.uid()` + su `client_id`) | todo; puede setear `internal` |
-| `client_pack_extras` | SELECT su cliente; INSERT scoped **solo `estado='solicitado'`** (dispara trigger 2). Sin update/delete | todo |
+| `client_task_comments` | SELECT su cliente **`WHERE internal=false`**; INSERT scoped: `internal=false` + `author_user_id=(select auth.uid())` + **`client_id IN (select id from clients where user_id=(select auth.uid()))`** (review C3 — no comenta en el cliente de otro) | todo; puede setear `internal` |
+| `client_pack_extras` | SELECT su cliente; INSERT scoped **endurecido (review C1):** `estado='solicitado'` **Y `gratis=false` Y `monto IS NULL` Y `source_lead_id IS NULL`** Y `client_id` propio Y `pack_extra_id` de un extra `activo`. El extra solo se vuelve `activo` por el trigger de cierre, nunca por el cliente. Sin update/delete | todo |
 | `pack_templates` / `pack_extras` | SELECT `activo=true` | CRUD |
 
 - **Frontera de acciones del cliente:** el cliente nunca llama una función `private` (PostgREST no la expone — gotcha ADR). "Solicitar upgrade" es solo un INSERT scoped; la conversión a venta la hace el trigger con derechos elevados. Sin RPC pública ni edge function para el request.
@@ -91,7 +96,7 @@ El onboarding de Fase 1 es **de staff** (`/staff/onboarding`, fuerza TOTP) — n
 
 Botón "crear acceso" en `/admin/clientes/[id]`:
 - Busca `auth.users` por el email del lead. **Existe** (ya era comunidad) → solo linkea `clients.user_id`, no toca su password. **No existe** → `inviteUserByEmail` + setea `user_id`.
-- Es una **server action con service role**, no client-side.
+- Es una **server action con service role**, no client-side. **(review C2)** La primera línea de la action **re-verifica server-side que `auth.uid()` es admin** (`resolveStaffRole` o equivalente) antes de tocar nada con el service role — una server action es un endpoint público; sin ese chequeo cualquier autenticado podría invitar/linkear cuentas (escalada de privilegios).
 
 ### 2. Edge Function `notify` (Deno)
 
@@ -124,10 +129,18 @@ Un bot (BotFather) → token en secrets. Registro de `chat_id` **manual en MVP**
 - `/admin/clientes` + `/admin/clientes/[id]` — listar clientes; gestionar fase, tareas, extras, comentar (toggle `internal`), "crear acceso". Implícitas por "solo admin gestiona tareas/assets".
 - `/admin/packs` — CRUD `pack_templates` + `pack_extras`.
 
+### Reubicación de route group (review A1 — BLOQUEANTE)
+
+Hoy `/area-clientes` vive en `src/app/[locale]/(site)/area-clientes/` → hereda el **layout/nav público**. DESIGN.md exige nav propia y distinta para el portal, y `/admin` y `/closer` ya están **fuera** de `(site)` como hijos directos de `[locale]`. **Mover** el árbol a `src/app/[locale]/area-clientes/` con su propio `layout.tsx` (el client-shell). No es agregar una página; es relocar el placeholder existente. (`/perfil` se queda en `(site)`: es universal, nav pública correcta.)
+
 ### Guards (`src/proxy.ts` — Next 16, no `middleware.ts`)
 
-- `/area-clientes/*`: requiere auth **y** ser cliente (`clients.user_id = uid`). Autenticado-no-cliente → **redirect a `/perfil`** (usuario legítimo, no 404 como staff). Sin sesión → `/auth`.
-- `/admin/clientes/*` y `/admin/packs`: extienden el guard admin existente.
+Forma exacta (review A2), espejando lo existente:
+- Nuevo helper `isClientAreaPath(path)` en `src/lib/staff-routes.ts` (con su test, como `isAdminPath`).
+- Nueva `resolveClientAccess(supabase): Promise<boolean>` en `proxy.ts` que espeja `resolveStaffRole` pero query `clients` por `user_id = user.id` (fail-closed: error/no-row → false).
+- Ampliar el gate: `proxy()` hoy hace `NextResponse.next()` inmediato si `!touchesStaffSurface` (no instancia Supabase). Se agrega una rama para `isClientAreaPath` que sí instancia el `createServerClient` y llama `resolveClientAccess`.
+- `/area-clientes/*`: auth + cliente → allow. Autenticado-no-cliente → **redirect a `/perfil`** (usuario legítimo, no `rewrite` 404 como staff). Sin sesión → redirect a `/auth`.
+- `/admin/clientes/*` y `/admin/packs`: caen bajo `isAdminPath` existente → ya guardados, cero cambio de proxy.
 - **Dualidad Supabase (gotcha ADR):** `/area-clientes` está detrás del guard → `proxy.ts` debe ver la sesión → usa **`ssr-browser-client.ts` (cookies)**, no el `client.ts` de localStorage. El `/auth` público sigue con `client.ts`.
 
 ### Shell y tokens (DESIGN.md)
@@ -144,9 +157,9 @@ Un bot (BotFather) → token en secrets. Registro de `chat_id` **manual en MVP**
 
 ### Verificación (las 3 capas del ADR)
 
-- **Jest:** helpers puros (orden de fases, agrupado de tareas, formato) + wrappers de `clients-api` mockeando `ssr-browser-client` por **ruta relativa**, no `@/` (gotcha ADR).
+- **Jest:** helpers puros (orden de fases, agrupado de tareas, formato) + wrappers de `clients-api` mockeando `ssr-browser-client` por **ruta relativa**, no `@/` (gotcha ADR). **Review:** `resolveClientAccess` (espejo de `proxy.test.ts`, mock de `from/select/eq/maybeSingle`) e `isClientAreaPath` (espejo de `staff-routes.test.ts`, incluye colisión de prefijo tipo `/area-clientes-x`).
 - **`get_advisors`** security+performance tras cada migración.
-- **En vivo con cuentas descartables** (lo que Jest no puede): trigger cierre→cliente vs branch de upsell, visibilidad RLS (cliente no ve `internal` ni otros clientes), flujo invite/link, request de upgrade generando el lead upsell.
+- **En vivo con cuentas descartables** (lo que Jest no puede): trigger cierre→cliente vs branch de upsell, visibilidad RLS (cliente no ve `internal` ni otros clientes), flujo invite/link, request de upgrade generando el lead upsell. **Review C1 (regresión de seguridad, CRÍTICO):** cliente descartable intenta `INSERT client_pack_extras` con `gratis=true` / `monto` arbitrario / `estado='activo'` → la RLS lo rechaza; solo `solicitado` limpio pasa.
 
 ## Fuera de alcance de 3a
 
@@ -160,3 +173,41 @@ Un bot (BotFather) → token en secrets. Registro de `chat_id` **manual en MVP**
 
 - El proyecto Supabase `josecoded` (`nrgrmymsjtgayzejtawa`) se pausa tras ~1 semana idle → `restore_project` + poll `get_project` hasta `ACTIVE_HEALTHY` antes de cualquier migración.
 - **Respaldar el ADR** (`manage_adr(mode='get')` → archivo) antes de cualquier `index_repository` (puede borrarlo — gotcha ADR).
+
+## Qué ya existe (reuso verificado contra el código)
+
+- `src/proxy.ts` — `proxy()` + `resolveStaffRole()` (lookup fresco por request, fail-closed, 404 para staff). El portal reusa exactamente ese patrón (nueva `resolveClientAccess`). Verificado.
+- `src/lib/staff-routes.ts` — helpers `isAdminPath/isCloserPath/...` con test propio. Se agrega `isClientAreaPath` al mismo módulo. Verificado.
+- `src/lib/supabase/ssr-browser-client.ts` — el cliente de cookies que el portal necesita. Verificado.
+- `src/app/[locale]/(site)/area-clientes/page.tsx` — placeholder existente; se **reubica** fuera de `(site)` (review A1), no se reconstruye.
+- Onboarding de staff (`StaffOnboardingClient`, `/staff/onboarding`) — **NO** se reusa para clientes (es staff-routed + fuerza TOTP); clientes van por invite nativo. Confirmado por qué no reusarlo.
+- Pipeline de leads/CRM de Fase 2 — reusado tal cual para upsells (auto-assign + comisión). Sin duplicación.
+- Shell/tokens `dash-*` de Fase 2 — reusados para el client-shell (nav distinta).
+
+## Failure modes de los codepaths nuevos
+
+| Codepath | Falla realista | ¿Test? | ¿Error handling? | ¿Silenciosa? |
+|---|---|---|---|---|
+| `create_client_on_close` | lead cierra dos veces | live + `ON CONFLICT DO NOTHING` | sí (idempotente) | no |
+| `request_upgrade_to_lead` | cliente forja `gratis=true` | **live regresión C1** | RLS `WITH CHECK` | no (rechazo visible) |
+| `notify_on_comment` (pg_net) | POST a edge function falla | no (best-effort) | el insert NO se bloquea por el fallo del notify | **sí (alerta perdida)** — aceptado MVP |
+| `resolveClientAccess` (proxy) | error de lookup | unit | fail-closed → false | no (redirect a /perfil) |
+| `provisionAccess` | no-admin llama la action | unit | re-check admin (C2) | no (rechazo) |
+
+Único gap silencioso: la alerta de notificación (pg_net best-effort). Aceptado para MVP; el auto-registro/reintento queda en TODOS.md. No es crítico: no pierde datos, solo puede demorar que te enteres de un comentario.
+
+## GSTACK REVIEW REPORT
+
+| Review | Trigger | Why | Runs | Status | Findings |
+|--------|---------|-----|------|--------|----------|
+| CEO Review | `/plan-ceo-review` | Scope & strategy | 0 | — | — |
+| Codex Review | `/codex review` | Independent 2nd opinion | 0 | skipped | codex no instalado |
+| Eng Review | `/plan-eng-review` | Architecture & tests (required) | 1 | issues_found→folded | 8 issues (3 P1-arch, 3 P1-quality/sec, 2 P2-perf), todos horneados en el spec |
+| Design Review | `/plan-design-review` | UI/UX gaps | 0 | — | — |
+| DX Review | `/plan-devex-review` | Developer experience gaps | 0 | — | — |
+
+**OUTSIDE VOICE:** codex no instalado → cross-model no corrió. Ofrecido al usuario (instalar codex o spawn de subagente) — pendiente de su decisión.
+**VERDICT:** ENG REVIEW hardened — 1 fork resuelto (A3), 7 fixes de seguridad/correctitud/estructura horneados. Listo para pasar a writing-plans. Sin CEO/Design review (no bloqueantes para esta capa de datos+auth).
+
+**UNRESOLVED DECISIONS:**
+- Outside voice cross-model (codex/subagente) — el usuario decide si lo corre antes de implementar.
