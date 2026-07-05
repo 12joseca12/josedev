@@ -817,6 +817,16 @@
     "metadataDescription": "Espacio privado para clientes.",
     "h1": "Área de clientes"
   },
+  "clientPortal": {
+    "shellBrand": "josedev",
+    "shellBrandSuffix": "clientes",
+    "navProyecto": "Proyecto",
+    "navTareas": "Tareas",
+    "navPack": "Pack",
+    "navPerfil": "Perfil",
+    "roleClient": "Cliente",
+    "signOut": "Cerrar sesión"
+  },
   "auth": {
     "metadataTitle": "Acceso · Jose Dev",
     "metadataDescription": "Inicia sesión o crea una cuenta para acceder al área privada.",
