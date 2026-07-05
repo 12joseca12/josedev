@@ -210,6 +210,34 @@ export type AdminChatThreadDTO = {
 };
 
 // -----------------------------------------------------------------------------
+// Leads / CRM (Supabase `leads`, `staff_members` — Capa 2, RLS por rol)
+// -----------------------------------------------------------------------------
+
+export type StaffRole = "admin" | "closer";
+
+export type StaffMemberDTO = {
+  userId: string;
+  email: string;
+  role: StaffRole;
+  comision: number | null;
+  totalGanado: number;
+};
+
+export type LeadEstado = "nuevo" | "contactado" | "negociando" | "cerrado" | "perdido";
+
+export type LeadDTO = {
+  id: string;
+  conversationId: string | null;
+  assignedStaffId: string | null;
+  estado: LeadEstado;
+  fuente: string | null;
+  monto: number | null;
+  notas: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+// -----------------------------------------------------------------------------
 // Sobre mí — stack portfolio
 // -----------------------------------------------------------------------------
 

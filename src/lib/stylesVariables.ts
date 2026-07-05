@@ -71,6 +71,22 @@ export const portfolioThemeColors = {
   "app-preview-surface-dim": "#080a0d",
   "device-frame-bezel": "#050608",
   "forum-composer-surface": "#06080a",
+
+  // Dashboard staff (DESIGN.md, dark mode) — admin/closer/portal. Namespace `dash-`
+  // hasta la Fase 4 (rediseño del sitio público), que promoverá esta paleta a
+  // tokens globales y retirará la Material de arriba. `dash-accent` es solo para
+  // UI grande (3:1); `dash-accent-text` es la variante 4.5:1 para texto/links.
+  "dash-bg": "#141414",
+  "dash-surface": "#1d1c1a",
+  "dash-text": "#f7f5f0",
+  "dash-muted": "#9c9890",
+  "dash-border": "#322f2a",
+  "dash-accent": "#c87d4a",
+  "dash-accent-text": "#d69466",
+  "dash-success": "#4a7c59",
+  "dash-warning": "#c89b3c",
+  "dash-error": "#b0473f",
+  "dash-info": "#4a7290",
 } as const satisfies Record<string, string>;
 
 /** Stacking-order tokens. Values may repeat across names — the name documents *why*, the generator/@theme block is the single place the number lives. */

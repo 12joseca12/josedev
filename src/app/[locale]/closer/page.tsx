@@ -1,13 +1,20 @@
-export default function CloserPage() {
-  return (
-    <main className="flex min-h-screen items-center justify-center p-8">
-      <div className="text-center">
-        <h1 className="font-mono text-2xl font-bold">/closer</h1>
-        <p className="mt-2 text-sm text-neutral-500">
-          Acceso concedido — placeholder de la Fase 1 (Auth/Roles/MFA). El kanban de leads
-          propios se construye en la Fase 2.
-        </p>
-      </div>
-    </main>
-  );
+import type { Metadata } from "next";
+
+import { CloserKanbanClient } from "@/components/staff-dash/closer-kanban-client";
+import { resolveLocaleParam, t } from "@/services/literals";
+
+type CloserPageProps = { params: Promise<{ locale: string }> };
+
+export async function generateMetadata({ params }: CloserPageProps): Promise<Metadata> {
+  const locale = resolveLocaleParam((await params).locale);
+  return {
+    title: t(locale, "staffLeads.closerMetadataTitle"),
+    description: t(locale, "staffLeads.closerMetadataDescription"),
+    robots: { index: false, follow: false },
+  };
+}
+
+export default async function CloserPage({ params }: CloserPageProps) {
+  const locale = resolveLocaleParam((await params).locale);
+  return <CloserKanbanClient locale={locale} />;
 }

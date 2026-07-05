@@ -14,6 +14,12 @@
   --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-label: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
+  /* Dashboard staff (DESIGN.md): los layouts de /admin y /closer setean
+     --font-jetbrains-mono / --font-dm-sans / --font-geist vía next/font. */
+  --font-dash-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+  --font-dash-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-dash-data: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+
   /* BEGIN GENERATED COLORS */
   --color-background: #111316;
   --color-surface: #111316;
@@ -77,6 +83,17 @@
   --color-app-preview-surface-dim: #080a0d;
   --color-device-frame-bezel: #050608;
   --color-forum-composer-surface: #06080a;
+  --color-dash-bg: #141414;
+  --color-dash-surface: #1d1c1a;
+  --color-dash-text: #f7f5f0;
+  --color-dash-muted: #9c9890;
+  --color-dash-border: #322f2a;
+  --color-dash-accent: #c87d4a;
+  --color-dash-accent-text: #d69466;
+  --color-dash-success: #4a7c59;
+  --color-dash-warning: #c89b3c;
+  --color-dash-error: #b0473f;
+  --color-dash-info: #4a7290;
   /* END GENERATED COLORS */
 
   --radius-DEFAULT: 0.125rem;
