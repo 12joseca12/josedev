@@ -20,3 +20,9 @@ Wiring (orchestrator, outside task pipeline):
   - chat_id 1331981969 set on admin row (user sanchezgaricajosecarlos12@gmail.com). notify Edge Function deployed (verify_jwt=false); Telegram smoke test → HTTP 200 (ops path wired). Resend/email path pending domain (SPF/DKIM) verification — only needed for client-email, non-blocking.
   - tsconfig excludes supabase/functions (Deno) → tsc clean.
 Next: Task 8 (relocate /area-clientes out of (site) into own shell).
+
+Task 8: complete (commit f521e6a, relocate /area-clientes + client-shell, review clean — SPEC ✅, quality Approved)
+  - Old (site)/area-clientes gone (rename verified on disk); client-shell = faithful mirror of staff dash-shell, client nav only, dark-only. 94/94 tests, tsc clean.
+  - Trivial follow-up: stale doc-comment in src/lib/supabase/ssr-browser-client.ts:7 ("area-clientes todavía no tiene guard" — false since T7).
+  - Pre-existing (not ours): next build static export fails on /foro/new LAN fetch.
+Next: Task 9 (clients-api.ts service + admin server actions: provisionAccess, approveExtraDirect, sendExtraToPipeline, rejectExtra). BASE = <this ledger commit>.
