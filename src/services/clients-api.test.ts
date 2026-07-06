@@ -3,6 +3,7 @@ import {
   createTask,
   getClient,
   getMyProject,
+  listAvailableExtras,
   listClients,
   listComments,
   listPack,
@@ -326,6 +327,67 @@ describe("listTasks / listComments / listPack", () => {
         },
       ],
     });
+  });
+});
+
+describe("listAvailableExtras", () => {
+  function makePerTableSupabase(opts: {
+    catalog: QueryResult;
+    owned: QueryResult;
+  }) {
+    return {
+      auth: { getUser: async () => ({ data: { user: { id: "client-1" } } }) },
+      from: (table: string) => makeQueryBuilder(table === "pack_extras" ? opts.catalog : opts.owned),
+    };
+  }
+
+  it("returns catalog extras minus those already incluido/solicitado/activo", async () => {
+    mockGetClient.mockReturnValue(
+      makePerTableSupabase({
+        catalog: {
+          data: [
+            { id: "pe-1", slug: "seo", nombre: "SEO", descripcion: null, precio: 100, activo: true, created_at: "2026-07-05T00:00:00Z" },
+            { id: "pe-2", slug: "hosting", nombre: "Hosting", descripcion: null, precio: 50, activo: true, created_at: "2026-07-05T00:00:00Z" },
+            { id: "pe-3", slug: "copys", nombre: "Copys", descripcion: null, precio: 30, activo: true, created_at: "2026-07-05T00:00:00Z" },
+          ],
+          error: null,
+        },
+        owned: {
+          data: [
+            { pack_extra_id: "pe-1", estado: "incluido" },
+            { pack_extra_id: "pe-2", estado: "rechazado" },
+          ],
+          error: null,
+        },
+      }),
+    );
+    const result = await listAvailableExtras("client-1");
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      // pe-1 excluded (incluido = vigente); pe-2 stays available even though rejected once;
+      // pe-3 was never requested, also available.
+      expect(result.data.map((extra) => extra.id)).toEqual(["pe-2", "pe-3"]);
+    }
+  });
+
+  it("surfaces a catalog query error", async () => {
+    mockGetClient.mockReturnValue(
+      makePerTableSupabase({
+        catalog: { data: null, error: { message: "boom-catalog" } },
+        owned: { data: [], error: null },
+      }),
+    );
+    await expect(listAvailableExtras("client-1")).resolves.toEqual({ ok: false, message: "boom-catalog" });
+  });
+
+  it("surfaces an owned-extras query error", async () => {
+    mockGetClient.mockReturnValue(
+      makePerTableSupabase({
+        catalog: { data: [], error: null },
+        owned: { data: null, error: { message: "boom-owned" } },
+      }),
+    );
+    await expect(listAvailableExtras("client-1")).resolves.toEqual({ ok: false, message: "boom-owned" });
   });
 });
 

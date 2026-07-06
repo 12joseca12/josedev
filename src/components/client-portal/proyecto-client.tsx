@@ -75,9 +75,7 @@ export function ProyectoClient({ locale }: Props) {
                 >
                   {statusLabel}
                 </p>
-                <p
-                  className={`mt-1 text-[14px] font-semibold ${isCurrent ? "text-dash-text" : "text-dash-text"}`}
-                >
+                <p className={`mt-1 text-[14px] font-semibold ${isDone ? "text-dash-muted" : "text-dash-text"}`}>
                   {phaseLabel(phase)}
                 </p>
               </li>

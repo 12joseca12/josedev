@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { DashToastViewport, useDashToasts } from "@/components/staff-dash/dash-toast";
-import type { ClientPackExtraDTO, ClientPackExtraEstado, Locale } from "@/lib/types";
+import type { ClientPackExtraEstado, Locale, PackExtraDTO } from "@/lib/types";
 import { requestUpgrade } from "@/services/clients-api";
 import { t } from "@/services/literals";
 
@@ -35,21 +35,57 @@ function PackExtraBadge({ estado, locale }: { estado: ClientPackExtraEstado; loc
   );
 }
 
+function AvailableExtraRow({
+  extra,
+  locale,
+  isBusy,
+  onRequest,
+}: {
+  extra: PackExtraDTO;
+  locale: Locale;
+  isBusy: boolean;
+  onRequest: () => void;
+}) {
+  return (
+    <li className="flex flex-col gap-3 rounded-xl border border-dash-border bg-dash-surface p-4 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <p className="text-[14px] font-semibold text-dash-text">{extra.nombre}</p>
+        {extra.precio != null ? (
+          <p className="mt-0.5 font-dash-data text-[13px] tabular-nums text-dash-muted">
+            {new Intl.NumberFormat(locale === "en" ? "en-GB" : "es-ES", {
+              style: "currency",
+              currency: "EUR",
+            }).format(extra.precio)}
+          </p>
+        ) : null}
+      </div>
+      <button
+        type="button"
+        disabled={isBusy}
+        onClick={onRequest}
+        className="min-h-11 rounded-lg border border-dash-border px-4 text-[13px] font-medium text-dash-text transition-colors hover:border-dash-accent disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dash-accent"
+      >
+        {isBusy ? t(locale, "clientPortal.requestingUpgrade") : t(locale, "clientPortal.requestExtra")}
+      </button>
+    </li>
+  );
+}
+
 export function PackClient({ locale }: Props) {
   const { state, reload } = useMyPack();
   const { toasts, pushToast, dismissToast } = useDashToasts();
   const [busyExtraId, setBusyExtraId] = useState<string | null>(null);
 
-  async function onRequestUpgrade(clientId: string, extra: ClientPackExtraDTO) {
-    setBusyExtraId(extra.id);
-    const result = await requestUpgrade(clientId, extra.packExtraId);
+  async function onRequestUpgrade(clientId: string, packExtraId: string) {
+    setBusyExtraId(packExtraId);
+    const result = await requestUpgrade(clientId, packExtraId);
     setBusyExtraId(null);
     if (result.ok) {
       pushToast("success", t(locale, "clientPortal.toastUpgradeRequested"));
+      reload();
     } else {
       pushToast("error", t(locale, "clientPortal.actionError"));
     }
-    reload();
   }
 
   if (state.status === "loading") {
@@ -80,7 +116,7 @@ export function PackClient({ locale }: Props) {
     );
   }
 
-  const { extras } = state;
+  const { extras, availableExtras } = state;
 
   return (
     <div className="max-w-3xl">
@@ -120,7 +156,7 @@ export function PackClient({ locale }: Props) {
                     <button
                       type="button"
                       disabled={!canRequest || isBusy}
-                      onClick={() => void onRequestUpgrade(state.clientId, extra)}
+                      onClick={() => void onRequestUpgrade(state.clientId, extra.packExtraId)}
                       className="min-h-11 rounded-lg border border-dash-border px-4 text-[13px] font-medium text-dash-text transition-colors hover:border-dash-accent disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dash-accent"
                     >
                       {isBusy ? t(locale, "clientPortal.requestingUpgrade") : t(locale, "clientPortal.requestUpgrade")}
@@ -132,6 +168,31 @@ export function PackClient({ locale }: Props) {
           })}
         </ul>
       )}
+
+      <section className="mt-8">
+        <header className="mb-3">
+          <h2 className="font-dash-mono text-[15px] font-bold text-dash-text">
+            {t(locale, "clientPortal.availableExtrasTitle")}
+          </h2>
+          <p className="mt-1 text-[13px] text-dash-muted">{t(locale, "clientPortal.availableExtrasSubtitle")}</p>
+        </header>
+
+        {availableExtras.length === 0 ? (
+          <p className="text-[13px] text-dash-muted">{t(locale, "clientPortal.emptyAvailableExtras")}</p>
+        ) : (
+          <ul className="flex flex-col gap-3">
+            {availableExtras.map((extra) => (
+              <AvailableExtraRow
+                key={extra.id}
+                extra={extra}
+                locale={locale}
+                isBusy={busyExtraId === extra.id}
+                onRequest={() => void onRequestUpgrade(state.clientId, extra.id)}
+              />
+            ))}
+          </ul>
+        )}
+      </section>
 
       <DashToastViewport toasts={toasts} closeLabel={t(locale, "clientPortal.closeDialog")} onDismiss={dismissToast} />
     </div>

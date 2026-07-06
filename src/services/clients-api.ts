@@ -289,6 +289,47 @@ export async function listPack(clientId: string): Promise<FetchResult<ClientPack
   return { ok: true, data: (data as unknown as ClientPackExtraRow[]).map(mapPackExtraRow) };
 }
 
+/**
+ * Extras del catálogo (`pack_extras` activos) que el cliente todavía NO tiene
+ * en un estado vigente/pendiente (`incluido|solicitado|activo`). Un extra
+ * `rechazado` no cuenta como "ya tenido" acá — sigue apareciendo como
+ * disponible; el re-pedido de un rechazado puntual se hace desde su propio
+ * badge en `listPack`, no desde esta lista. Solo lectura + filtro
+ * client-side: nunca setea estado, `requestUpgrade` sigue siendo el único
+ * camino de escritura (siempre `solicitado`, RLS manda).
+ */
+export async function listAvailableExtras(clientId: string): Promise<FetchResult<PackExtraDTO[]>> {
+  const supabase = getSupabaseSSRBrowserClient();
+
+  const [catalogResult, ownedResult] = await Promise.all([
+    supabase
+      .from("pack_extras")
+      .select("id, slug, nombre, descripcion, precio, activo, created_at")
+      .eq("activo", true)
+      .order("nombre", { ascending: true }),
+    supabase
+      .from("client_pack_extras")
+      .select("pack_extra_id, estado")
+      .eq("client_id", clientId),
+  ]);
+
+  if (catalogResult.error) return { ok: false, message: catalogResult.error.message };
+  if (ownedResult.error) return { ok: false, message: ownedResult.error.message };
+
+  const vigentes: ClientPackExtraEstado[] = ["incluido", "solicitado", "activo"];
+  const takenIds = new Set(
+    (ownedResult.data as { pack_extra_id: string; estado: ClientPackExtraEstado }[])
+      .filter((row) => vigentes.includes(row.estado))
+      .map((row) => row.pack_extra_id),
+  );
+
+  const available = (catalogResult.data as PackExtraRow[])
+    .filter((row) => !takenIds.has(row.id))
+    .map(mapPackExtraCatalogRow);
+
+  return { ok: true, data: available };
+}
+
 // -----------------------------------------------------------------------------
 // Admin (lectura/gestión vía RLS admin — mismo cliente SSR, misma sesión)
 // -----------------------------------------------------------------------------

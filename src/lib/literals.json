@@ -867,7 +867,11 @@
     "packExtraEstadoRechazado": "Rechazado",
     "requestUpgrade": "Solicitar upgrade",
     "requestingUpgrade": "Solicitando…",
-    "toastUpgradeRequested": "Upgrade solicitado."
+    "toastUpgradeRequested": "Upgrade solicitado.",
+    "availableExtrasTitle": "Extras disponibles",
+    "availableExtrasSubtitle": "Sumá un extra a tu pack cuando quieras.",
+    "emptyAvailableExtras": "No hay extras nuevos disponibles por ahora.",
+    "requestExtra": "Solicitar"
   },
   "auth": {
     "metadataTitle": "Acceso · Jose Dev",

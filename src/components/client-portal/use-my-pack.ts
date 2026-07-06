@@ -2,14 +2,14 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-import type { ClientPackExtraDTO } from "@/lib/types";
-import { getMyProject, listPack } from "@/services/clients-api";
+import type { ClientPackExtraDTO, PackExtraDTO } from "@/lib/types";
+import { getMyProject, listAvailableExtras, listPack } from "@/services/clients-api";
 
 type MyPackState =
   | { status: "loading" }
   | { status: "error" }
   | { status: "no-client" }
-  | { status: "ready"; clientId: string; extras: ClientPackExtraDTO[] };
+  | { status: "ready"; clientId: string; extras: ClientPackExtraDTO[]; availableExtras: PackExtraDTO[] };
 
 async function fetchMyPack(): Promise<MyPackState> {
   const projectResult = await getMyProject();
@@ -17,10 +17,19 @@ async function fetchMyPack(): Promise<MyPackState> {
   const client = projectResult.data;
   if (!client) return { status: "no-client" };
 
-  const packResult = await listPack(client.id);
+  const [packResult, availableResult] = await Promise.all([
+    listPack(client.id),
+    listAvailableExtras(client.id),
+  ]);
   if (!packResult.ok) return { status: "error" };
+  if (!availableResult.ok) return { status: "error" };
 
-  return { status: "ready", clientId: client.id, extras: packResult.data };
+  return {
+    status: "ready",
+    clientId: client.id,
+    extras: packResult.data,
+    availableExtras: availableResult.data,
+  };
 }
 
 /** Mismo patrón `reload`/`reloadKey` que `useLeadsData` — refetch tras `requestUpgrade`. */
