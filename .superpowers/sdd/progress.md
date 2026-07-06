@@ -33,3 +33,9 @@ Task 9: complete (commit c747ed0, clients-api + admin server actions, review cle
   - MINOR to fold into T11: sendExtraToPipeline lacks estado='solicitado' guard (double-send = 2 leads). Add guard + test when wiring the button.
   - Design gap noted: provisionAccess(clientId, email) — email is admin-entered param (leads has no email column).
 Next: Task 10 (client UI: proyecto/tareas/pack + phases helper). BASE = <this ledger commit>.
+
+Task 10: complete (commit 568b5e3, client UI proyecto/tareas/pack + phases helper, review clean — SPEC ✅, quality Approved)
+  - 132 tests. DESIGN.md/a11y verified (dark, dash tokens, one h1, min-h-11 touch targets, faithful fetch-hook mirror).
+  - Follow-ups: (Medium) no client "browse catalog" fn — requestUpgrade only re-requests rechazado → fold: add listAvailableExtras + wire pack browse. (Low) N+1 listComments per task. (Trivial) inert ternary proyecto-client.tsx:429; pack-client reloads on failure.
+Next: Task 11 (admin UI /admin/clientes + [id] + /admin/packs) + fold sendExtraToPipeline solicitado-guard. BASE = <this ledger commit>.
+Deferred to Task 13 (post-T11): client upgrade-browse loop (listAvailableExtras + pack page wiring) + trivial cosmetics.
