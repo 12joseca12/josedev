@@ -244,6 +244,29 @@ export type LeadDTO = {
 
 export type ProjectPhase = "briefing" | "diseño" | "desarrollo" | "revision" | "entregado";
 
+/** Fila completa de `pack_templates` (CRUD admin en `/admin/packs`) — distinta de la vista liviana embebida en otros DTOs. */
+export type PackTemplateDTO = {
+  id: string;
+  slug: string;
+  nombre: string;
+  descripcion: string | null;
+  precioBase: number | null;
+  orden: number;
+  activo: boolean;
+  createdAt: string;
+};
+
+/** Fila completa de `pack_extras` (CRUD admin en `/admin/packs`) — distinta de `PackExtraCatalogDTO` (join liviano en `ClientPackExtraDTO`). */
+export type PackExtraDTO = {
+  id: string;
+  slug: string;
+  nombre: string;
+  descripcion: string | null;
+  precio: number | null;
+  activo: boolean;
+  createdAt: string;
+};
+
 export type ClientDTO = {
   id: string;
   leadId: string;

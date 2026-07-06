@@ -162,6 +162,12 @@ export async function approveExtraDirect(extraId: string, monto: number): Promis
  * lead), inserta un lead `is_upsell=true` sin conversación asociada, y
  * linkea `source_lead_id` en el extra (queda `solicitado` hasta que el
  * pipeline de Fase 2 lo cierre — el auto-assign round-robin dispara solo).
+ *
+ * Guard de idempotencia (hardening Task 11 §D): si el extra ya no está en
+ * `solicitado` (p. ej. un doble-click, o ya fue mandado a pipeline / resuelto
+ * por otra vía), corta ANTES de insertar el lead. Sin esto, un doble-click
+ * crearía dos leads upsell y el segundo `update` pisaría el
+ * `source_lead_id` del primero, dejando el lead original huérfano.
  */
 export async function sendExtraToPipeline(extraId: string): Promise<ActionResult> {
   const admin = await requireAdmin();
@@ -176,6 +182,9 @@ export async function sendExtraToPipeline(extraId: string): Promise<ActionResult
     .maybeSingle();
   if (extraError) return { ok: false, message: extraError.message };
   if (!extra) return { ok: false, message: "extra not found" };
+  if (extra.estado !== "solicitado") {
+    return { ok: false, message: "extra no está en estado solicitado" };
+  }
 
   const { data: catalogExtra, error: catalogError } = await service
     .from("pack_extras")

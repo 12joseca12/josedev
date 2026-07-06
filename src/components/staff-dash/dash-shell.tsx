@@ -19,7 +19,11 @@ type NavItem = { href: string; labelKey: string };
 
 function navItemsFor(section: DashSection, locale: Locale): NavItem[] {
   if (section === "admin") {
-    return [{ href: `/${locale}/admin/leads`, labelKey: "staffLeads.navAdminLeads" }];
+    return [
+      { href: `/${locale}/admin/leads`, labelKey: "staffLeads.navAdminLeads" },
+      { href: `/${locale}/admin/clientes`, labelKey: "staffLeads.navAdminClientes" },
+      { href: `/${locale}/admin/packs`, labelKey: "staffLeads.navAdminPacks" },
+    ];
   }
   return [{ href: `/${locale}/closer`, labelKey: "staffLeads.navCloserBoard" }];
 }

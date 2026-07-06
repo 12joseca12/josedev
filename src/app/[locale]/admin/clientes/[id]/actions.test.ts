@@ -189,6 +189,40 @@ describe("admin callers reach the service role", () => {
     expect(linkedExtraPayload).toEqual({ source_lead_id: "lead-new-1" });
   });
 
+  it("sendExtraToPipeline is idempotent — bails without creating a lead when estado is not 'solicitado' (double-click guard)", async () => {
+    mockActionSupabase.mockReturnValue(makeCookieSupabase({ role: "admin" }));
+    let leadInsertCalled = false;
+    let extraUpdateCalled = false;
+    mockServiceClient.mockReturnValue({
+      from: (table: string) => {
+        if (table === "client_pack_extras") {
+          return {
+            select: () =>
+              makeQueryBuilder({ data: { id: "extra-1", pack_extra_id: "pe-1", estado: "activo" }, error: null }),
+            update: () => {
+              extraUpdateCalled = true;
+              return makeQueryBuilder({ data: null, error: null });
+            },
+          };
+        }
+        if (table === "leads") {
+          return {
+            insert: () => {
+              leadInsertCalled = true;
+              return makeQueryBuilder({ data: { id: "lead-new-1" }, error: null });
+            },
+          };
+        }
+        throw new Error(`unexpected table ${table}`);
+      },
+    });
+    const { sendExtraToPipeline } = await import("./actions");
+    const result = await sendExtraToPipeline("extra-1");
+    expect(result).toEqual({ ok: false, message: "extra no está en estado solicitado" });
+    expect(leadInsertCalled).toBe(false);
+    expect(extraUpdateCalled).toBe(false);
+  });
+
   it("provisionAccess links an existing auth.users match instead of inviting", async () => {
     mockActionSupabase.mockReturnValue(makeCookieSupabase({ role: "admin" }));
     let linkedPayload: unknown;

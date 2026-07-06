@@ -6,6 +6,8 @@ import type {
   ClientTaskCommentDTO,
   ClientTaskDTO,
   ClientTaskEstado,
+  PackExtraDTO,
+  PackTemplateDTO,
   ProjectPhase,
 } from "@/lib/types";
 
@@ -54,6 +56,27 @@ type ClientPackExtraRow = {
   pack_extras?: { id: string; slug: string; nombre: string; precio: number | null } | null;
 };
 
+type PackTemplateRow = {
+  id: string;
+  slug: string;
+  nombre: string;
+  descripcion: string | null;
+  precio_base: number | null;
+  orden: number;
+  activo: boolean;
+  created_at: string;
+};
+
+type PackExtraRow = {
+  id: string;
+  slug: string;
+  nombre: string;
+  descripcion: string | null;
+  precio: number | null;
+  activo: boolean;
+  created_at: string;
+};
+
 function mapClientRow(row: ClientRow): ClientDTO {
   return {
     id: row.id,
@@ -87,6 +110,31 @@ function mapCommentRow(row: ClientTaskCommentRow): ClientTaskCommentDTO {
     authorUserId: row.author_user_id,
     body: row.body,
     internal: row.internal,
+    createdAt: row.created_at,
+  };
+}
+
+function mapPackTemplateRow(row: PackTemplateRow): PackTemplateDTO {
+  return {
+    id: row.id,
+    slug: row.slug,
+    nombre: row.nombre,
+    descripcion: row.descripcion,
+    precioBase: row.precio_base,
+    orden: row.orden,
+    activo: row.activo,
+    createdAt: row.created_at,
+  };
+}
+
+function mapPackExtraCatalogRow(row: PackExtraRow): PackExtraDTO {
+  return {
+    id: row.id,
+    slug: row.slug,
+    nombre: row.nombre,
+    descripcion: row.descripcion,
+    precio: row.precio,
+    activo: row.activo,
     createdAt: row.created_at,
   };
 }
@@ -360,6 +408,98 @@ export async function addExtra(
     monto: opts.monto,
     estado: opts.estado,
   });
+
+  if (error) return { ok: false, message: error.message };
+  return { ok: true };
+}
+
+// -----------------------------------------------------------------------------
+// Catálogos — CRUD admin (`/admin/packs`). RLS `for all` en ambas tablas ya
+// lo permite; el read público de "activo=true" no aplica acá (esta vista
+// admin necesita ver también los inactivos para poder reactivarlos).
+// -----------------------------------------------------------------------------
+
+/** Todas las plantillas de pack (activas e inactivas), ordenadas por `orden`. */
+export async function listPackTemplates(): Promise<FetchResult<PackTemplateDTO[]>> {
+  const supabase = getSupabaseSSRBrowserClient();
+  const { data, error } = await supabase
+    .from("pack_templates")
+    .select("id, slug, nombre, descripcion, precio_base, orden, activo, created_at")
+    .order("orden", { ascending: true });
+
+  if (error) return { ok: false, message: error.message };
+  return { ok: true, data: (data as PackTemplateRow[]).map(mapPackTemplateRow) };
+}
+
+export type PackTemplateUpsertInput = {
+  id?: string;
+  slug: string;
+  nombre: string;
+  descripcion: string | null;
+  precioBase: number | null;
+  orden: number;
+  activo: boolean;
+};
+
+/** Alta o edición de una plantilla de pack — `id` presente = UPDATE, ausente = INSERT. */
+export async function upsertPackTemplate(
+  input: PackTemplateUpsertInput,
+): Promise<{ ok: true } | { ok: false; message: string }> {
+  const supabase = getSupabaseSSRBrowserClient();
+  const payload = {
+    slug: input.slug,
+    nombre: input.nombre,
+    descripcion: input.descripcion,
+    precio_base: input.precioBase,
+    orden: input.orden,
+    activo: input.activo,
+  };
+
+  const { error } = input.id
+    ? await supabase.from("pack_templates").update(payload).eq("id", input.id)
+    : await supabase.from("pack_templates").insert(payload);
+
+  if (error) return { ok: false, message: error.message };
+  return { ok: true };
+}
+
+/** Todos los extras del catálogo (activos e inactivos), orden alfabético por nombre. */
+export async function listPackExtras(): Promise<FetchResult<PackExtraDTO[]>> {
+  const supabase = getSupabaseSSRBrowserClient();
+  const { data, error } = await supabase
+    .from("pack_extras")
+    .select("id, slug, nombre, descripcion, precio, activo, created_at")
+    .order("nombre", { ascending: true });
+
+  if (error) return { ok: false, message: error.message };
+  return { ok: true, data: (data as PackExtraRow[]).map(mapPackExtraCatalogRow) };
+}
+
+export type PackExtraUpsertInput = {
+  id?: string;
+  slug: string;
+  nombre: string;
+  descripcion: string | null;
+  precio: number | null;
+  activo: boolean;
+};
+
+/** Alta o edición de un extra de catálogo — `id` presente = UPDATE, ausente = INSERT. */
+export async function upsertPackExtra(
+  input: PackExtraUpsertInput,
+): Promise<{ ok: true } | { ok: false; message: string }> {
+  const supabase = getSupabaseSSRBrowserClient();
+  const payload = {
+    slug: input.slug,
+    nombre: input.nombre,
+    descripcion: input.descripcion,
+    precio: input.precio,
+    activo: input.activo,
+  };
+
+  const { error } = input.id
+    ? await supabase.from("pack_extras").update(payload).eq("id", input.id)
+    : await supabase.from("pack_extras").insert(payload);
 
   if (error) return { ok: false, message: error.message };
   return { ok: true };
