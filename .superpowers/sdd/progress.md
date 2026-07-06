@@ -45,3 +45,7 @@ Task 11: complete (commit 024610f, admin UI + packs CRUD + sendExtraToPipeline g
   - Minors (non-blocking): pack catalog soft-delete only (no hard-delete); action import from bracketed route folder; parseMoney duplicated.
 Next: Task 13 (client upgrade-browse: listAvailableExtras + pack page wiring; + cosmetics: proyecto ternary, pack reload-on-fail). BASE = <this ledger commit>.
 Then: final whole-branch review → Task 12 live end-to-end verification (needs user SUPABASE_SERVICE_ROLE_KEY + throwaway accounts) → merge to main.
+
+Task 13: complete (commit ee99e56, listAvailableExtras + client upgrade browse + T10 cosmetics, 136 tests, tsc clean)
+  - Review deferred to final whole-branch review (small read-only fn + wiring + cosmetics).
+ALL BUILD TASKS COMPLETE (T1/T3/T7/T8/T9/T10/T11/T13). Next: final whole-branch review (opus) → apply fixes → Task 12 live e2e verification → merge to main.
