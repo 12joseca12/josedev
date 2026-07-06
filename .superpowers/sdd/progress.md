@@ -49,3 +49,11 @@ Then: final whole-branch review → Task 12 live end-to-end verification (needs 
 Task 13: complete (commit ee99e56, listAvailableExtras + client upgrade browse + T10 cosmetics, 136 tests, tsc clean)
   - Review deferred to final whole-branch review (small read-only fn + wiring + cosmetics).
 ALL BUILD TASKS COMPLETE (T1/T3/T7/T8/T9/T10/T11/T13). Next: final whole-branch review (opus) → apply fixes → Task 12 live e2e verification → merge to main.
+
+FINAL WHOLE-BRANCH REVIEW (opus): security model SOUND, 0 Critical. Verdict DO-NOT-MERGE-YET on:
+  - I1 (Important, MUST FIX): sendExtraToPipeline quotes monto=precio??null; null precio → upsell lead can't close (Fase 2 financial guard) → extra stranded. Fix: reject if catalog precio null + test.
+  - M1 (fold now): use-my-tasks per-task listComments loop is redundant — the single listComments(client,undefined) already returns all; group client-side.
+  - M3 (fold): parseMoney duplicated 3 sites → shared helper. M4 (fold): stale doc-comment ssr-browser-client.ts:7.
+  - Follow-up TODOs: M2 (comment INSERT policy doesn't bind task_id to client_id — contained, no leak), M5 (dead ??phase fallback), double-getUser proxy, action-import-shape, pack hard-delete.
+  Verified clean: i18n 863/863 parity, action shapes match callers, upsell trigger assumptions line up, idempotency guard + test present.
+Dispatching ONE fix subagent: I1 + M1 + M3 + M4. Then Task 12 live e2e + merge.
