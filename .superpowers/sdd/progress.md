@@ -57,3 +57,5 @@ FINAL WHOLE-BRANCH REVIEW (opus): security model SOUND, 0 Critical. Verdict DO-N
   - Follow-up TODOs: M2 (comment INSERT policy doesn't bind task_id to client_id — contained, no leak), M5 (dead ??phase fallback), double-getUser proxy, action-import-shape, pack hard-delete.
   Verified clean: i18n 863/863 parity, action shapes match callers, upsell trigger assumptions line up, idempotency guard + test present.
 Dispatching ONE fix subagent: I1 + M1 + M3 + M4. Then Task 12 live e2e + merge.
+
+Final-review fixes: DONE (commit bfc868f, 137 tests incl. new I1 regression test, tsc clean). All 4 findings (I1/M1/M3/M4) resolved. Branch merge-ready pending Task 12 live verification.
