@@ -7,6 +7,7 @@ import { DashToastViewport, useDashToasts } from "@/components/staff-dash/dash-t
 import { useAdminClientDetail } from "@/components/staff-dash/use-admin-client-detail";
 import { phaseLabel, phaseOrder } from "@/lib/client-portal/phases";
 import { formatLeadMonto } from "@/lib/leads-kanban";
+import { parseMoney } from "@/lib/money";
 import type {
   ClientPackExtraDTO,
   ClientPackExtraEstado,
@@ -196,8 +197,8 @@ export function AdminClienteDetailClient({ locale, clientId }: Props) {
   function onSubmitAddExtra(event: FormEvent) {
     event.preventDefault();
     if (!addExtraId) return;
-    const monto = addExtraGratis ? null : Number.parseFloat(addExtraMonto.replace(",", "."));
-    if (!addExtraGratis && (!Number.isFinite(monto) || (monto as number) <= 0)) return;
+    const monto = addExtraGratis ? null : parseMoney(addExtraMonto);
+    if (!addExtraGratis && (monto == null || monto <= 0)) return;
     void runAction(async () => {
       const result = await addExtra(client.id, addExtraId, {
         gratis: addExtraGratis,
@@ -215,8 +216,8 @@ export function AdminClienteDetailClient({ locale, clientId }: Props) {
 
   async function onApproveDirect(extra: ClientPackExtraDTO) {
     const rawMonto = approveMontoByExtra[extra.id] ?? "";
-    const monto = Number.parseFloat(rawMonto.replace(",", "."));
-    if (!Number.isFinite(monto) || monto <= 0) {
+    const monto = parseMoney(rawMonto);
+    if (monto == null || monto <= 0) {
       pushToast("error", t(locale, "adminClienteDetail.montoInvalid"));
       return;
     }

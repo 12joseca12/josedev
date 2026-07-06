@@ -223,6 +223,48 @@ describe("admin callers reach the service role", () => {
     expect(extraUpdateCalled).toBe(false);
   });
 
+  it("sendExtraToPipeline rejects when the catalog extra has no precio (I1) — no lead, no extra update", async () => {
+    mockActionSupabase.mockReturnValue(makeCookieSupabase({ role: "admin" }));
+    let leadInsertCalled = false;
+    let extraUpdateCalled = false;
+    mockServiceClient.mockReturnValue({
+      from: (table: string) => {
+        if (table === "client_pack_extras") {
+          return {
+            select: () =>
+              makeQueryBuilder({ data: { id: "extra-1", pack_extra_id: "pe-1", estado: "solicitado" }, error: null }),
+            update: () => {
+              extraUpdateCalled = true;
+              return makeQueryBuilder({ data: null, error: null });
+            },
+          };
+        }
+        if (table === "pack_extras") {
+          return {
+            select: () => makeQueryBuilder({ data: { precio: null }, error: null }),
+          };
+        }
+        if (table === "leads") {
+          return {
+            insert: () => {
+              leadInsertCalled = true;
+              return makeQueryBuilder({ data: { id: "lead-new-1" }, error: null });
+            },
+          };
+        }
+        throw new Error(`unexpected table ${table}`);
+      },
+    });
+    const { sendExtraToPipeline } = await import("./actions");
+    const result = await sendExtraToPipeline("extra-1");
+    expect(result).toEqual({
+      ok: false,
+      message: "el extra no tiene precio de catálogo; asignalo en /admin/packs antes de mandarlo a pipeline",
+    });
+    expect(leadInsertCalled).toBe(false);
+    expect(extraUpdateCalled).toBe(false);
+  });
+
   it("provisionAccess links an existing auth.users match instead of inviting", async () => {
     mockActionSupabase.mockReturnValue(makeCookieSupabase({ role: "admin" }));
     let linkedPayload: unknown;

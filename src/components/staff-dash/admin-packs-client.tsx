@@ -5,6 +5,7 @@ import { useId, useState, type FormEvent } from "react";
 import { DashToastViewport, useDashToasts } from "@/components/staff-dash/dash-toast";
 import { useAdminPacks } from "@/components/staff-dash/use-admin-packs";
 import { formatLeadMonto } from "@/lib/leads-kanban";
+import { parseMoney } from "@/lib/money";
 import type { Locale, PackExtraDTO, PackTemplateDTO } from "@/lib/types";
 import { upsertPackExtra, upsertPackTemplate } from "@/services/clients-api";
 import { t } from "@/services/literals";
@@ -57,13 +58,6 @@ const EMPTY_EXTRA_FORM: ExtraForm = {
   precio: "",
   activo: true,
 };
-
-function parseMoney(raw: string): number | null {
-  const trimmed = raw.trim();
-  if (!trimmed) return null;
-  const parsed = Number.parseFloat(trimmed.replace(",", "."));
-  return Number.isFinite(parsed) ? parsed : null;
-}
 
 export function AdminPacksClient({ locale }: Props) {
   const { state, reload } = useAdminPacks();

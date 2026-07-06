@@ -23,26 +23,32 @@ async function fetchMyTasks(): Promise<MyTasksState> {
   const client = projectResult.data;
   if (!client) return { status: "no-client" };
 
-  const [tasksResult, generalCommentsResult] = await Promise.all([
+  const [tasksResult, allCommentsResult] = await Promise.all([
     listTasks(client.id),
     listComments(client.id, undefined),
   ]);
   if (!tasksResult.ok) return { status: "error" };
 
   const tasks = tasksResult.data;
-  const commentsByTask = new Map<string, ClientTaskCommentDTO[]>();
-  await Promise.all(
-    tasks.map(async (task) => {
-      const result = await listComments(client.id, task.id);
-      if (result.ok) commentsByTask.set(task.id, result.data);
-    }),
-  );
+  const allComments = allCommentsResult.ok ? allCommentsResult.data : [];
 
-  // Comentarios generales = los que tienen task_id null; listComments(clientId, undefined)
-  // trae todos, así que filtramos acá lo que no tiene tarea asociada.
-  const generalComments = generalCommentsResult.ok
-    ? generalCommentsResult.data.filter((comment) => comment.taskId === null)
-    : [];
+  // listComments(clientId, undefined) trae TODOS los comentarios del cliente
+  // (generales + de todas las tareas) en un solo round-trip; agrupamos acá
+  // client-side por taskId en vez de re-fetchear uno por tarea (evita el N+1).
+  const commentsByTask = new Map<string, ClientTaskCommentDTO[]>();
+  const generalComments: ClientTaskCommentDTO[] = [];
+  for (const comment of allComments) {
+    if (comment.taskId === null) {
+      generalComments.push(comment);
+      continue;
+    }
+    const existing = commentsByTask.get(comment.taskId);
+    if (existing) {
+      existing.push(comment);
+    } else {
+      commentsByTask.set(comment.taskId, [comment]);
+    }
+  }
 
   return { status: "ready", clientId: client.id, tasks, generalComments, commentsByTask };
 }

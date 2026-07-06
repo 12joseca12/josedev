@@ -168,6 +168,13 @@ export async function approveExtraDirect(extraId: string, monto: number): Promis
  * por otra vía), corta ANTES de insertar el lead. Sin esto, un doble-click
  * crearía dos leads upsell y el segundo `update` pisaría el
  * `source_lead_id` del primero, dejando el lead original huérfano.
+ *
+ * Guard de precio (review final I1): `pack_extras.precio` es nullable. Si el
+ * catálogo no tiene precio cargado, corta ANTES de insertar el lead — un
+ * `monto=NULL` en `leads` queda atrapado para siempre por el trigger
+ * financiero de Fase 2 (`leads_financial_integrity`, BEFORE UPDATE), que
+ * impide cerrar un lead sin monto. Mejor fallar acá, explícito, que dejar el
+ * extra varado en `solicitado` con un lead huérfano imposible de cerrar.
  */
 export async function sendExtraToPipeline(extraId: string): Promise<ActionResult> {
   const admin = await requireAdmin();
@@ -192,12 +199,18 @@ export async function sendExtraToPipeline(extraId: string): Promise<ActionResult
     .eq("id", extra.pack_extra_id)
     .maybeSingle();
   if (catalogError) return { ok: false, message: catalogError.message };
+  if (catalogExtra?.precio == null) {
+    return {
+      ok: false,
+      message: "el extra no tiene precio de catálogo; asignalo en /admin/packs antes de mandarlo a pipeline",
+    };
+  }
 
   const { data: lead, error: leadError } = await service
     .from("leads")
     .insert({
       is_upsell: true,
-      monto: catalogExtra?.precio ?? null,
+      monto: catalogExtra.precio,
       conversation_id: null,
     })
     .select("id")
