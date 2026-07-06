@@ -39,3 +39,9 @@ Task 10: complete (commit 568b5e3, client UI proyecto/tareas/pack + phases helpe
   - Follow-ups: (Medium) no client "browse catalog" fn — requestUpgrade only re-requests rechazado → fold: add listAvailableExtras + wire pack browse. (Low) N+1 listComments per task. (Trivial) inert ternary proyecto-client.tsx:429; pack-client reloads on failure.
 Next: Task 11 (admin UI /admin/clientes + [id] + /admin/packs) + fold sendExtraToPipeline solicitado-guard. BASE = <this ledger commit>.
 Deferred to Task 13 (post-T11): client upgrade-browse loop (listAvailableExtras + pack page wiring) + trivial cosmetics.
+
+Task 11: complete (commit 024610f, admin UI + packs CRUD + sendExtraToPipeline guard, review clean — SPEC ✅, quality Approved)
+  - Security verified: service-role isolation grep clean; 4 actions admin-checked; guard + real regression test. 133 tests.
+  - Minors (non-blocking): pack catalog soft-delete only (no hard-delete); action import from bracketed route folder; parseMoney duplicated.
+Next: Task 13 (client upgrade-browse: listAvailableExtras + pack page wiring; + cosmetics: proyecto ternary, pack reload-on-fail). BASE = <this ledger commit>.
+Then: final whole-branch review → Task 12 live end-to-end verification (needs user SUPABASE_SERVICE_ROLE_KEY + throwaway accounts) → merge to main.
