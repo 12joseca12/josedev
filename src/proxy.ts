@@ -3,6 +3,7 @@ import { createServerClient } from "@supabase/ssr";
 import { isSupportedLocale } from "@/services/literals";
 import {
   isAdminPath,
+  isClientAreaPath,
   isCloserPath,
   isStaffLoginPath,
   isStaffOnboardingPath,
@@ -44,6 +45,30 @@ export async function resolveStaffRole(
   return data.role as "admin" | "closer";
 }
 
+/**
+ * Resuelve si el usuario autenticado tiene una fila en `clients` (acceso al área de
+ * clientes), con lookup fresco en cada request — mismo criterio fail-closed que
+ * resolveStaffRole.
+ */
+export async function resolveClientAccess(
+  supabase: ReturnType<typeof createServerClient>,
+): Promise<boolean> {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return false;
+
+  const { data, error } = await supabase
+    .from("clients")
+    .select("id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  // Fail-closed: cualquier error de lookup se trata como "sin acceso".
+  if (error || !data) return false;
+  return true;
+}
+
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -62,8 +87,9 @@ export async function proxy(request: NextRequest) {
     isStaffOnboardingPath(bareStaffPath) ||
     isAdminPath(bareStaffPath) ||
     isCloserPath(bareStaffPath);
+  const touchesClientArea = isClientAreaPath(bareStaffPath);
 
-  if (!touchesStaffSurface) {
+  if (!touchesStaffSurface && !touchesClientArea) {
     return NextResponse.next();
   }
 
@@ -82,6 +108,21 @@ export async function proxy(request: NextRequest) {
       },
     },
   );
+
+  if (touchesClientArea) {
+    const isClient = await resolveClientAccess(supabase);
+    if (isClient) {
+      return response;
+    }
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.redirect(new URL(`/${locale}/auth`, request.url));
+    }
+    return NextResponse.redirect(new URL(`/${locale}/perfil`, request.url));
+  }
 
   const role = await resolveStaffRole(supabase);
 

@@ -27,3 +27,7 @@ export function isAdminPath(path: string): boolean {
 export function isCloserPath(path: string): boolean {
   return path === "/closer" || path.startsWith("/closer/");
 }
+
+export function isClientAreaPath(path: string): boolean {
+  return path === "/area-clientes" || path.startsWith("/area-clientes/");
+}

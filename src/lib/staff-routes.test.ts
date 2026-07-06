@@ -1,5 +1,6 @@
 import {
   isAdminPath,
+  isClientAreaPath,
   isCloserPath,
   isStaffLoginPath,
   isStaffOnboardingPath,
@@ -47,5 +48,16 @@ describe("isAdminPath / isCloserPath / isStaffLoginPath / isStaffOnboardingPath"
     expect(isCloserPath("/admin")).toBe(false);
     expect(isStaffLoginPath("/staff/onboarding")).toBe(false);
     expect(isStaffOnboardingPath("/staff/login")).toBe(false);
+  });
+});
+
+describe("isClientAreaPath", () => {
+  it("matches the bare path and nested", () => {
+    expect(isClientAreaPath("/area-clientes")).toBe(true);
+    expect(isClientAreaPath("/area-clientes/tareas")).toBe(true);
+  });
+  it("does not match prefix collisions", () => {
+    expect(isClientAreaPath("/area-clientes-x")).toBe(false);
+    expect(isClientAreaPath("/perfil")).toBe(false);
   });
 });

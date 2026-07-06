@@ -238,6 +238,90 @@ export type LeadDTO = {
 };
 
 // -----------------------------------------------------------------------------
+// Client Portal (Supabase `clients`, `client_tasks`, `client_task_comments`,
+// `client_pack_extras`, `pack_templates`, `pack_extras` — Fase 3a, RLS por rol)
+// -----------------------------------------------------------------------------
+
+export type ProjectPhase = "briefing" | "diseño" | "desarrollo" | "revision" | "entregado";
+
+/** Fila completa de `pack_templates` (CRUD admin en `/admin/packs`) — distinta de la vista liviana embebida en otros DTOs. */
+export type PackTemplateDTO = {
+  id: string;
+  slug: string;
+  nombre: string;
+  descripcion: string | null;
+  precioBase: number | null;
+  orden: number;
+  activo: boolean;
+  createdAt: string;
+};
+
+/** Fila completa de `pack_extras` (CRUD admin en `/admin/packs`) — distinta de `PackExtraCatalogDTO` (join liviano en `ClientPackExtraDTO`). */
+export type PackExtraDTO = {
+  id: string;
+  slug: string;
+  nombre: string;
+  descripcion: string | null;
+  precio: number | null;
+  activo: boolean;
+  createdAt: string;
+};
+
+export type ClientDTO = {
+  id: string;
+  leadId: string;
+  userId: string | null;
+  packTemplateId: string | null;
+  projectPhase: ProjectPhase;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type ClientTaskEstado = "pendiente" | "en_curso" | "hecho";
+
+export type ClientTaskDTO = {
+  id: string;
+  clientId: string;
+  titulo: string;
+  descripcion: string | null;
+  estado: ClientTaskEstado;
+  orden: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type ClientTaskCommentDTO = {
+  id: string;
+  clientId: string;
+  taskId: string | null;
+  authorUserId: string;
+  body: string;
+  internal: boolean;
+  createdAt: string;
+};
+
+export type PackExtraCatalogDTO = {
+  id: string;
+  slug: string;
+  nombre: string;
+  precio: number | null;
+};
+
+export type ClientPackExtraEstado = "incluido" | "solicitado" | "activo" | "rechazado";
+
+export type ClientPackExtraDTO = {
+  id: string;
+  clientId: string;
+  packExtraId: string;
+  gratis: boolean;
+  monto: number | null;
+  estado: ClientPackExtraEstado;
+  sourceLeadId: string | null;
+  createdAt: string;
+  packExtra?: PackExtraCatalogDTO;
+};
+
+// -----------------------------------------------------------------------------
 // Sobre mí — stack portfolio
 // -----------------------------------------------------------------------------
 

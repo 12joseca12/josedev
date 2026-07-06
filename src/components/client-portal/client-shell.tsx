@@ -7,50 +7,47 @@ import { getSupabaseSSRBrowserClient } from "@/lib/supabase/ssr-browser-client";
 import type { Locale } from "@/lib/types";
 import { t } from "@/services/literals";
 
-type DashSection = "admin" | "closer";
-
-type DashShellProps = {
+type ClientShellProps = {
   locale: Locale;
-  section: DashSection;
   children: React.ReactNode;
 };
 
 type NavItem = { href: string; labelKey: string };
 
-function navItemsFor(section: DashSection, locale: Locale): NavItem[] {
-  if (section === "admin") {
-    return [
-      { href: `/${locale}/admin/leads`, labelKey: "staffLeads.navAdminLeads" },
-      { href: `/${locale}/admin/clientes`, labelKey: "staffLeads.navAdminClientes" },
-      { href: `/${locale}/admin/packs`, labelKey: "staffLeads.navAdminPacks" },
-    ];
-  }
-  return [{ href: `/${locale}/closer`, labelKey: "staffLeads.navCloserBoard" }];
+function navItemsFor(locale: Locale): NavItem[] {
+  return [
+    { href: `/${locale}/area-clientes/proyecto`, labelKey: "clientPortal.navProyecto" },
+    { href: `/${locale}/area-clientes/tareas`, labelKey: "clientPortal.navTareas" },
+    { href: `/${locale}/area-clientes/pack`, labelKey: "clientPortal.navPack" },
+    { href: `/${locale}/perfil`, labelKey: "clientPortal.navPerfil" },
+  ];
 }
 
 /**
- * Shell contenido del portal staff (DESIGN.md/Navigation): sidebar propia,
- * nunca mezclada con el header público. Desktop: sidebar fija a la izquierda;
- * mobile: header compacto arriba + tab bar inferior (targets ≥44px).
+ * Shell propio del portal cliente (DESIGN.md/Navigation): nav propia y distinta
+ * de la pública y de la de staff, nunca mezclada. Espeja la estructura de
+ * DashShell (src/components/staff-dash/dash-shell.tsx) y sus tokens `dash-*`:
+ * sidebar fija en desktop, header compacto + tab bar inferior en mobile
+ * (targets ≥44px). Dark-only por ahora (light-mode del portal → Fase 4).
  */
-export function DashShell({ locale, section, children }: DashShellProps) {
+export function ClientShell({ locale, children }: ClientShellProps) {
   const pathname = usePathname();
-  const items = navItemsFor(section, locale);
+  const items = navItemsFor(locale);
 
   async function signOut() {
     const supabase = getSupabaseSSRBrowserClient();
     await supabase.auth.signOut();
-    window.location.assign(`/${locale}/staff/login`);
+    window.location.assign(`/${locale}/auth`);
   }
 
   const brand = (
     <span className="font-dash-mono text-sm font-bold text-dash-text">
-      {t(locale, "staffLeads.shellBrand")}
-      <span className="text-dash-muted"> / {t(locale, "staffLeads.shellBrandSuffix")}</span>
+      {t(locale, "clientPortal.shellBrand")}
+      <span className="text-dash-muted"> / {t(locale, "clientPortal.shellBrandSuffix")}</span>
     </span>
   );
 
-  const roleLabel = t(locale, section === "admin" ? "staffLeads.roleAdmin" : "staffLeads.roleCloser");
+  const roleLabel = t(locale, "clientPortal.roleClient");
 
   return (
     <div className="flex min-h-dvh bg-dash-bg font-dash-sans text-dash-text">
@@ -88,7 +85,7 @@ export function DashShell({ locale, section, children }: DashShellProps) {
             onClick={signOut}
             className="w-full rounded-lg border border-dash-border px-3 py-2 text-left text-[13px] text-dash-muted transition-colors hover:border-dash-accent hover:text-dash-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dash-accent"
           >
-            {t(locale, "staffLeads.signOut")}
+            {t(locale, "clientPortal.signOut")}
           </button>
         </div>
       </aside>
@@ -132,7 +129,7 @@ export function DashShell({ locale, section, children }: DashShellProps) {
           onClick={signOut}
           className="flex min-h-14 flex-1 touch-manipulation items-center justify-center text-[13px] font-medium text-dash-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-dash-accent"
         >
-          {t(locale, "staffLeads.signOut")}
+          {t(locale, "clientPortal.signOut")}
         </button>
       </nav>
     </div>

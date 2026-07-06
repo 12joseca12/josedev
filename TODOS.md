@@ -45,3 +45,29 @@ Deferred work captured during planning/review, with enough context to pick up la
 **Context:** Found while applying the Layer 1 migration (2026-07-04) — `get_advisors(type="security")` flagged leaked-password-protection as disabled; rate-limiting was the architecture review's Issue 9 and was never confirmed enabled post-implementation.
 
 **Source:** Layer 1 (Auth/Roles/MFA) implementation, 2026-07-04.
+
+## Fase 3a — follow-ups (post-implementación)
+
+Surgieron durante la implementación/review de la Fase 3a (Client Portal). Ninguno bloquea; se difirieron con criterio.
+
+### Endurecer la policy INSERT de comentarios (bind task_id → client_id)
+**What:** La policy `insert comments` de `client_task_comments` valida `client_id` propio + `author_user_id` + `internal=false`, pero NO valida que el `task_id` pertenezca a ese `client_id`.
+**Why:** Impacto contenido (la fila lleva el `client_id` del propio cliente, el SELECT está scopeado por `client_id`, no hay fuga cross-cliente) — peor caso: una referencia `task_id` colgante auto-infligida, invisible para otros. Aun así es sloppy.
+**How:** Agregar a la rama del cliente `and (task_id is null or task_id in (select id from public.client_tasks where client_id in (select id from public.clients where user_id=(select auth.uid()))))`. Migración chica + `get_advisors`.
+**Source:** Review final whole-branch (opus), 2026-07-06, hallazgo M2.
+
+### Verificar dominio en Resend (SPF/DKIM) para el email al cliente
+**What:** El path de email al cliente (evento `comment.admin` → Resend) necesita `josedev.com` verificado en Resend (registros SPF/DKIM en el DNS).
+**Why:** Sin verificar, los mails salen como no-verificados o rebotan. El Telegram de ops ya anda sin esto; solo afecta el mail al cliente.
+**How:** Resend → Domains → agregar josedev.com → poner los registros que da en el DNS. Después probar el evento `comment.admin` end-to-end.
+**Source:** Fase 3a notificaciones, 2026-07-06.
+
+### Limpiezas menores de Fase 3a
+**What:** (a) doble `getUser()` en el path de redirect del guard client-area de `proxy.ts` (correcto, un round-trip redundante en el path no-cliente); (b) el componente admin importa las server actions desde el folder de ruta dinámica `[id]` (válido, forma inusual); (c) catálogo de packs solo soft-delete (`activo`), sin hard-delete; (d) fallback muerto `?? phase` en `phases.ts` (`phaseLabel`).
+**Why:** Todos cosméticos/no-bloqueantes, flagueados por los reviews. Agrupados para una pasada de limpieza futura.
+**Source:** Reviews de tarea + whole-branch de Fase 3a, 2026-07-06.
+
+### Pre-existentes que bloquean `next build` (no son de 3a)
+**What:** `next build` (export estático) falla en dos puntos NO relacionados con 3a: (a) `/foro/new` hace un fetch build-time a una IP de LAN; (b) la home `(site)/page` usa `useSearchParams` sin `Suspense` boundary.
+**Why:** Bloquean un build de producción / deploy. Confirmados pre-existentes (reproducidos en el árbol sin tocar). Hay que arreglarlos antes de deployar (envolver en Suspense la home; hacer el fetch de /foro/new resiliente o client-side).
+**Source:** Detectados durante los builds de verificación de Fase 3a, 2026-07-06.
