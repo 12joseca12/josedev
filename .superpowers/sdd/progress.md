@@ -26,3 +26,10 @@ Task 8: complete (commit f521e6a, relocate /area-clientes + client-shell, review
   - Trivial follow-up: stale doc-comment in src/lib/supabase/ssr-browser-client.ts:7 ("area-clientes todavía no tiene guard" — false since T7).
   - Pre-existing (not ours): next build static export fails on /foro/new LAN fetch.
 Next: Task 9 (clients-api.ts service + admin server actions: provisionAccess, approveExtraDirect, sendExtraToPipeline, rejectExtra). BASE = <this ledger commit>.
+
+Task 9: complete (commit c747ed0, clients-api + admin server actions, review clean — SPEC ✅, quality Approved)
+  - Security verified: admin re-check first in all 4 actions (before service-role); service-client server-only (no browser leak); requestUpgrade solicitado-only; provisionAccess TOCTOU handled. 127 tests.
+  - Created src/lib/supabase/service-client.ts (none existed). SUPABASE_SERVICE_ROLE_KEY absent from .env.local — USER must set it for actions to run in T12 live test.
+  - MINOR to fold into T11: sendExtraToPipeline lacks estado='solicitado' guard (double-send = 2 leads). Add guard + test when wiring the button.
+  - Design gap noted: provisionAccess(clientId, email) — email is admin-entered param (leads has no email column).
+Next: Task 10 (client UI: proyecto/tareas/pack + phases helper). BASE = <this ledger commit>.
