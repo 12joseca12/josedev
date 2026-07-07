@@ -3,3 +3,8 @@ BASE = dd27c20 (main tip at branch)
 
 Task 1: complete (commit a04381f, dash-* dual light/dark tokens + generator DASH-THEME-REFS/VALUES + @custom-variant dark + consistency test theme-css-consistency.test.ts). 139 tests, generate:theme idempotent. In review.
 Next: Task 2 (.dark anti-FOUC init script in layout). BASE = a04381f.
+
+Task 1 review: clean (SPEC ✅, quality Approved — values line-by-line, dark unchanged, Material untouched).
+Task 2: complete (commit b18fb32, anti-FOUC script in [locale]/layout.tsx + removed hardcoded dark + suppressHydrationWarning). Self-reviewed (trivial ~5-line diff, verified correct; final whole-branch review recovers). 139 tests.
+  NOTE: until Task 4 locks dashboards, a light-system user viewing /admin|/closer|/area-clientes would see dash-* light values (intermediate state, no real users, resolved by Task 4).
+Next: Task 3 (theme toggle in public nav). BASE = <this ledger commit>.
