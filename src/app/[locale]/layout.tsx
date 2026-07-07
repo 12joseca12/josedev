@@ -1,23 +1,11 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
 import "@/app/globals.css";
 import { EmulatorWarmupClient } from "@/components/layout/emulator-warmup-client";
 import { ScrollProgressBar } from "@/components/layout/scroll-progress-bar";
+import { dashFontVariables } from "@/components/staff-dash/dash-fonts";
 import { getRootStyleBlockCss } from "@/lib/stylesVariables";
 import type { Locale } from "@/lib/types";
 import { SUPPORTED_LOCALES, resolveLocaleParam, t } from "@/services/literals";
-
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-});
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-});
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -57,7 +45,7 @@ export default async function RootLayout({ children, params }: LayoutProps) {
   return (
     <html
       lang={locale}
-      className={`${spaceGrotesk.variable} ${inter.variable} h-full`}
+      className={`${dashFontVariables} h-full`}
       suppressHydrationWarning
     >
       <head>

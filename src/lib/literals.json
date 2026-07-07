@@ -6,7 +6,7 @@
     }
   },
   "nav": {
-    "brand": "Jose Dev",
+    "brand": "josedev",
     "home": "Inicio",
     "sobreMi": "Sobre mí",
     "portfolio": "Portfolio",
@@ -22,7 +22,7 @@
     "closeMenu": "Cerrar menú de navegación",
     "profileAria": "Ir a iniciar sesión o registrarse",
     "profileAriaSignedIn": "Ir a tu perfil",
-    "profileLink": "Acceso",
+    "profileLink": "Iniciar sesión",
     "profileLinkSignedIn": "Perfil",
     "currentPage": "página actual",
     "languageSwitcherAria": "Cambiar idioma",

@@ -1,5 +1,4 @@
 import type { Locale } from "@/lib/types";
-import { styleTokens } from "@/lib/stylesVariables";
 import { localizedHref, t } from "@/services/literals";
 
 import { SiteHeaderClient } from "./site-header-client";
@@ -20,8 +19,7 @@ export function SiteHeader({ locale }: Props) {
   return (
     <nav
       aria-label={t(locale, "nav.brand")}
-      className="sticky top-0 z-50 w-full bg-gradient-to-b from-background/80 to-transparent backdrop-blur-lg"
-      style={{ boxShadow: styleTokens.layout.navShadow }}
+      className="sticky top-0 z-50 w-full border-b border-dash-border bg-dash-bg"
     >
       <SiteHeaderClient
         locale={locale}
@@ -32,7 +30,6 @@ export function SiteHeader({ locale }: Props) {
         profileMenuLabel={t(locale, "nav.profileLink")}
         profileMenuLabelSignedIn={t(locale, "nav.profileLinkSignedIn")}
         terminalAria={t(locale, "nav.terminalAria")}
-        hireMe={t(locale, "nav.hireMe")}
         openMenuLabel={t(locale, "nav.openMenu")}
         closeMenuLabel={t(locale, "nav.closeMenu")}
         currentPageLabel={t(locale, "nav.currentPage")}

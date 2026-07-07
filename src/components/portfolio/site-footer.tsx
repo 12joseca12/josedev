@@ -20,20 +20,20 @@ const social: {
 
 export function SiteFooter({ locale }: Props) {
   return (
-    <footer className="w-full border-t border-outline-variant/20 bg-background">
+    <footer className="w-full border-t border-dash-border bg-dash-bg">
       <div className="mx-auto flex max-w-content flex-col items-center justify-between gap-8 px-4 py-10 sm:gap-6 sm:px-6 md:flex-row md:py-12 lg:px-8">
-        <div className="text-center font-headline text-sm font-bold text-primary-container sm:text-left md:text-base">
+        <div className="text-center font-dash-mono text-sm font-bold text-dash-text sm:text-left md:text-base">
           {t(locale, "footer.brand")}
         </div>
         <nav
           aria-label={t(locale, "footer.socialNav")}
-          className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 font-body text-[10px] uppercase tracking-[0.05em] text-slate-500 sm:gap-8"
+          className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 font-body text-[10px] uppercase tracking-[0.05em] text-dash-muted sm:gap-8"
         >
           {social.map(({ href, labelKey, Icon }) => (
             <a
               key={labelKey}
               data-hover-label={t(locale, labelKey)}
-              className="inline-flex items-center gap-2 transition-all hover:-translate-y-0.5 hover:text-primary"
+              className="inline-flex items-center gap-2 transition-colors hover:text-dash-accent-text"
               href={href}
               rel={href.startsWith("mailto") ? undefined : "noopener noreferrer"}
               target={href.startsWith("mailto") ? undefined : "_blank"}
@@ -43,7 +43,7 @@ export function SiteFooter({ locale }: Props) {
             </a>
           ))}
         </nav>
-        <p className="max-w-[20rem] text-center font-body text-[9px] uppercase leading-relaxed tracking-[0.05em] text-slate-500 sm:max-w-none sm:text-[10px] md:text-right">
+        <p className="max-w-[20rem] text-center font-body text-[9px] uppercase leading-relaxed tracking-[0.05em] text-dash-muted sm:max-w-none sm:text-[10px] md:text-right">
           {t(locale, "footer.copyright")}
         </p>
       </div>

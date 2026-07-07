@@ -6,7 +6,7 @@
     }
   },
   "nav": {
-    "brand": "ENGINEER_EDITORIAL",
+    "brand": "josedev",
     "home": "Home",
     "sobreMi": "About me",
     "portfolio": "Portfolio",
@@ -22,7 +22,7 @@
     "closeMenu": "Close navigation menu",
     "profileAria": "Go to sign in or sign up",
     "profileAriaSignedIn": "Go to your profile",
-    "profileLink": "Account",
+    "profileLink": "Sign in",
     "profileLinkSignedIn": "Profile",
     "currentPage": "current page",
     "languageSwitcherAria": "Switch language",
