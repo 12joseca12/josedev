@@ -51,7 +51,7 @@ const dashValueLines = [
   ...dashLightLines,
   "}",
   "",
-  "html.dark {",
+  ".dark {",
   ...dashDarkLines,
   "}",
 ];

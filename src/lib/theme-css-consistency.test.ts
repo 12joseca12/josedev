@@ -64,7 +64,7 @@ describe("globals.css generated theme blocks", () => {
     const block = css.slice(beginIdx + begin.length, endIdx);
 
     const rootMatch = block.match(/:root\s*\{([^}]*)\}/);
-    const darkMatch = block.match(/html\.dark\s*\{([^}]*)\}/);
+    const darkMatch = block.match(/(?:^|\s)\.dark\s*\{([^}]*)\}/);
     expect(rootMatch).not.toBeNull();
     expect(darkMatch).not.toBeNull();
 

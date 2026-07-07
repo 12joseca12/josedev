@@ -28,7 +28,8 @@ function navItemsFor(locale: Locale): NavItem[] {
  * de la pública y de la de staff, nunca mezclada. Espeja la estructura de
  * DashShell (src/components/staff-dash/dash-shell.tsx) y sus tokens `dash-*`:
  * sidebar fija en desktop, header compacto + tab bar inferior en mobile
- * (targets ≥44px). Dark-only por ahora (light-mode del portal → Fase 4).
+ * (targets ≥44px). Dark-locked vía la clase `dark` en el root (Fase 4a): el
+ * portal queda siempre oscuro sin importar el modo global del público.
  */
 export function ClientShell({ locale, children }: ClientShellProps) {
   const pathname = usePathname();
@@ -50,7 +51,7 @@ export function ClientShell({ locale, children }: ClientShellProps) {
   const roleLabel = t(locale, "clientPortal.roleClient");
 
   return (
-    <div className="flex min-h-dvh bg-dash-bg font-dash-sans text-dash-text">
+    <div className="dark flex min-h-dvh bg-dash-bg font-dash-sans text-dash-text">
       {/* Sidebar desktop */}
       <aside className="hidden w-56 shrink-0 flex-col border-r border-dash-border bg-dash-surface md:flex">
         <div className="flex items-center gap-2 border-b border-dash-border px-5 py-4">{brand}</div>

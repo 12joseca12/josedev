@@ -92,8 +92,9 @@
 
   /*
     dash-* refs: point @theme's --color-dash-* at the CSS custom properties
-    (--dash-*) set below in :root / html.dark, so utilities like `bg-dash-bg`
-    resolve to the light or dark value depending on the `.dark` class.
+    (--dash-*) set below in :root / .dark, so utilities like `bg-dash-bg`
+    resolve to the light or dark value depending on the `.dark` class (on
+    `<html>` for the global toggle, or on any ancestor to dark-lock a subtree).
     Generated from `dashThemeColors` — do not hand-edit, run `pnpm generate:theme`.
   */
   /* BEGIN GENERATED DASH-THEME-REFS */
@@ -129,8 +130,10 @@
 }
 
 /*
-  dash-* values: light (default, :root) and dark (html.dark) for the DESIGN.md
-  palette. Generated from `dashThemeColors` in `src/lib/stylesVariables.ts` by
+  dash-* values: light (default, :root) and dark (.dark, any nesting level —
+  matches `<html class="dark">` for the global toggle and `<div class="dark">`
+  to dark-lock a subtree) for the DESIGN.md palette. Generated from
+  `dashThemeColors` in `src/lib/stylesVariables.ts` by
   `scripts/generate-theme-css.ts` (`pnpm generate:theme`) — do not hand-edit the
   block between the markers below. `pnpm test` fails if this block drifts.
 */
@@ -149,7 +152,7 @@
   --dash-info: #4A7290;
 }
 
-html.dark {
+.dark {
   --dash-bg: #141414;
   --dash-surface: #1D1C1A;
   --dash-text: #F7F5F0;

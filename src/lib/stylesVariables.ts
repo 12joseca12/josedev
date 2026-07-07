@@ -79,7 +79,9 @@ export const portfolioThemeColors = {
  * public site's light/dark theme mechanism starting in Fase 4a. `dash-accent` is
  * only for large UI (3:1); `dash-accent-text` is the 4.5:1 variant for text/links.
  * Values are emitted by `scripts/generate-theme-css.ts` as `--dash-*` in `:root`
- * (light) / `html.dark` (dark), referenced from `@theme inline` via
+ * (light) / `.dark` (dark, any nesting level — matches the global toggle on
+ * `<html>` and subtree dark-locks like the staff/portal shells), referenced
+ * from `@theme inline` via
  * `--color-dash-*: var(--dash-*)`. Dark values are unchanged from the prior
  * dashboard-only palette; only the light column is new.
  */
