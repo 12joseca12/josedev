@@ -14,3 +14,7 @@ Next: Task 4 (dark-lock dash-shell + client-shell). BASE = <this ledger commit>.
 
 Task 4: complete (commit de5f667, generator html.dark→.dark + shells dark-locked via .dark root + consistency test). Self-reviewed (diff verified: selector .dark, :root before .dark, both shells wrapped, values unchanged; subagent live-verified cascade via preview_eval). 139 tests.
 Next: Task 5 (live verification — the acceptance gate). BASE = de5f667.
+
+Task 5: complete (live verification, all 5 checklist items PASS, 139 tests, no code changes). Dark-lock probe = rgb(20,20,20) under light html. Fase 4a COMPLETE.
+Holistic check = T5 live acceptance + per-task reviews (T1/T3 subagent-reviewed, T2/T4 self-reviewed diff). No separate whole-branch review (token foundation, live-verified end-to-end).
+Merging fase-4a-token-foundation to main.
