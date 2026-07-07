@@ -7,6 +7,7 @@ import { createPortal } from "react-dom";
 
 import { LanguageSwitcher } from "@/components/nav/language-switcher";
 import { NavProfileControl } from "@/components/nav/nav-profile-control";
+import { ThemeToggle } from "@/components/nav/theme-toggle";
 import dynamic from "next/dynamic";
 
 const TerminalChatPanel = dynamic(
@@ -125,6 +126,7 @@ export function SiteHeaderClient({
 
         <div className="flex items-center gap-2 sm:gap-4">
           <LanguageSwitcher locale={locale} />
+          <ThemeToggle locale={locale} />
           <NavProfileControl
             variant="icon"
             hoverLabelPlacement="below"
@@ -204,8 +206,9 @@ export function SiteHeaderClient({
                   className="max-h-[calc(100dvh-env(safe-area-inset-top)-env(safe-area-inset-bottom)-5.75rem)] overflow-y-auto overscroll-contain px-4 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-4"
                 >
                   <div className="flex flex-col gap-1">
-                    <div className="mb-1 flex justify-center">
+                    <div className="mb-1 flex items-center justify-center gap-2">
                       <LanguageSwitcher locale={locale} />
+                      <ThemeToggle locale={locale} />
                     </div>
                     <NavProfileControl
                       variant="menu"
