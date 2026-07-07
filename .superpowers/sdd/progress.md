@@ -11,3 +11,6 @@ Next: Task 3 (theme toggle in public nav). BASE = <this ledger commit>.
 
 Task 3: complete (commit ca9721f, theme-toggle.tsx + mounted in public nav site-header-client.tsx desktop+mobile, review clean — SPEC ✅, quality Approved: hydration-safe, a11y complete, es/en literals). 139 tests.
 Next: Task 4 (dark-lock dash-shell + client-shell). BASE = <this ledger commit>.
+
+Task 4: complete (commit de5f667, generator html.dark→.dark + shells dark-locked via .dark root + consistency test). Self-reviewed (diff verified: selector .dark, :root before .dark, both shells wrapped, values unchanged; subagent live-verified cascade via preview_eval). 139 tests.
+Next: Task 5 (live verification — the acceptance gate). BASE = de5f667.
