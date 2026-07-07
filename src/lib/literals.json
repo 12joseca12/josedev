@@ -25,7 +25,9 @@
     "profileLink": "Acceso",
     "profileLinkSignedIn": "Perfil",
     "currentPage": "página actual",
-    "languageSwitcherAria": "Cambiar idioma"
+    "languageSwitcherAria": "Cambiar idioma",
+    "themeToggleToDark": "Cambiar a tema oscuro",
+    "themeToggleToLight": "Cambiar a tema claro"
   },
   "terminalChat": {
     "panelAria": "Chat con el administrador",

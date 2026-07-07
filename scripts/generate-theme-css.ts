@@ -1,7 +1,12 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { portfolioThemeColors, styleTokens, zIndexTokens } from "../src/lib/stylesVariables.ts";
+import {
+  dashThemeColors,
+  portfolioThemeColors,
+  styleTokens,
+  zIndexTokens,
+} from "../src/lib/stylesVariables.ts";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const cssPath = join(__dirname, "..", "src", "app", "globals.css");
@@ -32,7 +37,27 @@ css = replaceBlock(css, "Z-INDEX", zIndexLines);
 const containerLines = [`  --container-content: ${styleTokens.layout.maxContentWidth};`];
 css = replaceBlock(css, "CONTAINER", containerLines);
 
+const dashRefLines = Object.keys(dashThemeColors).map((key) => `  --color-${key}: var(--${key});`);
+css = replaceBlock(css, "DASH-THEME-REFS", dashRefLines);
+
+const dashLightLines = (Object.entries(dashThemeColors) as [string, { light: string; dark: string }][]).map(
+  ([key, value]) => `  --${key}: ${value.light};`,
+);
+const dashDarkLines = (Object.entries(dashThemeColors) as [string, { light: string; dark: string }][]).map(
+  ([key, value]) => `  --${key}: ${value.dark};`,
+);
+const dashValueLines = [
+  ":root {",
+  ...dashLightLines,
+  "}",
+  "",
+  ".dark {",
+  ...dashDarkLines,
+  "}",
+];
+css = replaceBlock(css, "DASH-THEME-VALUES", dashValueLines);
+
 writeFileSync(cssPath, css);
 console.log(
-  `generate-theme-css: wrote ${colorLines.length} color tokens, ${zIndexLines.length} z-index tokens, and ${containerLines.length} container token(s) to globals.css`,
+  `generate-theme-css: wrote ${colorLines.length} color tokens, ${zIndexLines.length} z-index tokens, ${containerLines.length} container token(s), and ${dashRefLines.length} dash-theme tokens (light+dark) to globals.css`,
 );

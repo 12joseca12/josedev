@@ -25,7 +25,9 @@
     "profileLink": "Account",
     "profileLinkSignedIn": "Profile",
     "currentPage": "current page",
-    "languageSwitcherAria": "Switch language"
+    "languageSwitcherAria": "Switch language",
+    "themeToggleToDark": "Switch to dark theme",
+    "themeToggleToLight": "Switch to light theme"
   },
   "terminalChat": {
     "panelAria": "Chat with the administrator",

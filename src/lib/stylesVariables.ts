@@ -71,23 +71,33 @@ export const portfolioThemeColors = {
   "app-preview-surface-dim": "#080a0d",
   "device-frame-bezel": "#050608",
   "forum-composer-surface": "#06080a",
-
-  // Dashboard staff (DESIGN.md, dark mode) — admin/closer/portal. Namespace `dash-`
-  // hasta la Fase 4 (rediseño del sitio público), que promoverá esta paleta a
-  // tokens globales y retirará la Material de arriba. `dash-accent` es solo para
-  // UI grande (3:1); `dash-accent-text` es la variante 4.5:1 para texto/links.
-  "dash-bg": "#141414",
-  "dash-surface": "#1d1c1a",
-  "dash-text": "#f7f5f0",
-  "dash-muted": "#9c9890",
-  "dash-border": "#322f2a",
-  "dash-accent": "#c87d4a",
-  "dash-accent-text": "#d69466",
-  "dash-success": "#4a7c59",
-  "dash-warning": "#c89b3c",
-  "dash-error": "#b0473f",
-  "dash-info": "#4a7290",
 } as const satisfies Record<string, string>;
+
+/**
+ * DESIGN.md palette, light+dark. `dash-*` names are kept as the global tokens
+ * (Fase 4a) — used by staff/closer/portal today (dark-only) and promoted to the
+ * public site's light/dark theme mechanism starting in Fase 4a. `dash-accent` is
+ * only for large UI (3:1); `dash-accent-text` is the 4.5:1 variant for text/links.
+ * Values are emitted by `scripts/generate-theme-css.ts` as `--dash-*` in `:root`
+ * (light) / `.dark` (dark, any nesting level — matches the global toggle on
+ * `<html>` and subtree dark-locks like the staff/portal shells), referenced
+ * from `@theme inline` via
+ * `--color-dash-*: var(--dash-*)`. Dark values are unchanged from the prior
+ * dashboard-only palette; only the light column is new.
+ */
+export const dashThemeColors = {
+  "dash-bg": { light: "#F7F5F0", dark: "#141414" },
+  "dash-surface": { light: "#FFFFFF", dark: "#1D1C1A" },
+  "dash-text": { light: "#141414", dark: "#F7F5F0" },
+  "dash-muted": { light: "#5C5851", dark: "#9C9890" },
+  "dash-border": { light: "#E4E0D8", dark: "#322F2A" },
+  "dash-accent": { light: "#C87D4A", dark: "#C87D4A" },
+  "dash-accent-text": { light: "#A85E2E", dark: "#D69466" },
+  "dash-success": { light: "#4A7C59", dark: "#4A7C59" },
+  "dash-warning": { light: "#C89B3C", dark: "#C89B3C" },
+  "dash-error": { light: "#B0473F", dark: "#B0473F" },
+  "dash-info": { light: "#4A7290", dark: "#4A7290" },
+} as const satisfies Record<string, { light: string; dark: string }>;
 
 /** Stacking-order tokens. Values may repeat across names — the name documents *why*, the generator/@theme block is the single place the number lives. */
 export const zIndexTokens = {

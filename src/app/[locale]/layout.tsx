@@ -57,9 +57,16 @@ export default async function RootLayout({ children, params }: LayoutProps) {
   return (
     <html
       lang={locale}
-      className={`dark ${spaceGrotesk.variable} ${inter.variable} h-full`}
+      className={`${spaceGrotesk.variable} ${inter.variable} h-full`}
+      suppressHydrationWarning
     >
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){try{var s=localStorage.getItem('theme');var d=s?s==='dark':matchMedia('(prefers-color-scheme:dark)').matches;if(d)document.documentElement.classList.add('dark');}catch(e){}})();",
+          }}
+        />
         <style
           dangerouslySetInnerHTML={{ __html: getRootStyleBlockCss() }}
           suppressHydrationWarning

@@ -53,7 +53,7 @@ export function DashShell({ locale, section, children }: DashShellProps) {
   const roleLabel = t(locale, section === "admin" ? "staffLeads.roleAdmin" : "staffLeads.roleCloser");
 
   return (
-    <div className="flex min-h-dvh bg-dash-bg font-dash-sans text-dash-text">
+    <div className="dark flex min-h-dvh bg-dash-bg font-dash-sans text-dash-text">
       {/* Sidebar desktop */}
       <aside className="hidden w-56 shrink-0 flex-col border-r border-dash-border bg-dash-surface md:flex">
         <div className="flex items-center gap-2 border-b border-dash-border px-5 py-4">{brand}</div>

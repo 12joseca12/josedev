@@ -1,6 +1,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap");
 @import "tailwindcss";
 
+/* Tailwind 4: enables `dark:` variants driven by an ancestor `.dark` class
+   (toggled on <html> by the theme init script / toggle, or forced on
+   staff/portal shells) instead of `prefers-color-scheme` media queries. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /*
   Portfolio theme: semantic colors (Stitch / Material-style).
   Values are generated from `src/lib/stylesVariables.ts` → `portfolioThemeColors`
@@ -83,18 +88,28 @@
   --color-app-preview-surface-dim: #080a0d;
   --color-device-frame-bezel: #050608;
   --color-forum-composer-surface: #06080a;
-  --color-dash-bg: #141414;
-  --color-dash-surface: #1d1c1a;
-  --color-dash-text: #f7f5f0;
-  --color-dash-muted: #9c9890;
-  --color-dash-border: #322f2a;
-  --color-dash-accent: #c87d4a;
-  --color-dash-accent-text: #d69466;
-  --color-dash-success: #4a7c59;
-  --color-dash-warning: #c89b3c;
-  --color-dash-error: #b0473f;
-  --color-dash-info: #4a7290;
   /* END GENERATED COLORS */
+
+  /*
+    dash-* refs: point @theme's --color-dash-* at the CSS custom properties
+    (--dash-*) set below in :root / .dark, so utilities like `bg-dash-bg`
+    resolve to the light or dark value depending on the `.dark` class (on
+    `<html>` for the global toggle, or on any ancestor to dark-lock a subtree).
+    Generated from `dashThemeColors` — do not hand-edit, run `pnpm generate:theme`.
+  */
+  /* BEGIN GENERATED DASH-THEME-REFS */
+  --color-dash-bg: var(--dash-bg);
+  --color-dash-surface: var(--dash-surface);
+  --color-dash-text: var(--dash-text);
+  --color-dash-muted: var(--dash-muted);
+  --color-dash-border: var(--dash-border);
+  --color-dash-accent: var(--dash-accent);
+  --color-dash-accent-text: var(--dash-accent-text);
+  --color-dash-success: var(--dash-success);
+  --color-dash-warning: var(--dash-warning);
+  --color-dash-error: var(--dash-error);
+  --color-dash-info: var(--dash-info);
+  /* END GENERATED DASH-THEME-REFS */
 
   --radius-DEFAULT: 0.125rem;
   --radius-lg: 0.25rem;
@@ -113,6 +128,44 @@
   --container-content: 90rem;
   /* END GENERATED CONTAINER */
 }
+
+/*
+  dash-* values: light (default, :root) and dark (.dark, any nesting level —
+  matches `<html class="dark">` for the global toggle and `<div class="dark">`
+  to dark-lock a subtree) for the DESIGN.md palette. Generated from
+  `dashThemeColors` in `src/lib/stylesVariables.ts` by
+  `scripts/generate-theme-css.ts` (`pnpm generate:theme`) — do not hand-edit the
+  block between the markers below. `pnpm test` fails if this block drifts.
+*/
+/* BEGIN GENERATED DASH-THEME-VALUES */
+:root {
+  --dash-bg: #F7F5F0;
+  --dash-surface: #FFFFFF;
+  --dash-text: #141414;
+  --dash-muted: #5C5851;
+  --dash-border: #E4E0D8;
+  --dash-accent: #C87D4A;
+  --dash-accent-text: #A85E2E;
+  --dash-success: #4A7C59;
+  --dash-warning: #C89B3C;
+  --dash-error: #B0473F;
+  --dash-info: #4A7290;
+}
+
+.dark {
+  --dash-bg: #141414;
+  --dash-surface: #1D1C1A;
+  --dash-text: #F7F5F0;
+  --dash-muted: #9C9890;
+  --dash-border: #322F2A;
+  --dash-accent: #C87D4A;
+  --dash-accent-text: #D69466;
+  --dash-success: #4A7C59;
+  --dash-warning: #C89B3C;
+  --dash-error: #B0473F;
+  --dash-info: #4A7290;
+}
+  /* END GENERATED DASH-THEME-VALUES */
 
 /*
   overflow-x: hidden fuerza overflow-y: auto en algunos navegadores cuando un eje
