@@ -4,6 +4,8 @@ import { useId, useState, type FormEvent } from "react";
 import type { Locale } from "@/lib/types";
 import { t } from "@/services/literals";
 
+import { useScrollReveal } from "@/components/portfolio/use-scroll-reveal";
+
 type Props = {
   locale: Locale;
 };
@@ -11,10 +13,10 @@ type Props = {
 type TabId = "general" | "project" | "work";
 
 const fieldClass =
-  "w-full rounded-xl border border-outline-variant/35 bg-surface-container-low px-4 py-3 text-sm text-on-surface placeholder:text-on-surface-variant/50 transition-colors focus:border-primary/45 focus:outline-none focus:ring-2 focus:ring-primary/25";
+  "w-full rounded-md border border-dash-border bg-dash-bg px-4 py-3 text-sm text-dash-text placeholder:text-dash-muted/60 transition-colors focus:border-dash-accent focus:outline-none focus:ring-2 focus:ring-dash-accent/25";
 
 const labelClass =
-  "mb-1.5 block font-label text-[10px] font-medium uppercase tracking-widest text-outline";
+  "mb-1.5 block font-dash-sans text-[10px] font-medium uppercase tracking-widest text-dash-muted";
 
 const SERVICE_KEYS = [
   "ui",
@@ -33,6 +35,7 @@ const TECH_KEYS = ["react", "next", "rn", "ts", "supabase", "node", "other"] as 
 
 export function ContactSection({ locale }: Props) {
   const baseId = useId();
+  const revealRef = useScrollReveal<HTMLDivElement>();
   const [tab, setTab] = useState<TabId>("general");
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
@@ -108,19 +111,20 @@ export function ContactSection({ locale }: Props) {
       className="mx-auto max-w-content scroll-mt-24 px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20"
       aria-labelledby={`${baseId}-heading`}
     >
+      <div ref={revealRef}>
       <div className="mb-8 max-w-2xl sm:mb-10">
-        <span className="mb-3 block font-label text-[10px] font-normal uppercase tracking-widest text-primary">
+        <span className="mb-3 block font-dash-sans text-[10px] font-normal uppercase tracking-widest text-dash-accent-text">
           {t(locale, "contact.eyebrow")}
         </span>
-        <h2 id={`${baseId}-heading`} className="font-headline text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">
+        <h2 id={`${baseId}-heading`} className="font-headline text-2xl font-bold tracking-tight text-dash-text sm:text-3xl lg:text-4xl">
           {t(locale, "contact.title")}
         </h2>
-        <p className="mt-3 text-sm leading-relaxed text-on-surface-variant sm:text-base">
+        <p className="mt-3 text-sm leading-relaxed text-dash-muted sm:text-base">
           {t(locale, "contact.subtitle")}
         </p>
       </div>
 
-      <div className="glass-card rounded-2xl border border-outline-variant/25 p-5 shadow-[0_0_48px_rgba(0,0,0,0.2)] sm:p-8 lg:p-10">
+      <div className="rounded-md border border-dash-border bg-dash-surface p-5 sm:p-8 lg:p-10">
         <div
           role="tablist"
           aria-label={t(locale, "contact.tabsListAria")}
@@ -167,14 +171,14 @@ export function ContactSection({ locale }: Props) {
                   setTab(item.id);
                   setDone(false);
                 }}
-                className={`flex flex-1 flex-col rounded-xl border px-4 py-3 text-left transition-all duration-300 sm:min-w-[min(100%,220px)] sm:flex-[1_1_200px] lg:max-w-sm ${
+                className={`flex flex-1 flex-col rounded-md border px-4 py-3 text-left transition-colors duration-200 sm:min-w-[min(100%,220px)] sm:flex-[1_1_200px] lg:max-w-sm ${
                   selected
-                    ? "border-primary/40 bg-surface-container-high shadow-[0_0_28px_color-mix(in_srgb,var(--color-primary-container)_12%,transparent)]"
-                    : "border-outline-variant/20 bg-surface-container-low/40 hover:border-outline-variant/40 hover:bg-surface-container-low"
+                    ? "border-dash-accent bg-dash-bg"
+                    : "border-dash-border hover:border-dash-accent/60"
                 }`}
               >
-                <span className="font-headline text-sm font-bold text-on-surface">{item.label}</span>
-                <span className="mt-1 text-xs leading-snug text-on-surface-variant">{item.desc}</span>
+                <span className="font-headline text-sm font-bold text-dash-text">{item.label}</span>
+                <span className="mt-1 text-xs leading-snug text-dash-muted">{item.desc}</span>
               </button>
             );
           })}
@@ -182,15 +186,15 @@ export function ContactSection({ locale }: Props) {
 
         {done ? (
           <div
-            className="rounded-xl border border-tertiary/30 bg-surface-container-low/80 px-4 py-6 sm:px-6"
+            className="rounded-md border border-dash-success/40 bg-dash-bg px-4 py-6 sm:px-6"
             role="status"
           >
-            <p className="font-headline text-lg font-bold text-primary">{t(locale, "contact.successTitle")}</p>
-            <p className="mt-2 text-sm text-on-surface-variant">{t(locale, "contact.successBody")}</p>
+            <p className="font-headline text-lg font-bold text-dash-success">{t(locale, "contact.successTitle")}</p>
+            <p className="mt-2 text-sm text-dash-muted">{t(locale, "contact.successBody")}</p>
             <button
               type="button"
               data-hover-label={t(locale, "contact.reset")}
-              className="mt-4 rounded-lg border border-outline-variant/35 px-4 py-2 font-headline text-sm font-semibold text-on-surface transition-colors hover:border-primary/40 hover:text-primary"
+              className="mt-4 rounded-md border border-dash-border px-4 py-2 font-headline text-sm font-semibold text-dash-text transition-colors hover:border-dash-accent hover:text-dash-accent-text"
               onClick={() => setDone(false)}
             >
               {t(locale, "contact.reset")}
@@ -295,7 +299,7 @@ export function ContactSection({ locale }: Props) {
                   type="submit"
                   disabled={busy}
                   data-hover-label={busy ? t(locale, "contact.submitting") : t(locale, "contact.submit")}
-                  className="signature-glow w-full rounded-xl px-6 py-3.5 font-headline text-sm font-bold text-on-primary-fixed shadow-[0_8px_28px_color-mix(in_srgb,var(--color-primary-container)_20%,transparent)] transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_12px_36px_color-mix(in_srgb,var(--color-primary-container)_35%,transparent)] disabled:opacity-60 sm:w-auto sm:min-w-[200px]"
+                  className="w-full rounded-md border-2 border-dash-accent bg-dash-accent px-6 py-3.5 font-headline text-sm font-bold text-dash-bg transition-opacity duration-200 hover:opacity-90 disabled:opacity-60 sm:w-auto sm:min-w-[200px]"
                 >
                   {busy ? t(locale, "contact.submitting") : t(locale, "contact.submit")}
                 </button>
@@ -455,20 +459,20 @@ export function ContactSection({ locale }: Props) {
               </div>
               <fieldset className="sm:col-span-2">
                 <legend className={`${labelClass} mb-3`}>{t(locale, "contact.field.services")}</legend>
-                <p className="mb-3 text-xs text-on-surface-variant">{t(locale, "contact.field.multiHint")}</p>
+                <p className="mb-3 text-xs text-dash-muted">{t(locale, "contact.field.multiHint")}</p>
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {SERVICE_KEYS.map((key) => (
                     <label
                       key={key}
-                      className="flex cursor-pointer items-start gap-3 rounded-lg border border-outline-variant/25 bg-surface-container-low/50 px-3 py-2.5 transition-colors hover:border-primary/30 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary/30"
+                      className="flex cursor-pointer items-start gap-3 rounded-md border border-dash-border px-3 py-2.5 transition-colors hover:border-dash-accent/60 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-dash-accent/40"
                     >
                       <input
                         type="checkbox"
                         checked={project.services.includes(key)}
                         onChange={() => toggleProjectService(key)}
-                        className="mt-0.5 size-4 shrink-0 rounded border-outline-variant text-primary-container focus:ring-primary/40"
+                        className="mt-0.5 size-4 shrink-0 rounded border-dash-border text-dash-accent focus:ring-dash-accent/40"
                       />
-                      <span className="text-sm text-on-surface">{t(locale, `contact.project.services.${key}`)}</span>
+                      <span className="text-sm text-dash-text">{t(locale, `contact.project.services.${key}`)}</span>
                     </label>
                   ))}
                 </div>
@@ -519,7 +523,7 @@ export function ContactSection({ locale }: Props) {
                 <label htmlFor={`${baseId}-p-desc`} className={labelClass}>
                   {t(locale, "contact.field.description")}
                 </label>
-                <p className="mb-2 text-xs text-on-surface-variant">{t(locale, "contact.field.descriptionHint")}</p>
+                <p className="mb-2 text-xs text-dash-muted">{t(locale, "contact.field.descriptionHint")}</p>
                 <textarea
                   id={`${baseId}-p-desc`}
                   name="description"
@@ -535,7 +539,7 @@ export function ContactSection({ locale }: Props) {
                   type="submit"
                   disabled={busy}
                   data-hover-label={busy ? t(locale, "contact.submitting") : t(locale, "contact.submit")}
-                  className="signature-glow w-full rounded-xl px-6 py-3.5 font-headline text-sm font-bold text-on-primary-fixed shadow-[0_8px_28px_color-mix(in_srgb,var(--color-primary-container)_20%,transparent)] transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_12px_36px_color-mix(in_srgb,var(--color-primary-container)_35%,transparent)] disabled:opacity-60 sm:w-auto sm:min-w-[200px]"
+                  className="w-full rounded-md border-2 border-dash-accent bg-dash-accent px-6 py-3.5 font-headline text-sm font-bold text-dash-bg transition-opacity duration-200 hover:opacity-90 disabled:opacity-60 sm:w-auto sm:min-w-[200px]"
                 >
                   {busy ? t(locale, "contact.submitting") : t(locale, "contact.submit")}
                 </button>
@@ -645,20 +649,20 @@ export function ContactSection({ locale }: Props) {
               </div>
               <fieldset className="sm:col-span-2">
                 <legend className={`${labelClass} mb-3`}>{t(locale, "contact.field.technologies")}</legend>
-                <p className="mb-3 text-xs text-on-surface-variant">{t(locale, "contact.field.technologiesHint")}</p>
+                <p className="mb-3 text-xs text-dash-muted">{t(locale, "contact.field.technologiesHint")}</p>
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                   {TECH_KEYS.map((key) => (
                     <label
                       key={key}
-                      className="flex cursor-pointer items-start gap-3 rounded-lg border border-outline-variant/25 bg-surface-container-low/50 px-3 py-2.5 transition-colors hover:border-primary/30 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary/30"
+                      className="flex cursor-pointer items-start gap-3 rounded-md border border-dash-border px-3 py-2.5 transition-colors hover:border-dash-accent/60 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-dash-accent/40"
                     >
                       <input
                         type="checkbox"
                         checked={work.tech.includes(key)}
                         onChange={() => toggleWorkTech(key)}
-                        className="mt-0.5 size-4 shrink-0 rounded border-outline-variant text-primary-container focus:ring-primary/40"
+                        className="mt-0.5 size-4 shrink-0 rounded border-dash-border text-dash-accent focus:ring-dash-accent/40"
                       />
-                      <span className="text-sm text-on-surface">{t(locale, `contact.work.tech.${key}`)}</span>
+                      <span className="text-sm text-dash-text">{t(locale, `contact.work.tech.${key}`)}</span>
                     </label>
                   ))}
                 </div>
@@ -708,7 +712,7 @@ export function ContactSection({ locale }: Props) {
                   type="submit"
                   disabled={busy}
                   data-hover-label={busy ? t(locale, "contact.submitting") : t(locale, "contact.submit")}
-                  className="signature-glow w-full rounded-xl px-6 py-3.5 font-headline text-sm font-bold text-on-primary-fixed shadow-[0_8px_28px_color-mix(in_srgb,var(--color-primary-container)_20%,transparent)] transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_12px_36px_color-mix(in_srgb,var(--color-primary-container)_35%,transparent)] disabled:opacity-60 sm:w-auto sm:min-w-[200px]"
+                  className="w-full rounded-md border-2 border-dash-accent bg-dash-accent px-6 py-3.5 font-headline text-sm font-bold text-dash-bg transition-opacity duration-200 hover:opacity-90 disabled:opacity-60 sm:w-auto sm:min-w-[200px]"
                 >
                   {busy ? t(locale, "contact.submitting") : t(locale, "contact.submit")}
                 </button>
@@ -717,6 +721,7 @@ export function ContactSection({ locale }: Props) {
           </div>
         </div>
       </div>
+    </div>
     </section>
   );
 }

@@ -4,7 +4,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { Menu, Terminal, X } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { useEffect, useId, useRef, useState } from "react";
+import { Suspense, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { LanguageSwitcher } from "@/components/nav/language-switcher";
@@ -145,7 +145,9 @@ export function SiteHeaderClient({
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <LanguageSwitcher locale={locale} />
+          <Suspense fallback={null}>
+            <LanguageSwitcher locale={locale} />
+          </Suspense>
           <ThemeToggle locale={locale} />
           <div className="hidden md:block">
             <NavProfileControl
@@ -223,7 +225,9 @@ export function SiteHeaderClient({
                 >
                   <div className="flex flex-col gap-1">
                     <div className="mb-1 flex items-center justify-center gap-2">
-                      <LanguageSwitcher locale={locale} />
+                      <Suspense fallback={null}>
+                        <LanguageSwitcher locale={locale} />
+                      </Suspense>
                       <ThemeToggle locale={locale} />
                     </div>
                     <NavProfileControl

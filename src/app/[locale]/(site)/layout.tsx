@@ -11,10 +11,10 @@ export default async function SiteLayout({ children, params }: SiteLayoutProps) 
   const locale = resolveLocaleParam((await params).locale);
 
   return (
-    <>
+    <div className="flex min-h-full flex-col bg-dash-bg text-dash-text">
       <SiteHeader locale={locale} />
       {children}
       <SiteFooter locale={locale} />
-    </>
+    </div>
   );
 }
