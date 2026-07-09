@@ -8,3 +8,7 @@ WS2: complete (commit 3bf3b91, home hero 2-CTA + 7 sections dash-* + useScrollRe
   Notes: services-summary-section appears orphaned/unrouted (WS7 remove?); pre-existing hardcoded hex in contact-form select arrow; foro NOT in (site) so won't inherit the layout bg fix (WS5 handles foro bg).
 Strategy: keep 4b on branch until all WS done, then merge once (coherent site).
 Next: WS3 (sobre-mi + services). BASE = 3bf3b91.
+
+WS3: complete (commit 3e5b99c, sobre-mi + services reskin + services-page-content client component). Subagent STALLED on degraded-disk preview; orchestrator verified (tsc clean, anti-Material grep clean) + committed. jest deferred to background (slow disk).
+ENV NOTE: severe disk I/O degradation (fs bench 4061ms, dev server 3.6min) — stalling subagents on preview verification. ADAPTATION: remaining WS (blog/foro/auth/cleanup) verify via tsc+test+grep+code-review, NO dev-server; orchestrator does batched visual pass later.
+Next: WS4 (blog). BASE = 3e5b99c.
