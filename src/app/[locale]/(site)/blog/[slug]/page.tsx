@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { BlogArticleReveal } from "@/components/blog/blog-article-reveal";
 import { BlogMarkdown } from "@/components/blog/blog-markdown";
 import { BlogPostCard } from "@/components/blog/blog-post-card";
 import { BlogTagChips } from "@/components/blog/blog-tag-chips";
@@ -92,20 +93,20 @@ export default async function BlogArticlePage(props: PageProps) {
   return (
     <main id="main" className="mx-auto w-full max-w-content px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
       <article className="mx-auto max-w-3xl">
-        <nav aria-label={t(locale, "blog.ui.backToIndex")} className="font-label text-[10px] uppercase tracking-widest text-outline">
-          <Link href={localizedHref(locale, "/blog")} className="text-primary hover:underline">
+        <nav aria-label={t(locale, "blog.ui.backToIndex")} className="font-dash-sans text-[10px] uppercase tracking-widest text-dash-muted">
+          <Link href={localizedHref(locale, "/blog")} className="text-dash-accent-text hover:underline">
             {t(locale, "blog.ui.backToIndex")}
           </Link>
-          <span aria-hidden className="mx-2 text-outline-variant">
+          <span aria-hidden className="mx-2 text-dash-border">
             /
           </span>
-          <span className="text-on-surface-variant">{post.slug}</span>
+          <span className="text-dash-muted">{post.slug}</span>
         </nav>
-        <header className="mt-6 border-b border-outline-variant/20 pb-8">
-          <p className="font-label text-[10px] uppercase tracking-widest text-outline">{t(locale, "blog.ui.articleLabel")}</p>
-          <h1 className="mt-2 font-headline text-3xl font-bold tracking-tight text-on-surface sm:text-4xl">{post.title}</h1>
-          {post.excerpt ? <p className="mt-4 text-lg text-on-surface-variant">{post.excerpt}</p> : null}
-          <time className="mt-4 block text-sm text-outline" dateTime={post.publishedAt ?? undefined}>
+        <header className="mt-6 border-b border-dash-border pb-8">
+          <p className="font-dash-sans text-[10px] uppercase tracking-widest text-dash-muted">{t(locale, "blog.ui.articleLabel")}</p>
+          <h1 className="mt-2 font-headline text-3xl font-bold tracking-tight text-dash-text sm:text-4xl">{post.title}</h1>
+          {post.excerpt ? <p className="mt-4 font-body text-lg leading-relaxed text-dash-muted">{post.excerpt}</p> : null}
+          <time className="mt-4 block text-sm text-dash-muted" dateTime={post.publishedAt ?? undefined}>
             {formatPublished(post.publishedAt, locale)}
           </time>
           <BlogTagChips tags={post.tags} />
@@ -115,14 +116,14 @@ export default async function BlogArticlePage(props: PageProps) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
           suppressHydrationWarning
         />
-        <div className="pt-10">
+        <BlogArticleReveal className="pt-10">
           <BlogMarkdown markdown={post.bodyMd} />
-        </div>
+        </BlogArticleReveal>
       </article>
 
       {relatedPosts.length > 0 ? (
-        <section aria-labelledby="related-posts" className="mx-auto mt-16 max-w-3xl border-t border-outline-variant/20 pt-10">
-          <h2 id="related-posts" className="font-headline text-xl font-bold text-on-surface">
+        <section aria-labelledby="related-posts" className="mx-auto mt-16 max-w-3xl border-t border-dash-border pt-10">
+          <h2 id="related-posts" className="font-headline text-xl font-bold text-dash-text">
             {t(locale, "blog.ui.relatedPostsTitle")}
           </h2>
           <div className="mt-6 grid gap-6">
