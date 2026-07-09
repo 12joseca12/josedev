@@ -12,3 +12,7 @@ Next: WS3 (sobre-mi + services). BASE = 3bf3b91.
 WS3: complete (commit 3e5b99c, sobre-mi + services reskin + services-page-content client component). Subagent STALLED on degraded-disk preview; orchestrator verified (tsc clean, anti-Material grep clean) + committed. jest deferred to background (slow disk).
 ENV NOTE: severe disk I/O degradation (fs bench 4061ms, dev server 3.6min) — stalling subagents on preview verification. ADAPTATION: remaining WS (blog/foro/auth/cleanup) verify via tsc+test+grep+code-review, NO dev-server; orchestrator does batched visual pass later.
 Next: WS4 (blog). BASE = 3e5b99c.
+
+Regression jest (post-WS3): 139/139 pass, 17 suites (608s slow disk). No regression.
+WS4: complete (commit 3d60e6f, blog reskin — list/article/not-found + card/tags/markdown + blog-list-reveal/blog-article-reveal reusing useScrollReveal). tsc + anti-Material grep clean (broad). No-dev-server mode worked (no stall).
+Next: WS5 (foro + fix /foro/new LAN-fetch blocker + foro bg since NOT in (site)). BASE = 3d60e6f.
