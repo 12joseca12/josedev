@@ -22,3 +22,7 @@ Next: WS6 (auth + perfil + terminal widget). BASE = ff8d0eb.
 
 WS6: complete (commit 23771e2, auth cyber-grid dropped + /auth bg + perfil + terminal dark-locked keeping character, 9 terminal files migrated). tsc + anti-Material grep clean. Fixed pre-existing auth mobile-h1 a11y bug.
 ALL CONTENT WS (1-6) DONE. Next: WS7 cleanup (retire unused Material palette + cyan effects, keep terminal/device/chrome tokens) + visual pass + merge.
+
+WS7 Part A: complete (staff-auth login/onboarding + scroll-progress + root skip-link migrated to dash-*; subagent stalled on disk, orchestrator finished). WHOLE SITE = 0 Material-semantic refs (grep-verified). staff-auth dark-locked (dark wrapper).
+WS7 Part B DEFERRED: remove dead Material token DEFS from stylesVariables.ts + cyan effects from getGlobalUiCss() — do when disk healthy (needs build+visual; removing defs risks silent Tailwind class break uncatchable by tsc/test). Harmless dead code meanwhile.
+4b content + migration COMPLETE. Remaining: visual pass (disk-blocked) + Part B (deferred) + merge to main.
