@@ -16,3 +16,6 @@ Next: WS4 (blog). BASE = 3e5b99c.
 Regression jest (post-WS3): 139/139 pass, 17 suites (608s slow disk). No regression.
 WS4: complete (commit 3d60e6f, blog reskin — list/article/not-found + card/tags/markdown + blog-list-reveal/blog-article-reveal reusing useScrollReveal). tsc + anti-Material grep clean (broad). No-dev-server mode worked (no stall).
 Next: WS5 (foro + fix /foro/new LAN-fetch blocker + foro bg since NOT in (site)). BASE = 3d60e6f.
+
+WS5: complete (commit ff8d0eb, foro reskin + bg fix + force-dynamic on 5 foro routes + useScrollReveal). tsc + anti-Material grep clean. Build unverified (disk). Flagged pre-existing a11y aria-label bug via spawn_task chip.
+Next: WS6 (auth + perfil + terminal widget). BASE = ff8d0eb.
