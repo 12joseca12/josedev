@@ -11,12 +11,12 @@ export function TerminalChatHeader({
   onGreen,
 }: TerminalChatTrafficLightsProps) {
   return (
-    <header className="flex shrink-0 items-center gap-3 border-b border-outline-variant/25 px-3 py-2.5 sm:px-4">
+    <header className="flex shrink-0 items-center gap-3 border-b border-dash-border px-3 py-2.5 sm:px-4">
       <TerminalChatTrafficLights locale={locale} viewMode={viewMode} onClose={onClose} onYellow={onYellow} onGreen={onGreen} />
-      <p className="min-w-0 flex-1 truncate font-mono text-[10px] font-medium uppercase tracking-wide text-on-surface sm:text-xs">
+      <p className="min-w-0 flex-1 truncate font-mono text-[10px] font-medium uppercase tracking-wide text-dash-text sm:text-xs">
         {t(locale, "terminalChat.headerTitle")}
       </p>
-      <span className="hidden shrink-0 font-mono text-[9px] text-primary/80 sm:inline">
+      <span className="hidden shrink-0 font-mono text-[9px] text-dash-accent-text/80 sm:inline">
         {t(locale, "terminalChat.headerConnection")}
       </span>
     </header>

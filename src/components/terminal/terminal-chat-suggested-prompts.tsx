@@ -18,7 +18,7 @@ export function TerminalChatSuggestedPrompts({ locale, onSelect, disabled }: Pro
           type="button"
           disabled={disabled}
           onClick={() => onSelect(prompt)}
-          className="rounded-full border border-outline-variant/35 bg-surface-container-lowest/80 px-3 py-1.5 font-mono text-[10px] text-on-surface-variant transition-colors hover:border-primary/45 hover:text-primary disabled:opacity-40"
+          className="rounded-full border border-dash-border bg-terminal-panel px-3 py-1.5 font-mono text-[10px] text-dash-muted transition-colors hover:border-dash-accent/45 hover:text-dash-accent-text disabled:opacity-40"
         >
           {prompt}
         </button>

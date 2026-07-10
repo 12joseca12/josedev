@@ -25,15 +25,15 @@ export function TerminalChatMeetingPicker({ locale, busy, onSubmit }: Props) {
   return (
     <form
       onSubmit={onFormSubmit}
-      className="mt-3 rounded-lg border border-outline-variant/30 bg-surface-container-low/80 p-3"
+      className="mt-3 rounded-lg border border-dash-border bg-terminal-panel p-3"
       aria-label={t(locale, "terminalChat.meetingFormAria")}
     >
-      <p className="font-label text-[10px] uppercase tracking-widest text-primary">
+      <p className="font-label text-[10px] uppercase tracking-widest text-dash-accent-text">
         {t(locale, "terminalChat.meetingTitle")}
       </p>
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
         <div>
-          <label htmlFor={`${baseId}-date`} className="font-label text-[10px] uppercase tracking-widest text-outline">
+          <label htmlFor={`${baseId}-date`} className="font-label text-[10px] uppercase tracking-widest text-dash-muted">
             {t(locale, "terminalChat.meetingDate")}
           </label>
           <input
@@ -42,11 +42,11 @@ export function TerminalChatMeetingPicker({ locale, busy, onSubmit }: Props) {
             required
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="mt-1 w-full rounded-md border border-outline-variant/35 bg-surface-container-lowest px-2 py-2 font-mono text-xs text-on-surface"
+            className="mt-1 w-full rounded-md border border-dash-border bg-dash-bg px-2 py-2 font-mono text-xs text-dash-text"
           />
         </div>
         <div>
-          <label htmlFor={`${baseId}-time`} className="font-label text-[10px] uppercase tracking-widest text-outline">
+          <label htmlFor={`${baseId}-time`} className="font-label text-[10px] uppercase tracking-widest text-dash-muted">
             {t(locale, "terminalChat.meetingTime")}
           </label>
           <input
@@ -55,14 +55,14 @@ export function TerminalChatMeetingPicker({ locale, busy, onSubmit }: Props) {
             required
             value={time}
             onChange={(e) => setTime(e.target.value)}
-            className="mt-1 w-full rounded-md border border-outline-variant/35 bg-surface-container-lowest px-2 py-2 font-mono text-xs text-on-surface"
+            className="mt-1 w-full rounded-md border border-dash-border bg-dash-bg px-2 py-2 font-mono text-xs text-dash-text"
           />
         </div>
       </div>
       <button
         type="submit"
         disabled={busy || !date || !time}
-        className="mt-3 w-full rounded-md border border-primary/40 bg-primary/15 px-3 py-2 font-headline text-[10px] font-bold uppercase tracking-wide text-primary transition-opacity hover:bg-primary/25 disabled:opacity-50"
+        className="mt-3 w-full rounded-md border border-dash-accent/40 bg-dash-accent/15 px-3 py-2 font-headline text-[10px] font-bold uppercase tracking-wide text-dash-accent-text transition-opacity hover:bg-dash-accent/25 disabled:opacity-50"
       >
         {busy ? t(locale, "terminalChat.meetingSubmitting") : t(locale, "terminalChat.meetingSubmit")}
       </button>
