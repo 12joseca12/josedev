@@ -65,7 +65,7 @@ export default async function RootLayout({ children, params }: LayoutProps) {
         <EmulatorWarmupClient />
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-skip-link focus:rounded-xl focus:border focus:border-primary/40 focus:bg-surface-container-low focus:px-4 focus:py-2 focus:font-headline focus:text-sm focus:font-semibold focus:text-on-surface focus:shadow-[0_0_32px_color-mix(in_srgb,var(--color-primary-container)_18%,transparent)]"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-skip-link focus:rounded-md focus:border focus:border-dash-accent/40 focus:bg-dash-surface focus:px-4 focus:py-2 focus:font-headline focus:text-sm focus:font-semibold focus:text-dash-text focus:shadow-[0_0_24px_color-mix(in_srgb,var(--color-dash-accent)_18%,transparent)]"
         >
           {t(locale, "nav.skipToContent")}
         </a>
