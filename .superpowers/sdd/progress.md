@@ -19,3 +19,6 @@ Next: WS5 (foro + fix /foro/new LAN-fetch blocker + foro bg since NOT in (site))
 
 WS5: complete (commit ff8d0eb, foro reskin + bg fix + force-dynamic on 5 foro routes + useScrollReveal). tsc + anti-Material grep clean. Build unverified (disk). Flagged pre-existing a11y aria-label bug via spawn_task chip.
 Next: WS6 (auth + perfil + terminal widget). BASE = ff8d0eb.
+
+WS6: complete (commit 23771e2, auth cyber-grid dropped + /auth bg + perfil + terminal dark-locked keeping character, 9 terminal files migrated). tsc + anti-Material grep clean. Fixed pre-existing auth mobile-h1 a11y bug.
+ALL CONTENT WS (1-6) DONE. Next: WS7 cleanup (retire unused Material palette + cyan effects, keep terminal/device/chrome tokens) + visual pass + merge.
