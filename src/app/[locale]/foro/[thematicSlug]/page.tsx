@@ -1,15 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { ForumEntriesListReveal } from "@/components/forum/forum-entries-list-reveal";
 import { localizedHref, resolveLocaleParam, t } from "@/services/literals";
 import {
-  forumEntryTitle,
   forumFetchEntries,
   forumFetchThematics,
   forumIsApiConfigured,
   forumThematicDescription,
   forumThematicTitle,
 } from "@/services/forum-api";
+
+// DESIGN.md / build fix: fetchea thematics+entries en request-time (ver
+// forum-api.ts). Forzar dynamic evita que el export estático de `next build`
+// dispare ese fetch en build-time.
+export const dynamic = "force-dynamic";
 
 type PageProps = {
   params: Promise<{ locale: string; thematicSlug: string }>;
@@ -37,7 +42,7 @@ export default async function ForumThematicPage({ params }: PageProps) {
 
   if (!forumIsApiConfigured()) {
     return (
-      <div className="rounded-xl border border-outline-variant/30 bg-surface-container-low/50 p-6 text-sm text-on-surface-variant">
+      <div className="rounded-md border border-dash-border bg-dash-surface p-6 text-sm text-dash-muted">
         {t(locale, "forum.ui.apiUnavailable")}
       </div>
     );
@@ -49,7 +54,7 @@ export default async function ForumThematicPage({ params }: PageProps) {
 
   if (!thematic || !entries) {
     return (
-      <div className="rounded-xl border border-outline-variant/30 bg-surface-container-low/50 p-6 text-sm text-on-surface-variant">
+      <div className="rounded-md border border-dash-border bg-dash-surface p-6 text-sm text-dash-muted">
         {t(locale, "forum.ui.thematicNotFound")}
       </div>
     );
@@ -58,52 +63,25 @@ export default async function ForumThematicPage({ params }: PageProps) {
   return (
     <div className="min-w-0 space-y-8">
       <header className="space-y-2">
-        <nav className="font-label text-[10px] uppercase tracking-widest text-outline">
-          <Link href={localizedHref(locale, "/foro")} className="text-primary hover:underline">
+        <nav className="font-dash-sans text-[10px] uppercase tracking-widest text-dash-muted">
+          <Link href={localizedHref(locale, "/foro")} className="text-dash-accent-text hover:underline">
             {t(locale, "forum.ui.breadcrumbForum")}
           </Link>
-          <span aria-hidden className="mx-2 text-outline-variant">
+          <span aria-hidden className="mx-2 text-dash-border">
             /
           </span>
-          <span className="text-on-surface-variant">{thematicSlug}</span>
+          <span className="text-dash-muted">{thematicSlug}</span>
         </nav>
-        <h1 className="font-headline text-2xl font-bold tracking-tight text-on-surface sm:text-3xl">
+        <h1 className="font-headline text-2xl font-bold tracking-tight text-dash-text sm:text-3xl">
           {forumThematicTitle(thematic, (key) => t(locale, key))}
         </h1>
         {(() => {
           const desc = forumThematicDescription(thematic, (key) => t(locale, key));
-          return desc ? <p className="max-w-2xl text-sm text-on-surface-variant">{desc}</p> : null;
+          return desc ? <p className="max-w-2xl text-sm text-dash-muted">{desc}</p> : null;
         })()}
       </header>
 
-      <section aria-labelledby={`entries-${thematicSlug}`} className="space-y-4">
-        <h2 id={`entries-${thematicSlug}`} className="font-headline text-lg font-bold text-on-surface">
-          {t(locale, "forum.ui.entriesListHeading")}
-        </h2>
-        {entries.length === 0 ? (
-          <p className="rounded-xl border border-outline-variant/25 bg-surface-container-low/40 p-6 text-sm text-on-surface-variant">
-            {t(locale, "forum.ui.emptyThematic")}
-          </p>
-        ) : (
-          <ul className="space-y-3">
-            {entries.map((e) => (
-              <li key={e.id}>
-                <Link
-                  href={localizedHref(locale, `/foro/${e.thematicSlug}/${e.slug}`)}
-                  className="block rounded-xl border border-outline-variant/25 bg-surface-container-low/40 p-4 transition-colors hover:border-primary/35 hover:bg-surface-container-low/70"
-                >
-                  <span className="font-headline text-base font-semibold text-on-surface">
-                    {forumEntryTitle(e, (key) => t(locale, key))}
-                  </span>
-                  <span className="mt-1 block text-xs text-on-surface-variant">
-                    {e.commentCount} · {e.likeCount} · {e.usefulCount}
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+      <ForumEntriesListReveal thematicSlug={thematicSlug} entries={entries} locale={locale} />
     </div>
   );
 }

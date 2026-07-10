@@ -17,6 +17,7 @@ import {
 import { localizedHref, t } from "@/services/literals";
 import { buildAuthHref } from "@/lib/auth-return-path";
 import { forumAuthorLine } from "@/lib/forum-author-display";
+import { useScrollReveal } from "@/components/portfolio/use-scroll-reveal";
 import { ForumAsideBranches } from "./forum-aside-branches";
 import { ForumAsideParticipants } from "./forum-aside-participants";
 import { ForumSegmentsDisplay } from "./forum-segments-display";
@@ -35,6 +36,7 @@ function authNextPath(thematicSlug: string, entrySlug: string): string {
 export function ForumThreadView({ locale, thematicSlug, entrySlug, initialDetail }: Props) {
   const router = useRouter();
   const baseId = useId();
+  const commentsRevealRef = useScrollReveal<HTMLElement>();
   const [detail, setDetail] = useState<ForumEntryDetailDTO | null>(initialDetail);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [composer, setComposer] = useState<ForumSegment[]>([{ type: "text", content: "" }]);
@@ -223,7 +225,7 @@ export function ForumThreadView({ locale, thematicSlug, entrySlug, initialDetail
 
   if (!detail) {
     return (
-      <p className="rounded-xl border border-outline-variant/30 bg-surface-container-low/50 p-6 text-on-surface-variant">
+      <p className="rounded-md border border-dash-border bg-dash-surface p-6 text-dash-muted">
         {t(locale, "forum.ui.threadNotFound")}
       </p>
     );
@@ -236,35 +238,35 @@ export function ForumThreadView({ locale, thematicSlug, entrySlug, initialDetail
   return (
     <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
       <div className="min-w-0 flex-1 space-y-8">
-        <nav className="font-label text-[10px] uppercase tracking-widest text-outline">
-          <Link href={localizedHref(locale, "/foro")} className="text-primary hover:underline">
+        <nav className="font-dash-sans text-[10px] uppercase tracking-widest text-dash-muted">
+          <Link href={localizedHref(locale, "/foro")} className="text-dash-accent-text hover:underline">
             {t(locale, "forum.ui.breadcrumbForum")}
           </Link>
-          <span aria-hidden className="mx-2 text-outline-variant">
+          <span aria-hidden className="mx-2 text-dash-border">
             /
           </span>
-          <Link href={localizedHref(locale, `/foro/${thematicSlug}`)} className="text-primary hover:underline">
+          <Link href={localizedHref(locale, `/foro/${thematicSlug}`)} className="text-dash-accent-text hover:underline">
             {thematicSlug}
           </Link>
-          <span aria-hidden className="mx-2 text-outline-variant">
+          <span aria-hidden className="mx-2 text-dash-border">
             /
           </span>
-          <span className="text-on-surface-variant">{entrySlug}</span>
+          <span className="text-dash-muted">{entrySlug}</span>
         </nav>
 
         <header className="space-y-2">
-          <h1 className="font-headline text-2xl font-bold tracking-tight text-on-surface sm:text-3xl">
+          <h1 className="font-headline text-2xl font-bold tracking-tight text-dash-text sm:text-3xl">
             {forumEntryTitle(detail.entry, (key) => t(locale, key))}
           </h1>
           {seed ? (
-            <p className="text-xs text-on-surface-variant">
+            <p className="text-xs text-dash-muted">
               {forumAuthorLine(locale, seed)} · {t(locale, "forum.ui.threadOpened")}
             </p>
           ) : null}
         </header>
 
         {seed ? (
-          <article className="rounded-2xl border border-primary/35 bg-surface-container-low/60 p-5 shadow-[0_0_40px_color-mix(in_srgb,var(--color-primary-container)_8%,transparent)]">
+          <article className="rounded-md border border-dash-accent/35 bg-dash-surface p-5">
             <ForumSegmentsDisplay segments={seed.segments} />
             <CommentToolbar
               locale={locale}
@@ -289,13 +291,13 @@ export function ForumThreadView({ locale, thematicSlug, entrySlug, initialDetail
 
         {detail.usefulHighlights.length > 0 ? (
           <section aria-labelledby={`${baseId}-useful`} className="space-y-3">
-            <h2 id={`${baseId}-useful`} className="flex items-center gap-2 font-headline text-sm font-bold text-tertiary">
+            <h2 id={`${baseId}-useful`} className="flex items-center gap-2 font-headline text-sm font-bold text-dash-accent-text">
               <Sparkles className="size-4" aria-hidden />
               {t(locale, "forum.ui.usefulSectionTitle")}
             </h2>
             <ul className="space-y-3">
               {detail.usefulHighlights.map((c) => (
-                <li key={`useful-${c.id}`} className="rounded-xl border border-tertiary/25 bg-surface-container-low/50 p-4">
+                <li key={`useful-${c.id}`} className="rounded-md border border-dash-accent/25 bg-dash-surface p-4">
                   <ForumSegmentsDisplay segments={c.segments} />
                 </li>
               ))}
@@ -303,13 +305,13 @@ export function ForumThreadView({ locale, thematicSlug, entrySlug, initialDetail
           </section>
         ) : null}
 
-        <section aria-label={t(locale, "forum.ui.navThematics")} className="space-y-4">
+        <section ref={commentsRevealRef} aria-label={t(locale, "forum.ui.navThematics")} className="space-y-4">
           {others.map((c) => (
-            <article key={c.id} className="rounded-xl border border-outline-variant/25 bg-surface-container-low/40 p-4">
-              <div className="mb-2 flex flex-wrap items-center gap-2 text-xs text-on-surface-variant">
-                <span className="font-medium text-on-surface">{forumAuthorLine(locale, c)}</span>
+            <article key={c.id} className="rounded-md border border-dash-border bg-dash-surface p-4">
+              <div className="mb-2 flex flex-wrap items-center gap-2 text-xs text-dash-muted">
+                <span className="font-medium text-dash-text">{forumAuthorLine(locale, c)}</span>
                 {c.usefulCount > 0 ? (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-tertiary/15 px-2 py-0.5 font-label text-[9px] uppercase tracking-wide text-tertiary">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-dash-accent/15 px-2 py-0.5 font-dash-sans text-[9px] uppercase tracking-wide text-dash-accent-text">
                     <Sparkles className="size-3" aria-hidden />
                     {t(locale, "forum.ui.useful")}
                   </span>
@@ -347,15 +349,15 @@ export function ForumThreadView({ locale, thematicSlug, entrySlug, initialDetail
           ))}
         </section>
 
-        <section className="rounded-xl border border-outline-variant/25 bg-surface-container-low/30 p-4">
-          <h2 className="mb-3 font-headline text-sm font-bold text-on-surface">{t(locale, "forum.ui.composerSectionTitle")}</h2>
+        <section className="rounded-md border border-dash-border bg-dash-surface p-4">
+          <h2 className="mb-3 font-headline text-sm font-bold text-dash-text">{t(locale, "forum.ui.composerSectionTitle")}</h2>
           {actionError ? (
-            <p className="mb-2 rounded-lg border border-error/40 bg-error/10 px-3 py-2 text-xs text-error" role="alert">
+            <p className="mb-2 rounded-md border border-dash-error/40 bg-dash-error/10 px-3 py-2 text-xs text-dash-error" role="alert">
               {actionError}
             </p>
           ) : null}
           {replyTo ? (
-            <p className="mb-2 text-xs text-on-surface-variant">
+            <p className="mb-2 text-xs text-dash-muted">
               {t(locale, "forum.ui.reply")} · id {replyTo.slice(0, 8)}…
             </p>
           ) : null}
@@ -364,7 +366,7 @@ export function ForumThreadView({ locale, thematicSlug, entrySlug, initialDetail
               seg.type === "text" ? (
                 <textarea
                   key={idx}
-                  className="min-h-[100px] w-full rounded-lg border border-outline-variant/35 bg-surface-container-lowest px-3 py-2 text-sm text-on-surface"
+                  className="min-h-[100px] w-full rounded-md border border-dash-border bg-dash-bg px-3 py-2 text-sm text-dash-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dash-accent"
                   value={seg.content}
                   onChange={(e) => {
                     const next = [...composer];
@@ -376,7 +378,7 @@ export function ForumThreadView({ locale, thematicSlug, entrySlug, initialDetail
               ) : (
                 <textarea
                   key={idx}
-                  className="min-h-[80px] w-full rounded-lg border border-primary/30 bg-forum-composer-surface px-3 py-2 font-mono text-xs text-on-surface"
+                  className="min-h-[80px] w-full rounded-md border border-dash-accent/30 bg-dash-bg px-3 py-2 font-dash-mono text-xs text-dash-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dash-accent"
                   value={seg.content}
                   onChange={(e) => {
                     const next = [...composer];
@@ -391,14 +393,14 @@ export function ForumThreadView({ locale, thematicSlug, entrySlug, initialDetail
           <div className="mt-2 flex flex-wrap gap-2">
             <button
               type="button"
-              className="rounded-lg border border-outline-variant/40 px-3 py-1.5 text-xs font-semibold text-on-surface-variant hover:border-primary/40"
+              className="rounded-md border border-dash-border px-3 py-1.5 text-xs font-semibold text-dash-muted hover:border-dash-accent/50 hover:text-dash-accent-text"
               onClick={() => setComposer((s) => [...s, { type: "code", content: "", language: "txt" }])}
             >
               {t(locale, "forum.ui.addCodeBlock")}
             </button>
             <button
               type="button"
-              className="signature-glow rounded-lg px-4 py-2 text-xs font-bold uppercase tracking-wide text-on-primary-fixed"
+              className="rounded-md bg-dash-accent px-4 py-2 text-xs font-bold uppercase tracking-wide text-dash-bg transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dash-accent disabled:opacity-50"
               onClick={() => void onSubmitComment()}
               disabled={busyId === "composer"}
             >
@@ -414,14 +416,14 @@ export function ForumThreadView({ locale, thematicSlug, entrySlug, initialDetail
       </aside>
 
       {editing ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" role="dialog" aria-modal>
-          <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl border border-outline-variant/30 bg-surface-container-low p-4">
-            <h3 className="mb-3 font-headline text-lg font-bold">{t(locale, "forum.ui.edit")}</h3>
+        <div className="fixed inset-0 z-forum-modal-overlay flex items-center justify-center bg-black/60 p-4" role="dialog" aria-modal>
+          <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-md border border-dash-border bg-dash-surface p-4">
+            <h3 className="mb-3 font-headline text-lg font-bold text-dash-text">{t(locale, "forum.ui.edit")}</h3>
             {editing.segments.map((seg, idx) =>
               seg.type === "text" ? (
                 <textarea
                   key={idx}
-                  className="mb-2 min-h-[120px] w-full rounded-lg border border-outline-variant/35 bg-surface-container-lowest px-3 py-2 text-sm"
+                  className="mb-2 min-h-[120px] w-full rounded-md border border-dash-border bg-dash-bg px-3 py-2 text-sm text-dash-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dash-accent"
                   value={seg.content}
                   onChange={(e) => {
                     const next = [...editing.segments];
@@ -432,7 +434,7 @@ export function ForumThreadView({ locale, thematicSlug, entrySlug, initialDetail
               ) : (
                 <textarea
                   key={idx}
-                  className="mb-2 min-h-[100px] w-full rounded-lg border border-primary/30 bg-forum-composer-surface px-3 py-2 font-mono text-xs"
+                  className="mb-2 min-h-[100px] w-full rounded-md border border-dash-accent/30 bg-dash-bg px-3 py-2 font-dash-mono text-xs text-dash-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dash-accent"
                   value={seg.content}
                   onChange={(e) => {
                     const next = [...editing.segments];
@@ -443,10 +445,10 @@ export function ForumThreadView({ locale, thematicSlug, entrySlug, initialDetail
               ),
             )}
             <div className="mt-3 flex gap-2">
-              <button type="button" className="rounded-lg bg-primary px-4 py-2 text-xs font-bold text-on-primary-fixed" onClick={() => void onSaveEdit()}>
+              <button type="button" className="rounded-md bg-dash-accent px-4 py-2 text-xs font-bold text-dash-bg hover:opacity-90" onClick={() => void onSaveEdit()}>
                 {t(locale, "forum.ui.save")}
               </button>
-              <button type="button" className="rounded-lg border border-outline-variant px-4 py-2 text-xs" onClick={() => setEditing(null)}>
+              <button type="button" className="rounded-md border border-dash-border px-4 py-2 text-xs text-dash-muted hover:text-dash-text" onClick={() => setEditing(null)}>
                 {t(locale, "forum.ui.cancel")}
               </button>
             </div>
@@ -461,20 +463,20 @@ export function ForumThreadView({ locale, thematicSlug, entrySlug, initialDetail
           aria-modal="true"
           aria-labelledby={`${baseId}-del-title`}
         >
-          <div className="w-full max-w-md rounded-xl border border-outline-variant/30 bg-surface-container-low p-4 shadow-lg">
-            <h3 id={`${baseId}-del-title`} className="mb-2 font-headline text-lg font-bold text-on-surface">
+          <div className="w-full max-w-md rounded-md border border-dash-border bg-dash-surface p-4 shadow-lg">
+            <h3 id={`${baseId}-del-title`} className="mb-2 font-headline text-lg font-bold text-dash-text">
               {t(locale, "forum.ui.deleteConfirmTitle")}
             </h3>
-            <p className="mb-4 text-sm text-on-surface-variant">{t(locale, "forum.ui.deleteConfirmBody")}</p>
+            <p className="mb-4 text-sm text-dash-muted">{t(locale, "forum.ui.deleteConfirmBody")}</p>
             <div className="flex flex-wrap gap-2">
               <button
                 type="button"
-                className="rounded-lg bg-error/90 px-4 py-2 text-xs font-bold text-on-error-container"
+                className="rounded-md bg-dash-error px-4 py-2 text-xs font-bold text-dash-bg hover:opacity-90"
                 onClick={() => void executeDelete(pendingDeleteId)}
               >
                 {t(locale, "forum.ui.deleteConfirmSubmit")}
               </button>
-              <button type="button" className="rounded-lg border border-outline-variant px-4 py-2 text-xs" onClick={() => setPendingDeleteId(null)}>
+              <button type="button" className="rounded-md border border-dash-border px-4 py-2 text-xs text-dash-muted hover:text-dash-text" onClick={() => setPendingDeleteId(null)}>
                 {t(locale, "forum.ui.deleteConfirmCancel")}
               </button>
             </div>
@@ -483,21 +485,21 @@ export function ForumThreadView({ locale, thematicSlug, entrySlug, initialDetail
       ) : null}
 
       {branchFor ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" role="dialog" aria-modal>
-          <div className="w-full max-w-md rounded-xl border border-outline-variant/30 bg-surface-container-low p-4">
-            <h3 className="mb-3 flex items-center gap-2 font-headline text-lg font-bold">
-              <GitBranch className="size-5 text-primary" aria-hidden />
+        <div className="fixed inset-0 z-forum-modal-overlay flex items-center justify-center bg-black/60 p-4" role="dialog" aria-modal>
+          <div className="w-full max-w-md rounded-md border border-dash-border bg-dash-surface p-4">
+            <h3 className="mb-3 flex items-center gap-2 font-headline text-lg font-bold text-dash-text">
+              <GitBranch className="size-5 text-dash-accent-text" aria-hidden />
               {t(locale, "forum.ui.branchFromComment")}
             </h3>
-            <label className="mb-1 block text-xs text-on-surface-variant">{t(locale, "forum.ui.newEntryTitle")}</label>
-            <input className="mb-3 w-full rounded-lg border border-outline-variant/35 bg-surface-container-lowest px-3 py-2 text-sm" value={branchTitle} onChange={(e) => setBranchTitle(e.target.value)} />
-            <label className="mb-1 block text-xs text-on-surface-variant">{t(locale, "forum.ui.newEntrySlug")}</label>
-            <input className="mb-3 w-full rounded-lg border border-outline-variant/35 bg-surface-container-lowest px-3 py-2 font-mono text-sm" value={branchSlug} onChange={(e) => setBranchSlug(e.target.value)} />
+            <label className="mb-1 block text-xs text-dash-muted">{t(locale, "forum.ui.newEntryTitle")}</label>
+            <input className="mb-3 w-full rounded-md border border-dash-border bg-dash-bg px-3 py-2 text-sm text-dash-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dash-accent" value={branchTitle} onChange={(e) => setBranchTitle(e.target.value)} />
+            <label className="mb-1 block text-xs text-dash-muted">{t(locale, "forum.ui.newEntrySlug")}</label>
+            <input className="mb-3 w-full rounded-md border border-dash-border bg-dash-bg px-3 py-2 font-dash-mono text-sm text-dash-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dash-accent" value={branchSlug} onChange={(e) => setBranchSlug(e.target.value)} />
             <div className="flex gap-2">
-              <button type="button" className="rounded-lg bg-primary px-4 py-2 text-xs font-bold text-on-primary-fixed" onClick={() => void onCreateBranch()}>
+              <button type="button" className="rounded-md bg-dash-accent px-4 py-2 text-xs font-bold text-dash-bg hover:opacity-90" onClick={() => void onCreateBranch()}>
                 {t(locale, "forum.ui.newEntrySubmit")}
               </button>
-              <button type="button" className="rounded-lg border border-outline-variant px-4 py-2 text-xs" onClick={() => setBranchFor(null)}>
+              <button type="button" className="rounded-md border border-dash-border px-4 py-2 text-xs text-dash-muted hover:text-dash-text" onClick={() => setBranchFor(null)}>
                 {t(locale, "forum.ui.cancel")}
               </button>
             </div>
@@ -538,45 +540,45 @@ function CommentToolbar({
   const canDelete = !comment.isEntrySeed && (isOwner || canModerate);
   const busy = Boolean(busyId && busyId.startsWith(comment.id));
   return (
-    <div className="mt-4 flex flex-wrap gap-2 border-t border-outline-variant/20 pt-3">
+    <div className="mt-4 flex flex-wrap gap-2 border-t border-dash-border pt-3">
       <button
         type="button"
-        className="inline-flex items-center gap-1 rounded-lg border border-outline-variant/30 px-2 py-1 text-[11px] font-semibold text-on-surface-variant hover:border-primary/40 hover:text-primary"
+        className="inline-flex items-center gap-1 rounded-md border border-dash-border px-2 py-1 text-[11px] font-semibold text-dash-muted hover:border-dash-accent/50 hover:text-dash-accent-text"
         onClick={onLike}
         disabled={busy}
         aria-pressed={comment.likedByMe}
       >
-        <Heart className={`size-3.5 ${comment.likedByMe ? "fill-primary text-primary" : ""}`} aria-hidden />
+        <Heart className={`size-3.5 ${comment.likedByMe ? "fill-dash-accent-text text-dash-accent-text" : ""}`} aria-hidden />
         {comment.likeCount}
       </button>
       <button
         type="button"
-        className="inline-flex items-center gap-1 rounded-lg border border-outline-variant/30 px-2 py-1 text-[11px] font-semibold text-on-surface-variant hover:border-tertiary/40 hover:text-tertiary"
+        className="inline-flex items-center gap-1 rounded-md border border-dash-border px-2 py-1 text-[11px] font-semibold text-dash-muted hover:border-dash-accent/50 hover:text-dash-accent-text"
         onClick={onUseful}
         disabled={busy}
         aria-pressed={comment.usefulByMe}
       >
-        <Sparkles className={`size-3.5 ${comment.usefulByMe ? "text-tertiary" : ""}`} aria-hidden />
+        <Sparkles className={`size-3.5 ${comment.usefulByMe ? "text-dash-accent-text" : ""}`} aria-hidden />
         {comment.usefulCount}
       </button>
-      <button type="button" className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary hover:underline" onClick={onReply}>
+      <button type="button" className="inline-flex items-center gap-1 text-[11px] font-semibold text-dash-accent-text hover:underline" onClick={onReply}>
         <Reply className="size-3.5" aria-hidden />
         {t(locale, "forum.ui.reply")}
       </button>
       {canEdit ? (
-        <button type="button" className="inline-flex items-center gap-1 text-[11px] font-semibold text-on-surface-variant hover:text-primary" onClick={onEdit}>
+        <button type="button" className="inline-flex items-center gap-1 text-[11px] font-semibold text-dash-muted hover:text-dash-accent-text" onClick={onEdit}>
           <Pencil className="size-3.5" aria-hidden />
           {t(locale, "forum.ui.edit")}
         </button>
       ) : null}
       {canDelete ? (
-        <button type="button" className="inline-flex items-center gap-1 text-[11px] font-semibold text-error/80 hover:underline" onClick={onDelete}>
+        <button type="button" className="inline-flex items-center gap-1 text-[11px] font-semibold text-dash-error/80 hover:underline" onClick={onDelete}>
           <Trash2 className="size-3.5" aria-hidden />
           {t(locale, "forum.ui.delete")}
         </button>
       ) : null}
       {!comment.isEntrySeed && onBranch ? (
-        <button type="button" className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary hover:underline" onClick={onBranch}>
+        <button type="button" className="inline-flex items-center gap-1 text-[11px] font-semibold text-dash-accent-text hover:underline" onClick={onBranch}>
           <GitBranch className="size-3.5" aria-hidden />
           {t(locale, "forum.ui.branchFromComment")}
         </button>

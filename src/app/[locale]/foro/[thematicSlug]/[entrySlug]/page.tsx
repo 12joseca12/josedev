@@ -4,6 +4,12 @@ import { ForumThreadView } from "@/components/forum/forum-thread-view";
 import { resolveLocaleParam, t } from "@/services/literals";
 import { forumEntryTitle, forumFetchEntryDetail, forumIsApiConfigured } from "@/services/forum-api";
 
+// DESIGN.md / build fix: `forumFetchEntryDetail` usa `cache: "no-store"` (ver
+// forum-api.ts) — es inherentemente request-time. Forzar dynamic evita que
+// `next build` intente prerenderizar esta ruta estáticamente y dispare ese
+// fetch (a un backend LAN/Supabase potencialmente inalcanzable) en build-time.
+export const dynamic = "force-dynamic";
+
 type PageProps = {
   params: Promise<{ locale: string; thematicSlug: string; entrySlug: string }>;
 };
@@ -29,7 +35,7 @@ export default async function ForumEntryPage({ params }: PageProps) {
 
   if (!forumIsApiConfigured()) {
     return (
-      <div className="rounded-xl border border-outline-variant/30 bg-surface-container-low/50 p-6 text-sm text-on-surface-variant">
+      <div className="rounded-md border border-dash-border bg-dash-surface p-6 text-sm text-dash-muted">
         {t(locale, "forum.ui.apiUnavailable")}
       </div>
     );

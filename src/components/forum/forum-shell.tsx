@@ -37,7 +37,7 @@ export function ForumShell({ locale, thematics, entriesBySlug, popular, configur
     <div className="mx-auto flex w-full max-w-content min-w-0 flex-1 flex-col gap-6 px-4 py-8 sm:px-6 lg:flex-row lg:gap-8 lg:px-8 lg:py-10">
       <aside className="w-full shrink-0 space-y-6 lg:sticky lg:top-24 lg:w-72 lg:self-start">
         {!configured ? (
-          <p className="rounded-xl border border-outline-variant/30 bg-surface-container-low/50 p-4 text-sm text-on-surface-variant">
+          <p className="rounded-md border border-dash-border bg-dash-surface p-4 text-sm text-dash-muted">
             {t(locale, "forum.ui.apiUnavailable")}
           </p>
         ) : null}
@@ -52,20 +52,20 @@ export function ForumShell({ locale, thematics, entriesBySlug, popular, configur
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder={t(locale, "forum.ui.searchPlaceholder")}
-            className="w-full rounded-xl border border-outline-variant/35 bg-surface-container-lowest px-3 py-2.5 text-sm text-on-surface placeholder:text-outline/50 focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/25"
+            className="w-full rounded-md border border-dash-border bg-dash-surface px-3 py-2.5 text-sm text-dash-text placeholder:text-dash-muted/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dash-accent"
             autoComplete="off"
             maxLength={200}
           />
           <button
             type="submit"
-            className="w-full rounded-xl border border-primary/40 bg-primary/15 py-2 text-xs font-bold uppercase tracking-wide text-primary transition-colors hover:bg-primary/25"
+            className="w-full rounded-md border border-dash-accent/40 bg-dash-accent/15 py-2 text-xs font-bold uppercase tracking-wide text-dash-accent-text transition-colors hover:bg-dash-accent/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dash-accent"
           >
             {t(locale, "forum.ui.searchSubmit")}
           </button>
         </form>
 
         <nav aria-label={t(locale, "forum.ui.navThematics")} className="space-y-1">
-          <p className="font-label text-[10px] uppercase tracking-widest text-outline">
+          <p className="font-dash-sans text-[10px] uppercase tracking-widest text-dash-muted">
             {t(locale, "forum.ui.navThematics")}
           </p>
           <ForumThematicsNav locale={locale} thematics={thematics} entriesBySlug={entriesBySlug} />
@@ -74,20 +74,20 @@ export function ForumShell({ locale, thematics, entriesBySlug, popular, configur
         <div className="space-y-2">
           <Link
             href={localizedHref(locale, "/foro/new")}
-            className="flex w-full items-center justify-center rounded-xl bg-primary px-3 py-2.5 text-center text-xs font-bold uppercase tracking-wide text-on-primary-fixed shadow-[0_0_24px_color-mix(in_srgb,var(--color-primary-container)_20%,transparent)] transition-opacity hover:opacity-95"
+            className="flex w-full items-center justify-center rounded-md bg-dash-accent px-3 py-2.5 text-center text-xs font-bold uppercase tracking-wide text-dash-bg transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dash-accent"
           >
             {t(locale, "forum.ui.navNewEntry")}
           </Link>
           <Link
             href={`${localizedHref(locale, "/foro")}#popular`}
-            className="block rounded-lg border border-outline-variant/30 px-3 py-2 text-center text-xs font-semibold uppercase tracking-wide text-on-surface-variant transition-colors hover:border-primary/35 hover:text-primary"
+            className="block rounded-md border border-dash-border px-3 py-2 text-center text-xs font-semibold uppercase tracking-wide text-dash-muted transition-colors hover:border-dash-accent/50 hover:text-dash-accent-text"
           >
             {t(locale, "forum.ui.navPopular")}
           </Link>
         </div>
 
-        <div id="popular" className="scroll-mt-28 space-y-2 rounded-xl border border-outline-variant/20 bg-surface-container-low/40 p-3">
-          <p className="font-label text-[10px] uppercase tracking-widest text-outline">
+        <div id="popular" className="scroll-mt-28 space-y-2 rounded-md border border-dash-border bg-dash-surface p-3">
+          <p className="font-dash-sans text-[10px] uppercase tracking-widest text-dash-muted">
             {t(locale, "forum.ui.popularTitle")}
           </p>
           <ul className="space-y-2">
@@ -95,7 +95,7 @@ export function ForumShell({ locale, thematics, entriesBySlug, popular, configur
               <li key={e.id}>
                 <Link
                   href={localizedHref(locale, `/foro/${e.thematicSlug}/${e.slug}`)}
-                  className="line-clamp-2 text-xs leading-snug text-on-surface-variant transition-colors hover:text-primary"
+                  className="line-clamp-2 text-xs leading-snug text-dash-muted transition-colors hover:text-dash-accent-text"
                 >
                   {forumEntryTitle(e, (key) => t(locale, key))}
                 </Link>

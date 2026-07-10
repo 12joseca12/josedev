@@ -45,7 +45,7 @@ export function ForumThematicsNav({ locale, thematics, entriesBySlug }: Props) {
 
   if (thematics.length === 0) {
     return (
-      <p className="rounded-lg border border-outline-variant/25 bg-surface-container-low/40 px-3 py-2 text-xs text-on-surface-variant">
+      <p className="rounded-md border border-dash-border bg-dash-surface px-3 py-2 text-xs text-dash-muted">
         {t(locale, "forum.ui.noThematics")}
       </p>
     );
@@ -62,7 +62,7 @@ export function ForumThematicsNav({ locale, thematics, entriesBySlug }: Props) {
         const panelId = `forum-folder-panel-${th.slug}`;
 
         return (
-          <li key={th.id} className="rounded-lg">
+          <li key={th.id} className="rounded-md">
             <button
               type="button"
               id={folderId}
@@ -70,16 +70,16 @@ export function ForumThematicsNav({ locale, thematics, entriesBySlug }: Props) {
               aria-controls={panelId}
               onClick={() => onFolderClick(th.slug)}
               onKeyDown={(e) => onFolderKeyDown(e, th.slug)}
-              className={`flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${
+              className={`flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dash-accent ${
                 isActive
-                  ? "bg-primary/15 text-primary shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--color-primary-container)_20%,transparent)]"
-                  : "text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface"
+                  ? "border-l-2 border-dash-accent bg-dash-accent/10 text-dash-accent-text"
+                  : "text-dash-muted hover:bg-dash-border/40 hover:text-dash-text"
               }`}
             >
-              <span className="shrink-0 text-outline" aria-hidden>
+              <span className="shrink-0 text-dash-muted" aria-hidden>
                 {isOpen ? <ChevronDown className="size-4" /> : <ChevronRight className="size-4" />}
               </span>
-              <Folder className="size-4 shrink-0 text-primary/80" aria-hidden />
+              <Folder className="size-4 shrink-0 text-dash-accent-text/80" aria-hidden />
               <span className="min-w-0 flex-1 truncate">{title}</span>
               <span className="sr-only">
                 {isOpen ? t(locale, "forum.ui.collapseThematic") : t(locale, "forum.ui.expandThematic")}
@@ -87,9 +87,9 @@ export function ForumThematicsNav({ locale, thematics, entriesBySlug }: Props) {
             </button>
 
             {isOpen ? (
-              <div id={panelId} role="region" aria-labelledby={folderId} className="ml-3 border-l border-outline-variant/30 pl-2">
+              <div id={panelId} role="region" aria-labelledby={folderId} className="ml-3 border-l border-dash-border pl-2">
                 {entries.length === 0 ? (
-                  <p className="px-2 py-2 text-xs text-on-surface-variant">{t(locale, "forum.ui.emptyThematic")}</p>
+                  <p className="px-2 py-2 text-xs text-dash-muted">{t(locale, "forum.ui.emptyThematic")}</p>
                 ) : (
                   <ul className="space-y-0.5 py-1">
                     {entries.map((e) => {
@@ -99,10 +99,10 @@ export function ForumThematicsNav({ locale, thematics, entriesBySlug }: Props) {
                         <li key={e.id}>
                           <Link
                             href={entryHref}
-                            className={`block rounded-md px-2 py-1.5 text-xs leading-snug transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 ${
+                            className={`block rounded-md px-2 py-1.5 text-xs leading-snug transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dash-accent ${
                               entryActive
-                                ? "bg-surface-container-high font-medium text-primary"
-                                : "text-on-surface-variant hover:bg-surface-container-high/80 hover:text-on-surface"
+                                ? "bg-dash-border/40 font-medium text-dash-accent-text"
+                                : "text-dash-muted hover:bg-dash-border/25 hover:text-dash-text"
                             }`}
                           >
                             {forumEntryTitle(e, (key) => t(locale, key))}

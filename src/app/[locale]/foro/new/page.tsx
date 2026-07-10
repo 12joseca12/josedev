@@ -4,6 +4,11 @@ import { ForumNewEntryForm } from "@/components/forum/forum-new-entry-form";
 import { localizedHref, resolveLocaleParam, t } from "@/services/literals";
 import { forumFetchThematics, forumIsApiConfigured } from "@/services/forum-api";
 
+// DESIGN.md / build fix: fetchea thematics en request-time para poblar el
+// selector del formulario (ver forum-api.ts). Forzar dynamic evita que
+// `next build` dispare ese fetch en build-time al intentar prerenderizar.
+export const dynamic = "force-dynamic";
+
 type PageProps = { params: Promise<{ locale: string }> };
 
 export default async function ForumNewPage({ params }: PageProps) {
@@ -11,7 +16,7 @@ export default async function ForumNewPage({ params }: PageProps) {
 
   if (!forumIsApiConfigured()) {
     return (
-      <div className="rounded-xl border border-outline-variant/30 bg-surface-container-low/50 p-6 text-sm text-on-surface-variant">
+      <div className="rounded-md border border-dash-border bg-dash-surface p-6 text-sm text-dash-muted">
         {t(locale, "forum.ui.apiUnavailable")}
       </div>
     );
@@ -22,19 +27,19 @@ export default async function ForumNewPage({ params }: PageProps) {
   return (
     <div className="min-w-0 space-y-8">
       <header className="space-y-2">
-        <nav className="font-label text-[10px] uppercase tracking-widest text-outline">
-          <Link href={localizedHref(locale, "/foro")} className="text-primary hover:underline">
+        <nav className="font-dash-sans text-[10px] uppercase tracking-widest text-dash-muted">
+          <Link href={localizedHref(locale, "/foro")} className="text-dash-accent-text hover:underline">
             {t(locale, "forum.ui.breadcrumbForum")}
           </Link>
-          <span aria-hidden className="mx-2 text-outline-variant">
+          <span aria-hidden className="mx-2 text-dash-border">
             /
           </span>
-          <span className="text-on-surface-variant">new</span>
+          <span className="text-dash-muted">new</span>
         </nav>
-        <h1 className="font-headline text-2xl font-bold tracking-tight text-on-surface sm:text-3xl">
+        <h1 className="font-headline text-2xl font-bold tracking-tight text-dash-text sm:text-3xl">
           {t(locale, "forum.ui.newEntryTitlePage")}
         </h1>
-        <p className="max-w-2xl text-sm text-on-surface-variant">{t(locale, "forum.ui.newEntryIntro")}</p>
+        <p className="max-w-2xl text-sm text-dash-muted">{t(locale, "forum.ui.newEntryIntro")}</p>
       </header>
       <ForumNewEntryForm locale={locale} thematics={thematics} />
     </div>
