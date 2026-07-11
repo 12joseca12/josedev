@@ -14,7 +14,7 @@ export type TerminalChatTrafficLightsProps = {
 };
 
 const TRAFFIC_BTN =
-  "flex size-5 shrink-0 items-center justify-center rounded-full transition-[filter,box-shadow] duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:size-[1.375rem]";
+  "flex size-5 shrink-0 items-center justify-center rounded-full transition-[filter,box-shadow] duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dash-accent sm:size-[1.375rem]";
 
 export function TerminalChatTrafficLights({ locale, viewMode, onClose, onYellow, onGreen }: TerminalChatTrafficLightsProps) {
   const greenLabel =

@@ -1,3 +1,5 @@
+"use client";
+
 import { SOBRE_MI_CATEGORY_CONFIG } from "@/lib/sobre-mi-stack-config";
 import type { Locale, SobreMiCategoryKey } from "@/lib/types";
 import { t } from "@/services/literals";

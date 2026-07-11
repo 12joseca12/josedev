@@ -3,59 +3,13 @@
  * Import from `@/lib/stylesVariables` only; do not duplicate hex values in components.
  */
 
-/** Material-style semantic palette (dark UI). Keys match Tailwind theme names (kebab-case). */
+/**
+ * Chrome/mockup colors (macOS traffic lights, terminal/device/preview surfaces).
+ * Literal brand/hardware colors used only by the terminal and device-mockup
+ * components. The Material-style semantic palette that used to live here was
+ * removed in Fase 4b (WS7-B); the site palette is `dashThemeColors` (light/dark).
+ */
 export const portfolioThemeColors = {
-  background: "#111316",
-  surface: "#111316",
-  "inverse-on-surface": "#2f3034",
-  "on-surface": "#e2e2e6",
-  "primary-container": "#00e5ff",
-  outline: "#849396",
-  "on-tertiary-fixed": "#002117",
-  "tertiary-fixed": "#45fec9",
-  "outline-variant": "#3b494c",
-  "on-secondary": "#002d6e",
-  "surface-dim": "#111316",
-  "on-secondary-fixed-variant": "#00429b",
-  "surface-container-highest": "#333538",
-  "error-container": "#93000a",
-  "inverse-primary": "#006875",
-  "on-secondary-fixed": "#001945",
-  "secondary-fixed-dim": "#b0c6ff",
-  "on-tertiary": "#003829",
-  "on-secondary-container": "#f2f3ff",
-  primary: "#c3f5ff",
-  "surface-container-lowest": "#0c0e11",
-  "on-tertiary-fixed-variant": "#00513d",
-  "primary-fixed-dim": "#00daf3",
-  "primary-fixed": "#9cf0ff",
-  "tertiary-container": "#23ebb8",
-  "surface-container-high": "#282a2d",
-  tertiary: "#a1ffdc",
-  "secondary-container": "#0068ed",
-  "surface-container": "#1e2023",
-  "on-tertiary-container": "#00654d",
-  "secondary-fixed": "#d9e2ff",
-  "on-primary-container": "#00626e",
-  "surface-variant": "#333538",
-  "surface-tint": "#00daf3",
-  "surface-container-low": "#1a1c1f",
-  "on-primary-fixed": "#001f24",
-  "tertiary-fixed-dim": "#00e1ae",
-  "on-background": "#e2e2e6",
-  "on-primary": "#00363d",
-  error: "#ffb4ab",
-  "on-error": "#690005",
-  secondary: "#b0c6ff",
-  "inverse-surface": "#e2e2e6",
-  "on-surface-variant": "#bac9cc",
-  "on-primary-fixed-variant": "#004f58",
-  "surface-bright": "#37393d",
-  "on-error-container": "#ffdad6",
-
-  // Chrome/mockup colors (macOS traffic lights, terminal/device/preview surfaces).
-  // Not part of the semantic Material palette above — literal brand/hardware colors
-  // used only by the terminal and device-mockup components.
   "mac-close": "#ff5f57",
   "mac-close-icon": "#4a0f0c",
   "mac-minimize": "#febc2e",
@@ -130,7 +84,6 @@ export const styleTokens = {
 
   layout: {
     maxContentWidth: "90rem",
-    navShadow: `0 10px 30px ${withAlpha(portfolioThemeColors["primary-container"], 0.03)}`,
   },
 
   motion: {
@@ -144,51 +97,10 @@ export const styleTokens = {
 
 export type StyleTokens = typeof styleTokens;
 
-/** Extra non-token utilities (glass, gradients, Material icon tuning). */
+/** Global non-token CSS injected once by the root layout: terminal scrollbar
+ *  reset + `data-hover-label` tooltips (themed via `--color-dash-*`). */
 export function getGlobalUiCss(): string {
-  const primaryContainer = portfolioThemeColors["primary-container"];
-  const tertiaryFixed = portfolioThemeColors["tertiary-fixed"];
-  const primary = portfolioThemeColors.primary;
-  const outline = portfolioThemeColors.outline;
-  const outlineVariant = portfolioThemeColors["outline-variant"];
-  const surfaceContainer = portfolioThemeColors["surface-container"];
-  const surfaceContainerLow = portfolioThemeColors["surface-container-low"];
-
   return `
-.glass-card {
-  background: ${withAlpha(surfaceContainer, 0.4)};
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-/* Botones / superficies: gradiente como fondo completo (no mezclar con texto) */
-.signature-glow {
-  background-image: linear-gradient(135deg, ${primary} 0%, ${primaryContainer} 100%);
-  background-size: 100% 100%;
-}
-/* Título hero: el texto lleva el gradiente (evita el “bloque sólido” sin glifos) */
-.hero-accent-text {
-  display: block;
-  background-image: linear-gradient(135deg, ${primary} 0%, ${primaryContainer} 55%, ${tertiaryFixed} 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-  /* refuerzo legible en navegadores que clipan mal */
-  paint-order: stroke fill;
-}
-.text-glow {
-  text-shadow: 0 0 20px ${withAlpha(primaryContainer, 0.3)};
-}
-.material-symbols-outlined {
-  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-}
-.grid-overlay {
-  background-image:
-    linear-gradient(to right, ${withAlpha(outline, 0.05)} 1px, transparent 1px),
-    linear-gradient(to bottom, ${withAlpha(outline, 0.05)} 1px, transparent 1px);
-  background-size: 40px 40px;
-}
-
 /* Chat terminal: ocultar scrollbar nativa (refuerzo junto a globals.css). */
 .terminal-chat-scroll {
   scrollbar-width: none !important;
@@ -238,10 +150,10 @@ export function getGlobalUiCss(): string {
   border-radius: 12px;
   padding: 8px 10px;
   font: 600 12px/1.2 var(--font-headline, ui-sans-serif);
-  color: var(--color-on-surface);
-  background: ${withAlpha(surfaceContainerLow, 0.92)};
-  border: 1px solid ${withAlpha(outlineVariant, 0.55)};
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), 0 0 28px ${withAlpha(primaryContainer, 0.12)};
+  color: var(--color-dash-text);
+  background: color-mix(in srgb, var(--color-dash-surface) 92%, transparent);
+  border: 1px solid var(--color-dash-border);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
@@ -253,9 +165,9 @@ export function getGlobalUiCss(): string {
   width: 10px;
   height: 10px;
   transform: translate(-50%, -6px) rotate(45deg);
-  background: ${withAlpha(surfaceContainerLow, 0.92)};
-  border-left: 1px solid ${withAlpha(outlineVariant, 0.55)};
-  border-top: 1px solid ${withAlpha(outlineVariant, 0.55)};
+  background: color-mix(in srgb, var(--color-dash-surface) 92%, transparent);
+  border-left: 1px solid var(--color-dash-border);
+  border-top: 1px solid var(--color-dash-border);
 }
 
 [data-hover-label]:hover::after,
@@ -281,8 +193,8 @@ export function getGlobalUiCss(): string {
   translate: 0 2px;
   border-left: none;
   border-top: none;
-  border-right: 1px solid ${withAlpha(outlineVariant, 0.55)};
-  border-bottom: 1px solid ${withAlpha(outlineVariant, 0.55)};
+  border-right: 1px solid var(--color-dash-border);
+  border-bottom: 1px solid var(--color-dash-border);
 }
 
 [data-hover-label][data-hover-label-placement="below"]:hover::after,
@@ -300,9 +212,10 @@ export function getGlobalUiCss(): string {
 }
 
 /**
- * Extra CSS for `layout.tsx` `<style />` (glass, gradients).
- * Color tokens live in `globals.css` `@theme inline`, generated from
- * `portfolioThemeColors` by `scripts/generate-theme-css.ts` (`pnpm generate:theme`).
+ * CSS injected once via the root `layout.tsx` `<style />` (terminal scrollbar +
+ * hover-label tooltips). Color tokens live in `globals.css` `@theme inline`,
+ * generated from `stylesVariables.ts` by `scripts/generate-theme-css.ts`
+ * (`pnpm generate:theme`).
  */
 export function getRootStyleBlockCss(): string {
   return getGlobalUiCss();
