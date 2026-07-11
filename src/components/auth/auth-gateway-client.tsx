@@ -24,12 +24,11 @@ type Props = {
 type Mode = "login" | "register";
 
 const fieldClass =
-  "w-full rounded-xl border border-outline-variant/35 bg-surface-container-lowest px-4 py-3.5 text-sm text-on-surface placeholder:text-outline/50 transition-colors focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/25";
+  "w-full rounded-md border border-dash-border bg-dash-bg px-4 py-3.5 text-sm text-dash-text placeholder:text-dash-muted/70 transition-colors focus:border-dash-accent/60 focus:outline-none focus:ring-2 focus:ring-dash-accent/30";
 
-const labelClass =
-  "mb-1.5 block font-label text-[10px] font-medium uppercase tracking-widest text-on-surface-variant";
+const labelClass = "mb-1.5 block font-label text-[10px] font-medium uppercase tracking-widest text-dash-muted";
 
-const requiredStarClass = "ms-0.5 font-semibold text-primary";
+const requiredStarClass = "ms-0.5 font-semibold text-dash-accent-text";
 
 function RequiredFieldLabel({ htmlFor, children }: { htmlFor: string; children: ReactNode }) {
   return (
@@ -196,65 +195,42 @@ export function AuthGatewayClient({ locale, redirectAfterAuth = null }: Props) {
 
   return (
     <main className="relative flex min-h-[calc(100dvh-3.5rem)] flex-col items-center justify-center px-4 py-10 sm:py-14">
-      <div className="relative z-10 grid w-full max-w-[1100px] overflow-hidden rounded-xl border border-outline-variant/25 bg-surface-container-lowest/85 shadow-[0_40px_80px_rgba(0,0,0,0.45)] backdrop-blur-2xl lg:grid-cols-2">
-        <section className="relative hidden flex-col justify-between overflow-hidden bg-surface-container-low/45 p-10 lg:flex lg:p-12">
-          <svg className="auth-circuit-svg z-0" viewBox="0 0 520 640" preserveAspectRatio="xMidYMid slice" aria-hidden>
-            <path
-              className="auth-circuit-path--cyan"
-              d="M-20 120 H180 V40 H360 V200 H520 M40 260 H280 V420 H460 M120 520 H420 V300 H200"
-            />
-            <path
-              className="auth-circuit-path--mint"
-              d="M60 -10 V160 H320 V340 H80 V520 H520 M200 80 H440 V240 H260 V500"
-            />
-            <circle className="auth-circuit-node" cx="180" cy="120" r="3" />
-            <circle className="auth-circuit-node--delayed" cx="360" cy="200" r="2.5" />
-            <circle className="auth-circuit-node" cx="280" cy="420" r="2.5" />
-            <circle className="auth-circuit-node--delayed" cx="120" cy="520" r="3" />
-            <circle className="auth-circuit-node" cx="440" cy="240" r="2" />
-          </svg>
-          <div className="relative z-10">
+      <div className="relative z-10 grid w-full max-w-[1100px] overflow-hidden rounded-lg border border-dash-border bg-dash-surface shadow-[0_24px_64px_rgba(0,0,0,0.12)] lg:grid-cols-2">
+        <section className="relative hidden flex-col justify-between overflow-hidden border-dash-border bg-dash-bg p-10 lg:flex lg:border-r lg:p-12">
+          <div>
             <div className="mb-12 flex items-center gap-3">
-              <span className="flex size-10 items-center justify-center rounded-lg bg-primary-container shadow-[0_0_20px_color-mix(in_srgb,var(--color-primary-container)_35%,transparent)]">
-                <Terminal className="size-5 text-on-primary-fixed" aria-hidden strokeWidth={2.25} />
+              <span className="flex size-10 items-center justify-center rounded-lg border border-dash-border bg-dash-surface">
+                <Terminal className="size-5 text-dash-accent" aria-hidden strokeWidth={2.25} />
               </span>
-              <span className="font-headline text-xl font-extrabold tracking-tighter text-on-surface">
+              <span className="font-headline text-xl font-extrabold tracking-tighter text-dash-text">
                 {t(locale, "nav.brand")}
               </span>
             </div>
-            <h1 className="mb-5 font-headline text-4xl font-bold leading-[1.1] tracking-tight text-primary xl:text-5xl">
+            <p className="mb-5 font-headline text-4xl font-bold leading-[1.15] tracking-tight text-dash-text xl:text-5xl">
               {t(locale, "auth.brandPanelTitle")}
-            </h1>
-            <p className="max-w-sm text-sm font-light leading-relaxed text-on-surface-variant">
-              {t(locale, "auth.brandPanelSubtitle")}
             </p>
+            <p className="max-w-sm text-sm leading-relaxed text-dash-muted">{t(locale, "auth.brandPanelSubtitle")}</p>
           </div>
-          <div className="relative z-10 mt-10 space-y-3">
+          <div className="mt-10 space-y-3">
             <div className="flex items-center gap-3">
-              <span className="h-px w-10 bg-outline-variant/40" />
-              <span className="font-label text-[10px] uppercase tracking-[0.2em] text-outline">
+              <span className="h-px w-10 bg-dash-border" />
+              <span className="font-label text-[10px] uppercase tracking-[0.2em] text-dash-muted">
                 {t(locale, "auth.eyebrow")}
               </span>
             </div>
             <div className="flex gap-2">
-              <span className="size-2 animate-pulse rounded-full bg-tertiary shadow-[0_0_8px_color-mix(in_srgb,var(--color-tertiary)_45%,transparent)]" />
-              <span className="size-2 rounded-full bg-tertiary/30" />
-              <span className="size-2 rounded-full bg-tertiary/30" />
+              <span className="size-2 animate-pulse rounded-full bg-dash-accent motion-reduce:animate-none" />
+              <span className="size-2 rounded-full bg-dash-accent/30" />
+              <span className="size-2 rounded-full bg-dash-accent/30" />
             </div>
-          </div>
-          <div
-            className="pointer-events-none absolute bottom-0 right-0 h-[120%] w-[120%] translate-x-1/4 translate-y-1/4 opacity-[0.12]"
-            aria-hidden
-          >
-            <div className="h-full w-full rounded-full bg-gradient-to-br from-primary/30 via-transparent to-tertiary/20 blur-3xl" />
           </div>
         </section>
 
-        <section className="relative flex flex-col justify-center bg-surface-container p-6 sm:p-10 md:p-14">
+        <section className="relative flex flex-col justify-center bg-dash-surface p-6 sm:p-10 md:p-14">
           <div className="mx-auto w-full max-w-md">
-            <h2 className="sr-only">
+            <h1 className="sr-only">
               {mode === "login" ? t(locale, "auth.loginTitle") : t(locale, "auth.registerTitle")}
-            </h2>
+            </h1>
 
             <div
               role="tablist"
@@ -270,10 +246,10 @@ export function AuthGatewayClient({ locale, redirectAfterAuth = null }: Props) {
                 aria-selected={mode === "login"}
                 aria-controls={`${baseId}-panel-login`}
                 data-hover-label={t(locale, "auth.loginTab")}
-                className={`rounded-xl border px-3 py-2.5 font-headline text-xs font-bold uppercase tracking-tight transition-all sm:text-sm ${
+                className={`rounded-md border px-3 py-2.5 font-headline text-xs font-bold uppercase tracking-tight transition-colors sm:text-sm ${
                   mode === "login"
-                    ? "border-primary/40 bg-surface-container-high text-on-surface shadow-[0_0_24px_color-mix(in_srgb,var(--color-primary-container)_12%,transparent)]"
-                    : "border-outline-variant/25 bg-surface-container-low/40 text-on-surface-variant hover:border-outline-variant/45"
+                    ? "border-dash-accent/50 bg-dash-bg text-dash-text"
+                    : "border-dash-border bg-transparent text-dash-muted hover:border-dash-border/80 hover:text-dash-text"
                 }`}
                 onClick={() => setMode("login")}
               >
@@ -287,10 +263,10 @@ export function AuthGatewayClient({ locale, redirectAfterAuth = null }: Props) {
                 aria-selected={mode === "register"}
                 aria-controls={`${baseId}-panel-register`}
                 data-hover-label={t(locale, "auth.registerTab")}
-                className={`rounded-xl border px-3 py-2.5 font-headline text-xs font-bold uppercase tracking-tight transition-all sm:text-sm ${
+                className={`rounded-md border px-3 py-2.5 font-headline text-xs font-bold uppercase tracking-tight transition-colors sm:text-sm ${
                   mode === "register"
-                    ? "border-primary/40 bg-surface-container-high text-on-surface shadow-[0_0_24px_color-mix(in_srgb,var(--color-primary-container)_12%,transparent)]"
-                    : "border-outline-variant/25 bg-surface-container-low/40 text-on-surface-variant hover:border-outline-variant/45"
+                    ? "border-dash-accent/50 bg-dash-bg text-dash-text"
+                    : "border-dash-border bg-transparent text-dash-muted hover:border-dash-border/80 hover:text-dash-text"
                 }`}
                 onClick={() => setMode("register")}
               >
@@ -299,7 +275,7 @@ export function AuthGatewayClient({ locale, redirectAfterAuth = null }: Props) {
             </div>
 
             <div className="relative mb-8 flex items-center justify-center">
-              <div className="h-px w-full bg-outline-variant/20" />
+              <div className="h-px w-full bg-dash-border" />
             </div>
 
             <div
@@ -311,10 +287,10 @@ export function AuthGatewayClient({ locale, redirectAfterAuth = null }: Props) {
             >
               {error || notice ? (
                 <div
-                  className={`mb-5 rounded-xl border px-4 py-3 text-sm ${
+                  className={`mb-5 rounded-md border px-4 py-3 text-sm ${
                     error
-                      ? "border-error/35 bg-surface-container-low/60 text-error"
-                      : "border-tertiary/30 bg-surface-container-low/60 text-on-surface"
+                      ? "border-dash-error/40 bg-dash-error/10 text-dash-error"
+                      : "border-dash-success/35 bg-dash-success/10 text-dash-text"
                   }`}
                   role={error ? "alert" : "status"}
                 >
@@ -351,7 +327,7 @@ export function AuthGatewayClient({ locale, redirectAfterAuth = null }: Props) {
                     </RequiredFieldLabel>
                     <Link
                       href="#recover"
-                      className="font-label text-[10px] uppercase tracking-widest text-outline-variant transition-colors hover:text-primary"
+                      className="font-label text-[10px] uppercase tracking-widest text-dash-muted transition-colors hover:text-dash-accent-text"
                       data-hover-label={t(locale, "auth.lostPassword")}
                     >
                       {t(locale, "auth.lostPassword")}
@@ -378,26 +354,26 @@ export function AuthGatewayClient({ locale, redirectAfterAuth = null }: Props) {
                     id={`${baseId}-remember`}
                     name="remember"
                     type="checkbox"
-                    className="size-4 rounded border-outline-variant/40 bg-surface-container-lowest text-primary focus:ring-2 focus:ring-primary/30"
+                    className="size-4 rounded border-dash-border bg-dash-bg accent-dash-accent focus:ring-2 focus:ring-dash-accent/30"
                     checked={login.remember}
                     onChange={(e) => setLogin((s) => ({ ...s, remember: e.target.checked }))}
                   />
-                  <span className="text-xs font-light text-on-surface-variant">{t(locale, "auth.remember")}</span>
+                  <span className="text-xs text-dash-muted">{t(locale, "auth.remember")}</span>
                 </label>
                 <button
                   type="submit"
                   data-hover-label={t(locale, "auth.submitLogin")}
                   disabled={busy}
-                  className="signature-glow flex w-full items-center justify-center gap-2 rounded-lg py-3.5 font-headline text-xs font-bold uppercase tracking-tight text-on-primary-fixed shadow-[0_10px_30px_color-mix(in_srgb,var(--color-primary-container)_15%,transparent)] transition-all hover:shadow-[0_10px_40px_color-mix(in_srgb,var(--color-primary-container)_25%,transparent)] active:scale-[0.98] disabled:opacity-60"
+                  className="flex w-full items-center justify-center gap-2 rounded-md bg-dash-accent py-3.5 font-headline text-xs font-bold uppercase tracking-tight text-dash-bg transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60"
                 >
                   {busy ? t(locale, "auth.submitting") : t(locale, "auth.submitLogin")}
                   <ArrowRight className="size-4" aria-hidden strokeWidth={2.5} />
                 </button>
               </form>
-              <p className="mt-8 text-center text-xs text-on-surface-variant">
+              <p className="mt-8 text-center text-xs text-dash-muted">
                 <button
                   type="button"
-                  className="text-primary underline-offset-4 hover:underline"
+                  className="text-dash-accent-text underline-offset-4 hover:underline"
                   data-hover-label={t(locale, "auth.switchToRegister")}
                   onClick={() => setMode("register")}
                 >
@@ -415,10 +391,10 @@ export function AuthGatewayClient({ locale, redirectAfterAuth = null }: Props) {
             >
               {error || notice ? (
                 <div
-                  className={`mb-5 rounded-xl border px-4 py-3 text-sm ${
+                  className={`mb-5 rounded-md border px-4 py-3 text-sm ${
                     error
-                      ? "border-error/35 bg-surface-container-low/60 text-error"
-                      : "border-tertiary/30 bg-surface-container-low/60 text-on-surface"
+                      ? "border-dash-error/40 bg-dash-error/10 text-dash-error"
+                      : "border-dash-success/35 bg-dash-success/10 text-dash-text"
                   }`}
                   role={error ? "alert" : "status"}
                 >
@@ -521,16 +497,16 @@ export function AuthGatewayClient({ locale, redirectAfterAuth = null }: Props) {
                   type="submit"
                   data-hover-label={t(locale, "auth.submitRegister")}
                   disabled={busy}
-                  className="signature-glow flex w-full items-center justify-center gap-2 rounded-lg py-3.5 font-headline text-xs font-bold uppercase tracking-tight text-on-primary-fixed shadow-[0_10px_30px_color-mix(in_srgb,var(--color-primary-container)_15%,transparent)] transition-all hover:shadow-[0_10px_40px_color-mix(in_srgb,var(--color-primary-container)_25%,transparent)] active:scale-[0.98] disabled:opacity-60"
+                  className="flex w-full items-center justify-center gap-2 rounded-md bg-dash-accent py-3.5 font-headline text-xs font-bold uppercase tracking-tight text-dash-bg transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60"
                 >
                   {busy ? t(locale, "auth.submitting") : t(locale, "auth.submitRegister")}
                   <ArrowRight className="size-4" aria-hidden strokeWidth={2.5} />
                 </button>
               </form>
-              <p className="mt-8 text-center text-xs text-on-surface-variant">
+              <p className="mt-8 text-center text-xs text-dash-muted">
                 <button
                   type="button"
-                  className="text-primary underline-offset-4 hover:underline"
+                  className="text-dash-accent-text underline-offset-4 hover:underline"
                   data-hover-label={t(locale, "auth.switchToLogin")}
                   onClick={() => setMode("login")}
                 >

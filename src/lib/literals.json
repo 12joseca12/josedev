@@ -6,7 +6,7 @@
     }
   },
   "nav": {
-    "brand": "Jose Dev",
+    "brand": "josedev",
     "home": "Inicio",
     "sobreMi": "Sobre mí",
     "portfolio": "Portfolio",
@@ -22,7 +22,7 @@
     "closeMenu": "Cerrar menú de navegación",
     "profileAria": "Ir a iniciar sesión o registrarse",
     "profileAriaSignedIn": "Ir a tu perfil",
-    "profileLink": "Acceso",
+    "profileLink": "Iniciar sesión",
     "profileLinkSignedIn": "Perfil",
     "currentPage": "página actual",
     "languageSwitcherAria": "Cambiar idioma",
@@ -258,14 +258,12 @@
   },
   "hero": {
     "badge": "Disponible para proyectos globales",
-    "line1": "Ingeniería",
-    "line2Highlight": "el futuro",
-    "line3": "de Web y Mobile",
-    "description": "Arquitectura de ecosistemas digitales de alto rendimiento mediante código limpio, infraestructura escalable y experiencias móviles intuitivas.",
-    "ctaPrimary": "Contrátame",
-    "ctaSecondary": "Necesito una web para mi negocio",
-    "ctaPrimaryAria": "Ir a la sección de contacto",
-    "ctaSecondaryAria": "Ir a servicios para negocios",
+    "headline": "Ingeniería web y mobile que se sostiene sola",
+    "description": "Código limpio, infraestructura escalable y experiencias móviles intuitivas — sin humo.",
+    "ctaPrimary": "Ver cómo trabajo",
+    "ctaPrimaryAria": "Ir a sobre mí: stack y forma de trabajar",
+    "ctaSecondary": "Contratar / proyectos",
+    "ctaSecondaryAria": "Ir a servicios para contratar un proyecto",
     "aboutFocus": "Sobre mí",
     "icons": {
       "react": "React",
@@ -273,23 +271,19 @@
       "aws": "AWS",
       "swift": "Swift"
     },
-    "code": {
+    "terminal": {
+      "label": "Terminal en vivo",
+      "hint": "El mismo widget que usan mis clientes para hablar conmigo — no es una maqueta.",
       "const": "const",
       "engineer": "ingeniero",
       "nameKey": "nombre",
       "nameVal": "Dev.Architect",
       "roleKey": "rol",
       "roleVal": "Full Stack / Mobile",
-      "focusKey": "enfoque",
-      "focusPerformance": "Rendimiento",
-      "focusScalability": "Escalabilidad",
+      "statusKey": "estado",
+      "statusVal": "ACTIVO",
       "stackKey": "stack",
-      "stackLambda": "t",
-      "stackExpr": "t.NextJS && t.SwiftUI"
-    },
-    "preview": {
-      "title": "FINTECH_UI.OS",
-      "status": "ACTIVO"
+      "stackVal": "Next.js · Swift · AWS"
     }
   },
   "sobreMiStack": {

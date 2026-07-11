@@ -9,19 +9,19 @@ type Props = {
 
 export function ForumAsideParticipants({ locale, participants }: Props) {
   return (
-    <section className="rounded-xl border border-outline-variant/25 bg-surface-container-low/40 p-4 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.03)]">
-      <h2 className="mb-3 font-label text-[10px] uppercase tracking-widest text-outline">
+    <section className="rounded-md border border-dash-border bg-dash-surface p-4">
+      <h2 className="mb-3 font-dash-sans text-[10px] uppercase tracking-widest text-dash-muted">
         {t(locale, "forum.ui.participantsTitle")}
       </h2>
       <ul className="space-y-2">
         {participants.map((p) => (
           <li key={p.userId} className="flex items-center justify-between gap-2 text-sm">
-            <span className="truncate text-on-surface">{forumParticipantLabel(locale, p)}</span>
+            <span className="truncate text-dash-text">{forumParticipantLabel(locale, p)}</span>
             <span
-              className={`shrink-0 rounded px-1.5 py-0.5 font-label text-[9px] uppercase tracking-wide ${
+              className={`shrink-0 rounded px-1.5 py-0.5 font-dash-sans text-[9px] uppercase tracking-wide ${
                 p.role === "author"
-                  ? "bg-primary/15 text-primary"
-                  : "bg-surface-container-high text-on-surface-variant"
+                  ? "bg-dash-accent/15 text-dash-accent-text"
+                  : "bg-dash-border/40 text-dash-muted"
               }`}
             >
               {p.role === "author" ? t(locale, "forum.ui.roleAuthor") : t(locale, "forum.ui.roleParticipant")}

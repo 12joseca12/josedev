@@ -24,7 +24,7 @@ export function LanguageSwitcher({ locale }: Props) {
     <div
       role="group"
       aria-label={t(locale, "nav.languageSwitcherAria")}
-      className="flex shrink-0 items-center rounded-md border border-outline-variant/35 font-mono text-[10px] font-bold uppercase tracking-wide"
+      className="flex shrink-0 items-center rounded-md border border-dash-border font-dash-mono text-[10px] font-bold uppercase tracking-wide"
     >
       {SUPPORTED_LOCALES.map((candidate, index) => {
         const active = candidate === locale;
@@ -34,10 +34,10 @@ export function LanguageSwitcher({ locale }: Props) {
             key={candidate}
             href={href}
             aria-current={active ? "true" : undefined}
-            className={`px-2 py-1 transition-colors ${index === 0 ? "rounded-l-md" : "rounded-r-md border-l border-outline-variant/35"} ${
+            className={`px-2 py-1 transition-colors ${index === 0 ? "rounded-l-md" : "rounded-r-md border-l border-dash-border"} ${
               active
-                ? "bg-primary/15 text-primary"
-                : "text-on-surface-variant hover:bg-surface-container-low/80 hover:text-primary"
+                ? "bg-dash-accent/15 text-dash-accent-text"
+                : "text-dash-muted hover:bg-dash-border/40 hover:text-dash-accent-text"
             }`}
           >
             {candidate}

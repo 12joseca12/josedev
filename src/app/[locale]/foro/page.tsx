@@ -10,6 +10,14 @@ import {
   forumThematicTitle,
 } from "@/services/forum-api";
 
+// DESIGN.md / build fix: esta página depende de un fetch a la API del foro en
+// request-time (thematics + búsqueda, sin cache larga — ver forum-api.ts,
+// `revalidate: 30`/`10`). Forzarla a dynamic evita que `next build` intente
+// generarla estáticamente e invoque ese fetch en build-time (donde el backend
+// LAN/Supabase puede no estar disponible), que es lo que rompía el export
+// estático del foro.
+export const dynamic = "force-dynamic";
+
 type PageProps = {
   params: Promise<{ locale: string }>;
   searchParams: Promise<{ q?: string }>;
@@ -22,7 +30,7 @@ export default async function ForumIndexPage({ params, searchParams }: PageProps
 
   if (!forumIsApiConfigured()) {
     return (
-      <div className="rounded-xl border border-outline-variant/30 bg-surface-container-low/50 p-6 text-sm text-on-surface-variant">
+      <div className="rounded-md border border-dash-border bg-dash-surface p-6 text-sm text-dash-muted">
         {t(locale, "forum.ui.apiUnavailable")}
       </div>
     );
@@ -34,7 +42,7 @@ export default async function ForumIndexPage({ params, searchParams }: PageProps
     const results = await forumFetchSearch(q);
     if (!results) {
       return (
-        <div className="rounded-xl border border-outline-variant/30 bg-surface-container-low/50 p-6 text-sm text-on-surface-variant">
+        <div className="rounded-md border border-dash-border bg-dash-surface p-6 text-sm text-dash-muted">
           {t(locale, "forum.ui.errorGeneric")}
         </div>
       );
@@ -43,22 +51,22 @@ export default async function ForumIndexPage({ params, searchParams }: PageProps
     return (
       <div className="min-w-0 space-y-8">
         <header className="space-y-2">
-          <h1 className="font-headline text-2xl font-bold tracking-tight text-on-surface sm:text-3xl">
+          <h1 className="font-headline text-2xl font-bold tracking-tight text-dash-text sm:text-3xl">
             {t(locale, "forum.ui.searchResultsTitle")}
           </h1>
-          <p className="text-sm text-on-surface-variant">
-            <span className="font-mono text-primary">{q}</span>
+          <p className="text-sm text-dash-muted">
+            <span className="font-dash-mono text-dash-accent-text">{q}</span>
           </p>
         </header>
         {results.entries.length === 0 && results.thematics.length === 0 ? (
-          <p className="rounded-xl border border-outline-variant/25 bg-surface-container-low/40 p-6 text-sm text-on-surface-variant">
+          <p className="rounded-md border border-dash-border bg-dash-surface p-6 text-sm text-dash-muted">
             {t(locale, "forum.ui.emptySearch")}
           </p>
         ) : (
           <div className="grid gap-8 lg:grid-cols-2">
             {results.entries.length > 0 ? (
               <section aria-labelledby="search-entries">
-                <h2 id="search-entries" className="mb-3 font-headline text-sm font-bold text-on-surface">
+                <h2 id="search-entries" className="mb-3 font-headline text-sm font-bold text-dash-text">
                   {t(locale, "forum.ui.entriesListHeading")}
                 </h2>
                 <ul className="space-y-2">
@@ -66,7 +74,7 @@ export default async function ForumIndexPage({ params, searchParams }: PageProps
                     <li key={e.id}>
                       <Link
                         href={localizedHref(locale, `/foro/${e.thematicSlug}/${e.slug}`)}
-                        className="block rounded-lg border border-outline-variant/20 bg-surface-container-low/40 p-3 text-sm text-on-surface transition-colors hover:border-primary/35"
+                        className="block rounded-md border border-dash-border bg-dash-surface p-3 text-sm text-dash-text transition-colors hover:border-dash-accent/50"
                       >
                         {forumEntryTitle(e, (key) => t(locale, key))}
                       </Link>
@@ -77,7 +85,7 @@ export default async function ForumIndexPage({ params, searchParams }: PageProps
             ) : null}
             {results.thematics.length > 0 ? (
               <section aria-labelledby="search-thematics">
-                <h2 id="search-thematics" className="mb-3 font-headline text-sm font-bold text-on-surface">
+                <h2 id="search-thematics" className="mb-3 font-headline text-sm font-bold text-dash-text">
                   {t(locale, "forum.ui.navThematics")}
                 </h2>
                 <ul className="space-y-2">
@@ -85,7 +93,7 @@ export default async function ForumIndexPage({ params, searchParams }: PageProps
                     <li key={th.id}>
                       <Link
                         href={localizedHref(locale, `/foro/${th.slug}`)}
-                        className="block rounded-lg border border-outline-variant/20 bg-surface-container-low/40 p-3 text-sm text-on-surface transition-colors hover:border-primary/35"
+                        className="block rounded-md border border-dash-border bg-dash-surface p-3 text-sm text-dash-text transition-colors hover:border-dash-accent/50"
                       >
                         {forumThematicTitle(th, (key) => t(locale, key))}
                       </Link>
@@ -107,17 +115,17 @@ export default async function ForumIndexPage({ params, searchParams }: PageProps
   return (
     <div className="min-w-0 space-y-6">
       <header className="space-y-3">
-        <h1 className="font-headline text-2xl font-bold tracking-tight text-on-surface sm:text-3xl">
+        <h1 className="font-headline text-2xl font-bold tracking-tight text-dash-text sm:text-3xl">
           {t(locale, "screens.forum.title")}
         </h1>
-        <p className="max-w-2xl text-sm text-on-surface-variant">{t(locale, "forum.ui.homeEmptyHint")}</p>
+        <p className="max-w-2xl text-sm text-dash-muted">{t(locale, "forum.ui.homeEmptyHint")}</p>
       </header>
-      <p className="rounded-xl border border-outline-variant/25 bg-surface-container-low/40 p-6 text-sm text-on-surface-variant">
+      <p className="rounded-md border border-dash-border bg-dash-surface p-6 text-sm text-dash-muted">
         {t(locale, "forum.ui.noThematics")}
       </p>
       <Link
         href={localizedHref(locale, "/foro/new")}
-        className="inline-flex rounded-xl bg-primary px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-on-primary-fixed transition-opacity hover:opacity-95"
+        className="inline-flex rounded-md bg-dash-accent px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-dash-bg transition-opacity hover:opacity-90"
       >
         {t(locale, "forum.ui.navNewEntry")}
       </Link>

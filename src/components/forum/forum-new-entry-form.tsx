@@ -112,31 +112,31 @@ export function ForumNewEntryForm({ locale, thematics }: Props) {
 
   return (
     <form id={formId} onSubmit={(ev) => void onSubmit(ev)} className="max-w-2xl space-y-6">
-      <fieldset className="space-y-3 rounded-xl border border-outline-variant/25 bg-surface-container-low/30 p-4">
-        <legend className="px-1 font-label text-[10px] font-semibold uppercase tracking-widest text-outline">
+      <fieldset className="space-y-3 rounded-md border border-dash-border bg-dash-surface p-4">
+        <legend className="px-1 font-dash-sans text-[10px] font-semibold uppercase tracking-widest text-dash-muted">
           {t(locale, "forum.ui.newEntryThematicSection")}
         </legend>
         {!hasExisting ? (
-          <p className="text-sm text-on-surface-variant">{t(locale, "forum.ui.noThematics")}</p>
+          <p className="text-sm text-dash-muted">{t(locale, "forum.ui.noThematics")}</p>
         ) : (
           <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap" role="radiogroup" aria-label={t(locale, "forum.ui.newEntryThematicSection")}>
-            <label className="flex cursor-pointer items-center gap-2 text-sm text-on-surface">
+            <label className="flex cursor-pointer items-center gap-2 text-sm text-dash-text">
               <input
                 type="radio"
                 name={`${formId}-thematic-mode`}
                 checked={thematicMode === "existing"}
                 onChange={() => setThematicMode("existing")}
-                className="text-primary"
+                className="accent-dash-accent"
               />
               {t(locale, "forum.ui.newEntryThematicModeExisting")}
             </label>
-            <label className="flex cursor-pointer items-center gap-2 text-sm text-on-surface">
+            <label className="flex cursor-pointer items-center gap-2 text-sm text-dash-text">
               <input
                 type="radio"
                 name={`${formId}-thematic-mode`}
                 checked={thematicMode === "new"}
                 onChange={() => setThematicMode("new")}
-                className="text-primary"
+                className="accent-dash-accent"
               />
               {t(locale, "forum.ui.newEntryThematicModeNew")}
             </label>
@@ -145,12 +145,12 @@ export function ForumNewEntryForm({ locale, thematics }: Props) {
 
         {hasExisting && thematicMode === "existing" ? (
           <div>
-            <label htmlFor={`${formId}-thematic`} className="mb-1 block text-xs font-medium text-on-surface-variant">
+            <label htmlFor={`${formId}-thematic`} className="mb-1 block text-xs font-medium text-dash-muted">
               {t(locale, "forum.ui.newEntryThematic")}
             </label>
             <select
               id={`${formId}-thematic`}
-              className="w-full rounded-lg border border-outline-variant/35 bg-surface-container-lowest px-3 py-2 text-sm text-on-surface"
+              className="w-full rounded-md border border-dash-border bg-dash-bg px-3 py-2 text-sm text-dash-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dash-accent"
               value={existingThematicSlug}
               onChange={(e) => setExistingThematicSlug(e.target.value)}
             >
@@ -166,29 +166,29 @@ export function ForumNewEntryForm({ locale, thematics }: Props) {
         {(thematicMode === "new" || !hasExisting) && (
           <div className="space-y-3">
             <div>
-              <label htmlFor={`${formId}-new-thematic-title`} className="mb-1 block text-xs font-medium text-on-surface-variant">
+              <label htmlFor={`${formId}-new-thematic-title`} className="mb-1 block text-xs font-medium text-dash-muted">
                 {t(locale, "forum.ui.newThematicTitle")}
               </label>
               <input
                 id={`${formId}-new-thematic-title`}
-                className="w-full rounded-lg border border-outline-variant/35 bg-surface-container-lowest px-3 py-2 text-sm text-on-surface"
+                className="w-full rounded-md border border-dash-border bg-dash-bg px-3 py-2 text-sm text-dash-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dash-accent"
                 value={newThematicTitle}
                 onChange={(e) => setNewThematicTitle(e.target.value)}
                 maxLength={120}
                 autoComplete="off"
               />
-              <p className="mt-1 font-mono text-[11px] text-on-surface-variant" aria-live="polite">
-                <span className="font-sans text-outline">{t(locale, "forum.ui.thematicSlugPreview")}: </span>/
+              <p className="mt-1 font-dash-mono text-[11px] text-dash-muted" aria-live="polite">
+                <span className="font-dash-sans text-dash-muted">{t(locale, "forum.ui.thematicSlugPreview")}: </span>/
                 {thematicSlugPreview || "—"}
               </p>
             </div>
             <div>
-              <label htmlFor={`${formId}-new-thematic-desc`} className="mb-1 block text-xs font-medium text-on-surface-variant">
+              <label htmlFor={`${formId}-new-thematic-desc`} className="mb-1 block text-xs font-medium text-dash-muted">
                 {t(locale, "forum.ui.newThematicDescription")}
               </label>
               <textarea
                 id={`${formId}-new-thematic-desc`}
-                className="min-h-[72px] w-full rounded-lg border border-outline-variant/35 bg-surface-container-lowest px-3 py-2 text-sm text-on-surface"
+                className="min-h-[72px] w-full rounded-md border border-dash-border bg-dash-bg px-3 py-2 text-sm text-dash-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dash-accent"
                 value={newThematicDescription}
                 onChange={(e) => setNewThematicDescription(e.target.value)}
                 maxLength={500}
@@ -199,34 +199,34 @@ export function ForumNewEntryForm({ locale, thematics }: Props) {
       </fieldset>
 
       <div>
-        <label htmlFor={`${formId}-entry-title`} className="mb-1 block text-xs font-medium text-on-surface-variant">
+        <label htmlFor={`${formId}-entry-title`} className="mb-1 block text-xs font-medium text-dash-muted">
           {t(locale, "forum.ui.newEntryTitle")}
         </label>
         <input
           id={`${formId}-entry-title`}
-          className="w-full rounded-lg border border-outline-variant/35 bg-surface-container-lowest px-3 py-2 text-sm text-on-surface"
+          className="w-full rounded-md border border-dash-border bg-dash-bg px-3 py-2 text-sm text-dash-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dash-accent"
           value={entryTitle}
           onChange={(e) => setEntryTitle(e.target.value)}
           maxLength={200}
           required
           autoComplete="off"
         />
-        <p id={`${formId}-slug-hint`} className="mt-1 text-xs text-on-surface-variant">
+        <p id={`${formId}-slug-hint`} className="mt-1 text-xs text-dash-muted">
           {t(locale, "forum.ui.slugFromTitleHint")}
         </p>
-        <p className="mt-1 font-mono text-[11px] text-on-surface-variant" aria-live="polite">
-          <span className="font-sans text-outline">{t(locale, "forum.ui.entrySlugPreview")}: </span>/{entrySlugPreview || "—"}
+        <p className="mt-1 font-dash-mono text-[11px] text-dash-muted" aria-live="polite">
+          <span className="font-dash-sans text-dash-muted">{t(locale, "forum.ui.entrySlugPreview")}: </span>/{entrySlugPreview || "—"}
         </p>
       </div>
 
       <div>
-        <p className="mb-2 text-xs font-medium text-on-surface-variant">{t(locale, "forum.ui.newEntryBody")}</p>
+        <p className="mb-2 text-xs font-medium text-dash-muted">{t(locale, "forum.ui.newEntryBody")}</p>
         <div className="space-y-2">
           {segments.map((seg, idx) =>
             seg.type === "text" ? (
               <textarea
                 key={idx}
-                className="min-h-[100px] w-full rounded-lg border border-outline-variant/35 bg-surface-container-lowest px-3 py-2 text-sm text-on-surface"
+                className="min-h-[100px] w-full rounded-md border border-dash-border bg-dash-bg px-3 py-2 text-sm text-dash-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dash-accent"
                 value={seg.content}
                 onChange={(e) => {
                   const next = [...segments];
@@ -238,7 +238,7 @@ export function ForumNewEntryForm({ locale, thematics }: Props) {
             ) : (
               <textarea
                 key={idx}
-                className="min-h-[100px] w-full rounded-lg border border-primary/30 bg-[rgb(6,8,10)] px-3 py-2 font-mono text-xs text-on-surface"
+                className="min-h-[100px] w-full rounded-md border border-dash-accent/30 bg-dash-bg px-3 py-2 font-dash-mono text-xs text-dash-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dash-accent"
                 value={seg.content}
                 onChange={(e) => {
                   const next = [...segments];
@@ -252,7 +252,7 @@ export function ForumNewEntryForm({ locale, thematics }: Props) {
         </div>
         <button
           type="button"
-          className="mt-2 rounded-lg border border-outline-variant/40 px-3 py-1.5 text-xs font-semibold text-on-surface-variant hover:border-primary/40"
+          className="mt-2 rounded-md border border-dash-border px-3 py-1.5 text-xs font-semibold text-dash-muted hover:border-dash-accent/50 hover:text-dash-accent-text"
           onClick={() => setSegments((s) => [...s, { type: "code", content: "", language: "txt" }])}
         >
           {t(locale, "forum.ui.addCodeBlock")}
@@ -260,14 +260,14 @@ export function ForumNewEntryForm({ locale, thematics }: Props) {
       </div>
 
       {error ? (
-        <p role="alert" className="text-sm text-error">
+        <p role="alert" className="text-sm text-dash-error">
           {error}
         </p>
       ) : null}
       <button
         type="submit"
         disabled={busy}
-        className="rounded-xl bg-primary px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-on-primary-fixed shadow-[0_0_20px_color-mix(in_srgb,var(--color-primary-container)_20%,transparent)] disabled:opacity-50"
+        className="rounded-md bg-dash-accent px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-dash-bg transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dash-accent disabled:opacity-50"
       >
         {busy ? t(locale, "forum.ui.loading") : t(locale, "forum.ui.newEntrySubmit")}
       </button>

@@ -26,26 +26,26 @@ export default async function AuthPage({ params, searchParams }: AuthPageProps) 
   const redirectAfterAuth = sanitizeInternalNextPath(sp.next);
 
   return (
-    <>
-      <header className="sticky top-0 z-50 border-b border-outline-variant/15 bg-background/80 backdrop-blur-lg">
+    <div className="flex min-h-dvh flex-col bg-dash-bg text-dash-text">
+      <header className="sticky top-0 z-50 border-b border-dash-border bg-dash-bg/80 backdrop-blur-lg">
         <div className="mx-auto flex max-w-content items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
           <Link
             href={localizedHref(locale, "/")}
-            className="inline-flex items-center gap-2.5 font-headline text-sm font-bold text-primary sm:text-base"
+            className="inline-flex items-center gap-2.5 font-headline text-sm font-bold text-dash-accent-text sm:text-base"
             aria-label={t(locale, "auth.backHomeAria")}
             data-hover-label={t(locale, "auth.backHomeAria")}
           >
             <span
-              className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-outline-variant/35 bg-surface-container-low shadow-[0_0_18px_color-mix(in_srgb,var(--color-primary-container)_18%,transparent)]"
+              className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-dash-border bg-dash-surface"
               aria-hidden
             >
-              <Terminal className="size-5 text-primary-container" strokeWidth={2.1} />
+              <Terminal className="size-5 text-dash-accent" strokeWidth={2.1} />
             </span>
             {t(locale, "nav.brand")}
           </Link>
           <Link
             href={localizedHref(locale, "/")}
-            className="font-label text-[10px] font-semibold uppercase tracking-widest text-on-surface-variant transition-colors hover:text-primary"
+            className="font-label text-[10px] font-semibold uppercase tracking-widest text-dash-muted transition-colors hover:text-dash-accent-text"
             data-hover-label={t(locale, "auth.backHome")}
           >
             {t(locale, "auth.backHome")}
@@ -53,6 +53,6 @@ export default async function AuthPage({ params, searchParams }: AuthPageProps) 
         </div>
       </header>
       <AuthGatewayClient locale={locale} redirectAfterAuth={redirectAfterAuth} />
-    </>
+    </div>
   );
 }

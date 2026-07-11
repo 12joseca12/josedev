@@ -148,7 +148,6 @@ export type StyleTokens = typeof styleTokens;
 export function getGlobalUiCss(): string {
   const primaryContainer = portfolioThemeColors["primary-container"];
   const tertiaryFixed = portfolioThemeColors["tertiary-fixed"];
-  const tertiary = portfolioThemeColors.tertiary;
   const primary = portfolioThemeColors.primary;
   const outline = portfolioThemeColors.outline;
   const outlineVariant = portfolioThemeColors["outline-variant"];
@@ -203,77 +202,6 @@ export function getGlobalUiCss(): string {
   height: 0 !important;
   display: none !important;
   background: transparent !important;
-}
-
-.auth-cyber-grid {
-  background-image:
-    linear-gradient(${withAlpha(primaryContainer, 0.05)} 1px, transparent 1px),
-    linear-gradient(90deg, ${withAlpha(primaryContainer, 0.05)} 1px, transparent 1px);
-  background-size: 40px 40px;
-}
-
-@keyframes auth-circuit-dash {
-  to {
-    stroke-dashoffset: -320;
-  }
-}
-
-@keyframes auth-circuit-breathe {
-  0%,
-  100% {
-    opacity: 0.35;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.85;
-    transform: scale(1.15);
-  }
-}
-
-.auth-circuit-svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.auth-circuit-path--cyan {
-  fill: none;
-  stroke: ${withAlpha(primaryContainer, 0.32)};
-  stroke-width: 1.1;
-  stroke-dasharray: 5 16;
-  stroke-linecap: round;
-  animation: auth-circuit-dash 8s linear infinite;
-}
-
-.auth-circuit-path--mint {
-  fill: none;
-  stroke: ${withAlpha(tertiaryFixed, 0.22)};
-  stroke-width: 1;
-  stroke-dasharray: 9 18;
-  stroke-linecap: round;
-  animation: auth-circuit-dash 12s linear infinite reverse;
-}
-
-.auth-circuit-node {
-  fill: ${withAlpha(primaryContainer, 0.55)};
-  animation: auth-circuit-breathe 3.4s ease-in-out infinite;
-}
-
-.auth-circuit-node--delayed {
-  fill: ${withAlpha(tertiary, 0.45)};
-  animation: auth-circuit-breathe 3.4s ease-in-out infinite;
-  animation-delay: 1.1s;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .auth-circuit-path--cyan,
-  .auth-circuit-path--mint,
-  .auth-circuit-node,
-  .auth-circuit-node--delayed {
-    animation: none !important;
-  }
 }
 
 /*

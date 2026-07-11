@@ -27,7 +27,7 @@ type Props = {
 function ProfileAvatar({ initials, className }: { initials: string; className?: string }) {
   return (
     <span
-      className={`flex shrink-0 items-center justify-center rounded-lg border border-primary/45 bg-gradient-to-br from-surface-container-high to-surface-container-low font-headline text-[10px] font-bold uppercase tracking-tight text-primary shadow-[0_0_16px_color-mix(in_srgb,var(--color-primary-container)_22%,transparent)] sm:text-[11px] ${className ?? ""}`}
+      className={`flex shrink-0 items-center justify-center rounded-md border border-dash-accent/45 bg-dash-surface font-dash-mono text-[10px] font-bold uppercase tracking-tight text-dash-accent-text sm:text-[11px] ${className ?? ""}`}
       aria-hidden
     >
       {initials}
@@ -77,9 +77,9 @@ function NavProfileControlInner({
   }, []);
 
   const iconButtonClass =
-    "rounded-lg p-2 text-on-surface-variant transition-all duration-300 hover:bg-surface-container-low/80 hover:text-primary hover:shadow-[0_0_18px_color-mix(in_srgb,var(--color-primary-container)_15%,transparent)]";
+    "rounded-md p-2 text-dash-muted transition-colors duration-200 hover:bg-dash-border/40 hover:text-dash-accent-text";
   const menuItemClass =
-    "flex items-center gap-3 rounded-lg px-3 py-3 font-headline text-sm font-medium uppercase tracking-tight text-slate-400 transition-all duration-300 hover:bg-surface-container-low hover:pl-4 hover:text-primary hover:shadow-[inset_3px_0_0_0_var(--color-primary)]";
+    "flex items-center gap-3 rounded-md px-3 py-3 font-headline text-sm font-medium uppercase tracking-tight text-dash-muted transition-colors duration-200 hover:bg-dash-border/30 hover:text-dash-accent-text";
 
   if (!ready) {
     if (variant === "menu") {

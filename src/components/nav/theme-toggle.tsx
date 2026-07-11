@@ -31,7 +31,7 @@ export function ThemeToggle({ locale }: Props) {
   }, []);
 
   const buttonClass =
-    "inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg p-2 text-on-surface-variant transition-all duration-300 hover:bg-surface-container-low/80 hover:text-primary hover:shadow-[0_0_18px_color-mix(in_srgb,var(--color-primary-container)_15%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dash-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+    "inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-md p-2 text-dash-muted transition-colors duration-200 hover:bg-dash-border/40 hover:text-dash-accent-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dash-accent focus-visible:ring-offset-2 focus-visible:ring-offset-dash-bg";
 
   if (!mounted) {
     return (

@@ -1,10 +1,12 @@
 import { DM_Sans, Geist, JetBrains_Mono } from "next/font/google";
 
 /**
- * Tipografía del dashboard staff (DESIGN.md): JetBrains Mono para titulares,
- * DM Sans para UI, Geist (tabular-nums) para datos. Se cargan solo en los
- * layouts de /admin y /closer — el sitio público sigue con Space Grotesk/Inter
- * hasta la Fase 4. globals.css mapea estas variables a font-dash-*.
+ * Tipografía DESIGN.md: JetBrains Mono para titulares/display, DM Sans para
+ * UI/body, Geist (tabular-nums) para datos. Cargadas una vez aquí y
+ * reutilizadas por el layout raíz público (`[locale]/layout.tsx`, Fase 4b)
+ * y por los layouts de /admin, /closer y /area-clientes. globals.css mapea
+ * estas variables a `--font-headline`/`--font-body` (público) y a
+ * `--font-dash-mono`/`--font-dash-sans`/`--font-dash-data` (dashboards).
  */
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",

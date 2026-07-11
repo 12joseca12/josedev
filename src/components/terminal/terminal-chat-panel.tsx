@@ -154,7 +154,7 @@ export function TerminalChatPanel({ locale, open, onClose }: Props) {
         id={panelId}
         role="dialog"
         aria-label={t(locale, "terminalChat.pipPanelAria")}
-        className="pointer-events-auto fixed bottom-4 left-4 z-chat-widget flex w-[min(calc(100vw-2rem),20rem)] flex-col overflow-hidden rounded-lg border border-outline-variant/35 bg-terminal-panel shadow-[0_12px_40px_rgba(0,0,0,0.55)] sm:bottom-5 sm:left-5 sm:w-[22rem]"
+        className="dark pointer-events-auto fixed bottom-4 left-4 z-chat-widget flex w-[min(calc(100vw-2rem),20rem)] flex-col overflow-hidden rounded-lg border border-dash-border bg-terminal-panel shadow-[0_12px_40px_rgba(0,0,0,0.55)] sm:bottom-5 sm:left-5 sm:w-[22rem]"
         style={{ paddingBottom: "max(0px, env(safe-area-inset-bottom))" }}
         onMouseDown={(e) => e.stopPropagation()}
         onClick={(e) => e.stopPropagation()}
@@ -175,26 +175,26 @@ export function TerminalChatPanel({ locale, open, onClose }: Props) {
           aria-live="polite"
         >
           {!authReady ? (
-            <p className="font-mono text-[10px] text-outline">{t(locale, "terminalChat.loading")}</p>
+            <p className="font-mono text-[10px] text-dash-muted">{t(locale, "terminalChat.loading")}</p>
           ) : null}
           {authReady && !signedIn ? (
-            <div className="space-y-2 rounded border border-primary/25 bg-primary/5 p-2 text-center">
-              <p className="font-mono text-[10px] text-outline">{t(locale, "terminalChat.signInBody")}</p>
+            <div className="space-y-2 rounded border border-dash-accent/25 bg-dash-accent/5 p-2 text-center">
+              <p className="font-mono text-[10px] text-dash-muted">{t(locale, "terminalChat.signInBody")}</p>
               <Link
                 href={buildAuthHref(locale, pathname)}
-                className="inline-block rounded border border-primary/50 bg-primary/20 px-2 py-1 font-mono text-[10px] text-primary"
+                className="inline-block rounded border border-dash-accent/50 bg-dash-accent/20 px-2 py-1 font-mono text-[10px] text-dash-accent-text"
               >
                 {t(locale, "terminalChat.signInCta")}
               </Link>
             </div>
           ) : null}
           {signedIn && error ? (
-            <p className="rounded border border-error/30 bg-error/10 px-2 py-1 font-mono text-[10px] text-error">
+            <p className="rounded border border-dash-error/30 bg-dash-error/10 px-2 py-1 font-mono text-[10px] text-dash-error">
               {error}
             </p>
           ) : null}
           {signedIn && !loading && !lastUser && !lastAssistant ? (
-            <p className="font-mono text-[10px] text-outline">{t(locale, "terminalChat.emptyHint")}</p>
+            <p className="font-mono text-[10px] text-dash-muted">{t(locale, "terminalChat.emptyHint")}</p>
           ) : null}
           {signedIn && lastUser ? (
             <TerminalChatMessageBlock
@@ -234,7 +234,7 @@ export function TerminalChatPanel({ locale, open, onClose }: Props) {
         {signedIn && awaitingReply ? <TerminalChatTypingIndicator locale={locale} /> : null}
 
         {signedIn ? (
-          <div className="shrink-0 border-t border-outline-variant/25 bg-terminal-footer px-2 py-2">
+          <div className="shrink-0 border-t border-dash-border bg-terminal-footer px-2 py-2">
             <TerminalChatComposer
               locale={locale}
               inputId={pipInputId}
@@ -254,8 +254,8 @@ export function TerminalChatPanel({ locale, open, onClose }: Props) {
   }
 
   const asideClassName = isFullscreen
-    ? "relative z-10 flex h-full min-h-0 w-full max-w-none flex-col overflow-hidden border-0 bg-terminal-panel"
-    : "relative z-10 flex h-full min-h-0 w-full max-w-full flex-col overflow-hidden border-l border-outline-variant/30 bg-terminal-panel shadow-[-12px_0_48px_rgba(0,0,0,0.55)] sm:max-w-[min(100vw,32rem)] md:max-w-[min(100vw,36rem)] lg:max-w-[min(100vw,40rem)]";
+    ? "dark relative z-10 flex h-full min-h-0 w-full max-w-none flex-col overflow-hidden border-0 bg-terminal-panel"
+    : "dark relative z-10 flex h-full min-h-0 w-full max-w-full flex-col overflow-hidden border-l border-dash-border bg-terminal-panel shadow-[-12px_0_48px_rgba(0,0,0,0.55)] sm:max-w-[min(100vw,32rem)] md:max-w-[min(100vw,36rem)] lg:max-w-[min(100vw,40rem)]";
 
   return createPortal(
     <div
@@ -265,7 +265,7 @@ export function TerminalChatPanel({ locale, open, onClose }: Props) {
       {!isFullscreen ? (
         <button
           type="button"
-          className="absolute inset-0 bg-background/70 backdrop-blur-sm"
+          className="absolute inset-0 bg-dash-bg/70 backdrop-blur-sm"
           aria-label={t(locale, "terminalChat.closeAria")}
           onClick={onClose}
         />
@@ -295,35 +295,35 @@ export function TerminalChatPanel({ locale, open, onClose }: Props) {
           aria-busy={signedIn && (loading || awaitingReply)}
         >
           {!authReady ? (
-            <p className="font-mono text-xs text-outline">{t(locale, "terminalChat.loading")}</p>
+            <p className="font-mono text-xs text-dash-muted">{t(locale, "terminalChat.loading")}</p>
           ) : null}
           {authReady && !signedIn ? (
-            <div className="flex flex-1 flex-col items-center justify-center gap-4 rounded-lg border border-primary/25 bg-primary/5 px-4 py-8 text-center">
-              <p className="font-headline text-sm font-bold uppercase tracking-wide text-primary">
+            <div className="flex flex-1 flex-col items-center justify-center gap-4 rounded-lg border border-dash-accent/25 bg-dash-accent/5 px-4 py-8 text-center">
+              <p className="font-headline text-sm font-bold uppercase tracking-wide text-dash-accent-text">
                 {t(locale, "terminalChat.signInTitle")}
               </p>
-              <p className="max-w-xs font-mono text-xs leading-relaxed text-outline">
+              <p className="max-w-xs font-mono text-xs leading-relaxed text-dash-muted">
                 {t(locale, "terminalChat.signInBody")}
               </p>
               <Link
                 href={buildAuthHref(locale, pathname)}
                 onClick={onClose}
-                className="rounded-md border border-primary/50 bg-primary/20 px-4 py-2 font-headline text-xs font-bold uppercase tracking-wide text-primary transition-colors hover:bg-primary/30"
+                className="rounded-md border border-dash-accent/50 bg-dash-accent/20 px-4 py-2 font-headline text-xs font-bold uppercase tracking-wide text-dash-accent-text transition-colors hover:bg-dash-accent/30"
               >
                 {t(locale, "terminalChat.signInCta")}
               </Link>
             </div>
           ) : null}
           {signedIn && loading ? (
-            <p className="font-mono text-xs text-outline">{t(locale, "terminalChat.loading")}</p>
+            <p className="font-mono text-xs text-dash-muted">{t(locale, "terminalChat.loading")}</p>
           ) : null}
           {signedIn && error ? (
-            <p className="rounded border border-error/30 bg-error/10 px-2 py-1 font-mono text-xs text-error">
+            <p className="rounded border border-dash-error/30 bg-dash-error/10 px-2 py-1 font-mono text-xs text-dash-error">
               {error}
             </p>
           ) : null}
           {signedIn && !loading && thread?.messages.length === 0 ? (
-            <p className="font-mono text-xs text-outline">{t(locale, "terminalChat.emptyHint")}</p>
+            <p className="font-mono text-xs text-dash-muted">{t(locale, "terminalChat.emptyHint")}</p>
           ) : null}
           {signedIn
             ? thread?.messages.map((msg) => {

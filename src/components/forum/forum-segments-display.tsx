@@ -11,7 +11,7 @@ export function ForumSegmentsDisplay({ segments }: Props) {
       {segments.map((seg, i) => {
         if (seg.type === "text") {
           return (
-            <p key={i} className="whitespace-pre-wrap break-words text-sm leading-relaxed text-on-surface [overflow-wrap:anywhere]">
+            <p key={i} className="whitespace-pre-wrap break-words text-sm leading-relaxed text-dash-text [overflow-wrap:anywhere]">
               {seg.content}
             </p>
           );
@@ -19,14 +19,14 @@ export function ForumSegmentsDisplay({ segments }: Props) {
         return (
           <div
             key={i}
-            className="overflow-x-auto rounded-lg border border-outline-variant/30 bg-[rgb(6,8,10)] p-3 font-mono text-xs leading-relaxed shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04)]"
+            className="overflow-x-auto rounded-md border border-dash-border bg-dash-bg p-3 font-dash-mono text-xs leading-relaxed"
           >
             {seg.language ? (
-              <div className="mb-2 font-label text-[10px] uppercase tracking-widest text-tertiary">
+              <div className="mb-2 font-dash-sans text-[10px] uppercase tracking-widest text-dash-accent-text">
                 {escapeHtml(seg.language)}
               </div>
             ) : null}
-            <pre className="whitespace-pre text-on-surface [overflow-wrap:anywhere]">
+            <pre className="whitespace-pre text-dash-text [overflow-wrap:anywhere]">
               <code>{seg.content}</code>
             </pre>
           </div>

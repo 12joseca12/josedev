@@ -11,10 +11,10 @@ type Props = { locale: Locale };
 type Step = "loading" | "password" | "mfa-enroll" | "done";
 
 const fieldClass =
-  "w-full rounded-xl border border-outline-variant/35 bg-surface-container-lowest px-4 py-3.5 text-sm text-on-surface placeholder:text-outline/50 transition-colors focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/25 font-mono";
+  "w-full rounded-xl border border-dash-border bg-dash-bg px-4 py-3.5 text-sm text-dash-text placeholder:text-dash-muted/50 transition-colors focus:border-dash-accent/50 focus:outline-none focus:ring-2 focus:ring-dash-accent/25 font-mono";
 
 const labelClass =
-  "mb-1.5 block font-label text-[10px] font-medium uppercase tracking-widest text-on-surface-variant";
+  "mb-1.5 block font-label text-[10px] font-medium uppercase tracking-widest text-dash-muted";
 
 export function StaffOnboardingClient({ locale }: Props) {
   const baseId = useId();
@@ -137,14 +137,14 @@ export function StaffOnboardingClient({ locale }: Props) {
   }
 
   return (
-    <main className="flex min-h-[calc(100dvh-3.5rem)] flex-col items-center justify-center px-4 py-10">
-      <div className="w-full max-w-md rounded-xl border border-outline-variant/25 bg-surface-container-lowest/85 p-8 shadow-[0_40px_80px_rgba(0,0,0,0.45)]">
-        <h1 className="mb-6 font-headline text-xl font-bold text-on-surface">
+    <main className="dark flex min-h-[calc(100dvh-3.5rem)] flex-col items-center justify-center bg-dash-bg px-4 py-10 text-dash-text">
+      <div className="w-full max-w-md rounded-xl border border-dash-border bg-dash-surface/85 p-8 shadow-[0_40px_80px_rgba(0,0,0,0.45)]">
+        <h1 className="mb-6 font-headline text-xl font-bold text-dash-text">
           {t(locale, "staffAuth.onboardingTitle")}
         </h1>
 
         {error ? (
-          <div role="alert" className="mb-5 rounded-xl border border-error/35 bg-surface-container-low/60 px-4 py-3 text-sm text-error">
+          <div role="alert" className="mb-5 rounded-xl border border-dash-error/35 bg-dash-error/10 px-4 py-3 text-sm text-dash-error">
             {error}
           </div>
         ) : null}
@@ -153,7 +153,7 @@ export function StaffOnboardingClient({ locale }: Props) {
 
         {step === "password" ? (
           <form className="space-y-4" onSubmit={onSubmitPassword}>
-            <p className="text-sm text-on-surface-variant">{t(locale, "staffAuth.onboardingPasswordStepTitle")}</p>
+            <p className="text-sm text-dash-muted">{t(locale, "staffAuth.onboardingPasswordStepTitle")}</p>
             <div>
               <label htmlFor={`${baseId}-new-pw`} className={labelClass}>
                 {t(locale, "staffAuth.newPassword")}
@@ -187,7 +187,7 @@ export function StaffOnboardingClient({ locale }: Props) {
             <button
               type="submit"
               disabled={busy}
-              className="signature-glow w-full rounded-lg py-3.5 font-headline text-xs font-bold uppercase tracking-tight text-on-primary-fixed disabled:opacity-60"
+              className="w-full rounded-lg bg-dash-accent py-3.5 font-headline text-xs font-bold uppercase tracking-tight text-dash-bg transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60"
             >
               {t(locale, "staffAuth.continueButton")}
             </button>
@@ -196,18 +196,18 @@ export function StaffOnboardingClient({ locale }: Props) {
 
         {step === "mfa-enroll" ? (
           <form className="space-y-4" onSubmit={onSubmitMfaEnroll}>
-            <p className="text-sm text-on-surface-variant">{t(locale, "staffAuth.onboardingMfaStepTitle")}</p>
+            <p className="text-sm text-dash-muted">{t(locale, "staffAuth.onboardingMfaStepTitle")}</p>
             {qrCode ? (
               <>
-                <p className="text-xs text-on-surface-variant">{t(locale, "staffAuth.mfaScanInstructions")}</p>
+                <p className="text-xs text-dash-muted">{t(locale, "staffAuth.mfaScanInstructions")}</p>
                 <div
                   className="mx-auto w-fit rounded-lg bg-white p-3"
                   // eslint-disable-next-line react/no-danger -- SVG viene directo de Supabase Auth (auth.mfa.enroll), no de input de usuario.
                   dangerouslySetInnerHTML={{ __html: qrCode }}
                 />
                 {secret ? (
-                  <p className="break-all text-center font-mono text-[11px] text-on-surface-variant">
-                    {t(locale, "staffAuth.mfaManualEntry")} <span className="text-on-surface">{secret}</span>
+                  <p className="break-all text-center font-mono text-[11px] text-dash-muted">
+                    {t(locale, "staffAuth.mfaManualEntry")} <span className="text-dash-text">{secret}</span>
                   </p>
                 ) : null}
                 <div>
@@ -230,7 +230,7 @@ export function StaffOnboardingClient({ locale }: Props) {
                 <button
                   type="submit"
                   disabled={busy || mfaCode.length !== 6}
-                  className="signature-glow w-full rounded-lg py-3.5 font-headline text-xs font-bold uppercase tracking-tight text-on-primary-fixed disabled:opacity-60"
+                  className="w-full rounded-lg bg-dash-accent py-3.5 font-headline text-xs font-bold uppercase tracking-tight text-dash-bg transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60"
                 >
                   {t(locale, "staffAuth.mfaEnrollSubmit")}
                 </button>
@@ -239,7 +239,7 @@ export function StaffOnboardingClient({ locale }: Props) {
           </form>
         ) : null}
 
-        {step === "done" ? <p className="text-sm text-on-surface-variant">{t(locale, "staffAuth.onboardingComplete")}</p> : null}
+        {step === "done" ? <p className="text-sm text-dash-muted">{t(locale, "staffAuth.onboardingComplete")}</p> : null}
       </div>
     </main>
   );

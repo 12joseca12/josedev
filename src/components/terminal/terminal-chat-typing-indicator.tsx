@@ -29,14 +29,14 @@ export function TerminalChatTypingIndicator({ locale }: Props) {
 
   return (
     <div
-      className="flex w-full shrink-0 items-center gap-2 border-t border-outline-variant/15 px-3 py-3"
+      className="flex w-full shrink-0 items-center gap-2 border-t border-dash-border px-3 py-3"
       role="status"
       aria-live="polite"
     >
-      <span className="w-3 shrink-0 text-center font-mono text-sm text-primary" aria-hidden>
+      <span className="w-3 shrink-0 text-center font-mono text-sm text-dash-accent-text" aria-hidden>
         {SPINNER_FRAMES[frame]}
       </span>
-      <span className="font-mono text-[11px] uppercase tracking-widest text-outline">{label}</span>
+      <span className="font-mono text-[11px] uppercase tracking-widest text-dash-muted">{label}</span>
     </div>
   );
 }

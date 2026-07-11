@@ -21,21 +21,21 @@ function formatPublished(locale: Locale, iso: string | null): string {
 export function BlogPostCard({ locale, post }: Props) {
   const dateLabel = formatPublished(locale, post.publishedAt);
   return (
-    <article className="rounded-2xl border border-outline-variant/25 bg-surface-container-low/40 p-6 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.03)] transition-colors hover:border-primary/30">
-      <time className="font-label text-[10px] uppercase tracking-widest text-outline" dateTime={post.publishedAt ?? undefined}>
+    <article className="rounded-md border border-dash-border bg-dash-surface p-6 transition-colors hover:border-dash-accent/60 sm:p-8">
+      <time className="font-dash-sans text-[10px] uppercase tracking-widest text-dash-muted" dateTime={post.publishedAt ?? undefined}>
         {dateLabel}
       </time>
-      <h2 className="mt-2 font-headline text-xl font-bold tracking-tight text-on-surface sm:text-2xl">
-        <Link href={localizedHref(locale, `/blog/${encodeURIComponent(post.slug)}`)} className="text-on-surface hover:text-primary">
+      <h2 className="mt-2 font-headline text-xl font-bold tracking-tight text-dash-text sm:text-2xl">
+        <Link href={localizedHref(locale, `/blog/${encodeURIComponent(post.slug)}`)} className="text-dash-text hover:text-dash-accent-text">
           {post.title}
         </Link>
       </h2>
-      {post.excerpt ? <p className="mt-3 text-sm leading-relaxed text-on-surface-variant">{post.excerpt}</p> : null}
+      {post.excerpt ? <p className="mt-3 text-sm leading-relaxed text-dash-muted">{post.excerpt}</p> : null}
       <BlogTagChips tags={post.tags} />
       <p className="mt-4">
         <Link
           href={localizedHref(locale, `/blog/${encodeURIComponent(post.slug)}`)}
-          className="inline-flex text-sm font-semibold text-primary hover:underline"
+          className="inline-flex text-sm font-semibold text-dash-accent-text hover:underline"
           aria-label={`${t(locale, "blog.ui.readArticleAria")}: ${post.title}`}
         >
           {t(locale, "blog.ui.readMore")}

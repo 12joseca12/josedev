@@ -1,8 +1,10 @@
 "use client";
 
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
 import { Menu, Terminal, X } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { useEffect, useId, useState } from "react";
+import { Suspense, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { LanguageSwitcher } from "@/components/nav/language-switcher";
@@ -31,32 +33,28 @@ type Props = {
   profileMenuLabel: string;
   profileMenuLabelSignedIn: string;
   terminalAria: string;
-  hireMe: string;
   openMenuLabel: string;
   closeMenuLabel: string;
   currentPageLabel: string;
 };
 
 const navLinkBaseClass =
-  "relative shrink-0 rounded-md px-2.5 py-1.5 font-headline text-sm font-medium uppercase tracking-tight transition-all duration-300";
+  "relative shrink-0 rounded-sm px-2.5 py-1.5 font-headline text-sm font-medium transition-colors duration-200";
 
-const navLinkHoverGlowClass =
-  "hover:[text-shadow:0_0_8px_color-mix(in_srgb,var(--color-primary-container)_42%,transparent),0_0_18px_color-mix(in_srgb,var(--color-primary-container)_20%,transparent)]";
+const navLinkDesktopInactiveClass =
+  "text-dash-muted underline-offset-[6px] decoration-2 decoration-transparent hover:text-dash-accent-text hover:decoration-dash-accent hover:underline";
 
-const navLinkGlowClass =
-  "[text-shadow:0_0_10px_color-mix(in_srgb,var(--color-primary-container)_55.00000000000001%,transparent),0_0_22px_color-mix(in_srgb,var(--color-primary-container)_28.000000000000004%,transparent)]";
-
-const navLinkDesktopInactiveClass = `text-slate-400 underline-offset-[6px] decoration-2 decoration-transparent hover:text-primary hover:decoration-primary hover:underline ${navLinkHoverGlowClass}`;
-
-
-const navLinkDesktopActiveClass = `font-bold text-primary underline decoration-primary decoration-2 underline-offset-[6px] ${navLinkGlowClass}`;
+const navLinkDesktopActiveClass =
+  "font-bold text-dash-accent-text underline decoration-dash-accent decoration-2 underline-offset-[6px]";
 
 const navLinkMobileBaseClass =
-  "rounded-lg px-3 py-3 font-headline text-sm font-medium uppercase tracking-tight transition-all duration-300";
+  "rounded-sm px-3 py-3 font-headline text-sm font-medium transition-colors duration-200";
 
-const navLinkMobileInactiveClass = `text-slate-400 hover:text-primary hover:underline hover:decoration-primary hover:decoration-2 hover:underline-offset-4 ${navLinkHoverGlowClass}`;
+const navLinkMobileInactiveClass =
+  "text-dash-muted hover:text-dash-accent-text hover:underline hover:decoration-dash-accent hover:decoration-2 hover:underline-offset-4";
 
-const navLinkMobileActiveClass = `font-bold text-primary underline decoration-primary decoration-2 underline-offset-4 ${navLinkGlowClass}`;
+const navLinkMobileActiveClass =
+  "border-l-2 border-dash-accent bg-dash-accent/10 font-bold text-dash-accent-text";
 
 export function SiteHeaderClient({
   locale,
@@ -67,7 +65,6 @@ export function SiteHeaderClient({
   profileMenuLabel,
   profileMenuLabelSignedIn,
   terminalAria,
-  hireMe,
   openMenuLabel,
   closeMenuLabel,
   currentPageLabel,
@@ -77,6 +74,8 @@ export function SiteHeaderClient({
   const [terminalOpen, setTerminalOpen] = useState(false);
   const panelId = useId();
   const hoverLabelBelow = { "data-hover-label-placement": "below" as const };
+  const drawerPanelRef = useRef<HTMLDivElement>(null);
+  const drawerBackdropRef = useRef<HTMLButtonElement>(null);
 
   const navLinkA11y = (label: string, active: boolean) =>
     active ? { "aria-current": "page" as const, "aria-label": `${label} (${currentPageLabel})` } : {};
@@ -99,14 +98,35 @@ export function SiteHeaderClient({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [open]);
 
+  // Drawer slide-in (~200ms, power2.out). Gated by prefers-reduced-motion via
+  // gsap.matchMedia — with motion, we play the slide-in tween; without it,
+  // the drawer just appears (no transform), so it's fully usable with zero
+  // motion (DESIGN.md Motion/Accessibility).
+  useGSAP(
+    () => {
+      if (!open) return;
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        if (drawerPanelRef.current) {
+          gsap.from(drawerPanelRef.current, { xPercent: 100, duration: 0.2, ease: "power2.out" });
+        }
+        if (drawerBackdropRef.current) {
+          gsap.from(drawerBackdropRef.current, { autoAlpha: 0, duration: 0.2, ease: "power2.out" });
+        }
+        return () => mm.kill();
+      });
+    },
+    { dependencies: [open] },
+  );
+
   return (
     <>
       <div className="mx-auto flex max-w-content items-center justify-between gap-3 px-4 py-2.5 sm:px-6 sm:py-3 lg:px-8">
-        <div className="min-w-0 cursor-default font-headline text-base font-bold tracking-tighter text-primary transition-[filter,text-shadow] duration-300 hover:drop-shadow-[0_0_14px_color-mix(in_srgb,var(--color-primary-container)_40%,transparent)] sm:text-xl">
+        <div className="min-w-0 cursor-default font-dash-mono text-base font-bold tracking-tight text-dash-text sm:text-xl">
           {brand}
         </div>
 
-        <div className="hidden items-center gap-6 font-headline text-sm font-medium uppercase tracking-tight md:flex lg:gap-8">
+        <div className="hidden items-center gap-6 lg:gap-8 md:flex">
           {links.map((item) => {
             const active = isNavLinkActive(item.href, pathname);
             return (
@@ -124,22 +144,26 @@ export function SiteHeaderClient({
           })}
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-4">
-          <LanguageSwitcher locale={locale} />
+        <div className="flex items-center gap-2 sm:gap-3">
+          <Suspense fallback={null}>
+            <LanguageSwitcher locale={locale} />
+          </Suspense>
           <ThemeToggle locale={locale} />
-          <NavProfileControl
-            variant="icon"
-            hoverLabelPlacement="below"
-            profileAria={profileAria}
-            profileAriaSignedIn={profileAriaSignedIn}
-            profileMenuLabel={profileMenuLabel}
-            profileMenuLabelSignedIn={profileMenuLabelSignedIn}
-          />
+          <div className="hidden md:block">
+            <NavProfileControl
+              variant="menu"
+              hoverLabelPlacement="below"
+              profileAria={profileAria}
+              profileAriaSignedIn={profileAriaSignedIn}
+              profileMenuLabel={profileMenuLabel}
+              profileMenuLabelSignedIn={profileMenuLabelSignedIn}
+            />
+          </div>
           <button
             type="button"
             data-hover-label={terminalAria}
             {...hoverLabelBelow}
-            className="rounded-lg p-2 text-primary-container transition-all duration-300 hover:bg-surface-container/60 hover:opacity-90 hover:shadow-[0_0_20px_color-mix(in_srgb,var(--color-primary-container)_20%,transparent)]"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-dash-muted transition-colors duration-200 hover:bg-dash-border/40 hover:text-dash-accent-text"
             aria-label={terminalAria}
             aria-expanded={terminalOpen}
             onClick={(e) => {
@@ -152,17 +176,9 @@ export function SiteHeaderClient({
           </button>
           <button
             type="button"
-            data-hover-label={hireMe}
-            {...hoverLabelBelow}
-            className="signature-glow hidden rounded-lg px-4 py-2 font-headline text-xs font-bold tracking-tight text-on-primary-fixed shadow-[0_6px_24px_color-mix(in_srgb,var(--color-primary-container)_20%,transparent)] transition-all duration-300 hover:scale-[1.02] hover:opacity-95 hover:shadow-[0_10px_32px_color-mix(in_srgb,var(--color-primary-container)_38%,transparent)] active:scale-[0.98] sm:inline-flex sm:px-6 sm:text-sm"
-          >
-            {hireMe}
-          </button>
-          <button
-            type="button"
             data-hover-label={open ? closeMenuLabel : openMenuLabel}
             {...hoverLabelBelow}
-            className="inline-flex rounded-lg p-2 text-on-surface transition-colors duration-300 hover:bg-surface-container-low/80 hover:text-primary md:hidden"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-dash-text transition-colors duration-200 hover:bg-dash-border/40 hover:text-dash-accent-text md:hidden"
             aria-expanded={open}
             aria-controls={panelId}
             aria-label={open ? closeMenuLabel : openMenuLabel}
@@ -177,24 +193,26 @@ export function SiteHeaderClient({
         ? createPortal(
             <div className="fixed inset-0 z-mobile-menu-overlay md:hidden" role="presentation">
               <button
+                ref={drawerBackdropRef}
                 type="button"
-                className="absolute inset-0 bg-background/75 backdrop-blur-md"
+                className="absolute inset-0 bg-black/50"
                 aria-label={closeMenuLabel}
                 onClick={() => setOpen(false)}
               />
               <div
+                ref={drawerPanelRef}
                 id={panelId}
-                className="relative z-10 flex w-full max-w-full flex-col border-t border-outline-variant/25 bg-background/96 pt-[env(safe-area-inset-top)] shadow-[0_0_48px_rgba(0,0,0,0.45)] backdrop-blur-xl"
+                className="relative z-10 ml-auto flex h-full w-full max-w-xs flex-col border-l border-dash-border bg-dash-bg pt-[env(safe-area-inset-top)] shadow-[0_0_48px_rgba(0,0,0,0.35)]"
                 role="dialog"
                 aria-modal="true"
                 aria-label={openMenuLabel}
               >
-                <div className="flex shrink-0 items-center justify-between gap-3 border-b border-outline-variant/20 px-4 py-3">
-                  <span className="truncate font-headline text-sm font-bold text-primary">{brand}</span>
+                <div className="flex shrink-0 items-center justify-between gap-3 border-b border-dash-border px-4 py-3">
+                  <span className="truncate font-dash-mono text-sm font-bold text-dash-text">{brand}</span>
                   <button
                     type="button"
                     data-hover-label={closeMenuLabel}
-                    className="rounded-lg p-2 text-on-surface transition-colors hover:bg-surface-container-low hover:text-primary"
+                    className="rounded-md p-2 text-dash-muted transition-colors hover:bg-dash-border/40 hover:text-dash-accent-text"
                     aria-label={closeMenuLabel}
                     onClick={() => setOpen(false)}
                   >
@@ -207,7 +225,9 @@ export function SiteHeaderClient({
                 >
                   <div className="flex flex-col gap-1">
                     <div className="mb-1 flex items-center justify-center gap-2">
-                      <LanguageSwitcher locale={locale} />
+                      <Suspense fallback={null}>
+                        <LanguageSwitcher locale={locale} />
+                      </Suspense>
                       <ThemeToggle locale={locale} />
                     </div>
                     <NavProfileControl
@@ -239,7 +259,7 @@ export function SiteHeaderClient({
                       type="button"
                       data-hover-label={terminalAria}
                       {...hoverLabelBelow}
-                      className="flex w-full items-center justify-center gap-2 rounded-lg border border-primary/35 bg-surface-container-low px-3 py-3 font-headline text-sm font-medium uppercase tracking-tight text-primary transition-colors hover:bg-primary/10"
+                      className="flex w-full items-center justify-center gap-2 rounded-md border border-dash-border px-3 py-3 font-headline text-sm font-medium text-dash-muted transition-colors hover:border-dash-accent/40 hover:text-dash-accent-text"
                       onClick={() => {
                         setOpen(false);
                         setTerminalOpen(true);
@@ -247,13 +267,6 @@ export function SiteHeaderClient({
                     >
                       <Terminal className="size-5" aria-hidden strokeWidth={2} />
                       {terminalAria}
-                    </button>
-                    <button
-                      type="button"
-                      data-hover-label={hireMe}
-                      className="signature-glow mt-2 w-full rounded-lg px-6 py-3 font-headline text-sm font-bold text-on-primary-fixed shadow-[0_8px_28px_color-mix(in_srgb,var(--color-primary-container)_25%,transparent)] transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_12px_36px_color-mix(in_srgb,var(--color-primary-container)_40%,transparent)] active:scale-[0.99]"
-                    >
-                      {hireMe}
                     </button>
                   </div>
                 </nav>

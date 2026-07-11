@@ -14,13 +14,18 @@
   regenerate. `pnpm test` fails if this block drifts from that source.
 */
 @theme inline {
-  /* next/font sets --font-space-grotesk / --font-inter on <html> */
-  --font-headline: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
-  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-label: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  /* DESIGN.md: display/headlines JetBrains Mono 700, body/UI DM Sans 400/500.
+     next/font sets --font-jetbrains-mono / --font-dm-sans / --font-geist on
+     <html> via dashFontVariables (src/components/staff-dash/dash-fonts.ts),
+     applied by the public root layout AND the /admin, /closer,
+     /area-clientes layouts. */
+  --font-headline: var(--font-jetbrains-mono), ui-monospace, monospace;
+  --font-body: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-label: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
 
-  /* Dashboard staff (DESIGN.md): los layouts de /admin y /closer setean
-     --font-jetbrains-mono / --font-dm-sans / --font-geist vía next/font. */
+  /* Dashboard staff (DESIGN.md): mismas variables next/font, expuestas bajo
+     nombres dash-* para los componentes staff-dash/portal que las referencian
+     explícitamente. */
   --font-dash-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
   --font-dash-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
   --font-dash-data: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
@@ -166,6 +171,17 @@
   --dash-info: #4A7290;
 }
   /* END GENERATED DASH-THEME-VALUES */
+
+/*
+  DESIGN.md a11y: JetBrains Mono en display/headlines necesita más
+  line-height que el default de un display font (1.15-1.2, no el ~1
+  ajustado típico) para no perder legibilidad a tamaños pequeños/mobile.
+  Aplica a cualquier elemento con la utilidad font-headline (Tailwind
+  genera esa clase desde --font-headline en el bloque @theme de arriba).
+*/
+.font-headline {
+  line-height: 1.2;
+}
 
 /*
   overflow-x: hidden fuerza overflow-y: auto en algunos navegadores cuando un eje

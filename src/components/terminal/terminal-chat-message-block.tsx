@@ -32,14 +32,12 @@ export function TerminalChatMessageBlock({
   if (compact) {
     return (
       <div
-        className={`rounded border border-outline-variant/20 bg-surface-container-low/80 px-2 py-1.5 ${
-          isUser ? "border-r-2 border-r-outline/40" : "border-l-2 border-l-primary"
+        className={`rounded border border-dash-border bg-terminal-panel px-2 py-1.5 ${
+          isUser ? "border-r-2 border-r-dash-muted/50" : "border-l-2 border-l-dash-accent"
         }`}
       >
-        <p className="mb-0.5 font-mono text-[8px] font-bold uppercase tracking-widest text-outline">
-          {label}
-        </p>
-        <p className="line-clamp-3 font-mono text-[10px] leading-snug text-on-surface">{msg.content}</p>
+        <p className="mb-0.5 font-mono text-[8px] font-bold uppercase tracking-widest text-dash-muted">{label}</p>
+        <p className="line-clamp-3 font-mono text-[10px] leading-snug text-dash-text">{msg.content}</p>
       </div>
     );
   }
@@ -52,16 +50,16 @@ export function TerminalChatMessageBlock({
       <div className={`flex items-center gap-2 ${isUser ? "flex-row-reverse" : ""}`}>
         <span
           className={`rounded px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-widest ${
-            isUser ? "bg-outline-variant/25 text-outline" : "bg-primary/20 text-primary"
+            isUser ? "bg-dash-border/60 text-dash-muted" : "bg-dash-accent/20 text-dash-accent-text"
           }`}
         >
           {label}
         </span>
-        <span className="font-mono text-[9px] text-outline/80 sm:text-[10px]">{prompt}</span>
+        <span className="font-mono text-[9px] text-dash-muted/90 sm:text-[10px]">{prompt}</span>
       </div>
       <div
-        className={`max-w-[min(100%,28rem)] rounded-md border border-outline-variant/25 bg-surface-container-low/90 px-3 py-2.5 font-mono text-xs leading-relaxed text-on-surface shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] ${
-          isUser ? "border-r-2 border-r-outline/50" : "border-l-2 border-l-primary"
+        className={`max-w-[min(100%,28rem)] rounded-md border border-dash-border bg-terminal-panel px-3 py-2.5 font-mono text-xs leading-relaxed text-dash-text shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] ${
+          isUser ? "border-r-2 border-r-dash-muted/60" : "border-l-2 border-l-dash-accent"
         }`}
       >
         <p className="whitespace-pre-wrap break-words">{msg.content}</p>
@@ -69,9 +67,9 @@ export function TerminalChatMessageBlock({
           <TerminalChatMeetingPicker locale={locale} busy={meetingBusy} onSubmit={onMeetingSubmit} />
         ) : null}
         {!isUser && msg.messageType === "meeting_picker" && !meetingPickerIsPending(msg) && meta.selectedDate ? (
-          <p className="mt-2 font-label text-[10px] uppercase tracking-widest text-primary">
+          <p className="mt-2 font-label text-[10px] uppercase tracking-widest text-dash-accent-text">
             {t(locale, "terminalChat.meetingScheduled")}{" "}
-            <span className="font-mono normal-case tracking-normal text-on-surface">
+            <span className="font-mono normal-case tracking-normal text-dash-text">
               {meta.selectedDate} {meta.selectedTime ?? ""}
             </span>
           </p>

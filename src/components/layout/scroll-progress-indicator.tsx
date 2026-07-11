@@ -26,7 +26,7 @@ export function ScrollProgressIndicator({
       aria-hidden="true"
     >
       <div
-        className={`h-full w-full bg-outline-variant/25 ${
+        className={`h-full w-full bg-dash-border/40 ${
           horizontal
             ? "shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
             : "shadow-[inset_1px_0_0_rgba(255,255,255,0.04)]"
@@ -35,8 +35,8 @@ export function ScrollProgressIndicator({
         <div
           className={`scroll-progress-fill h-full w-full will-change-transform transition-[transform] duration-150 ease-out motion-reduce:transition-none ${
             horizontal
-              ? "origin-left rounded-r-sm bg-gradient-to-r from-primary-container via-tertiary to-primary"
-              : "origin-top rounded-b-sm bg-gradient-to-b from-primary-container via-tertiary to-primary"
+              ? "origin-left rounded-r-sm bg-dash-accent"
+              : "origin-top rounded-b-sm bg-dash-accent"
           }`}
           style={{ transform: horizontal ? `scaleX(${progress})` : `scaleY(${progress})` }}
         />
