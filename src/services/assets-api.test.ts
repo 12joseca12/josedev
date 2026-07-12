@@ -16,7 +16,6 @@ describe("assets-api pure helpers", () => {
       size_bytes: 1234,
       titulo: null,
       descripcion: "marca",
-      uploaded_by_user_id: "u-1",
       created_at: "2026-07-11T10:00:00Z",
     };
     expect(mapAssetRow(row)).toEqual({
@@ -29,7 +28,6 @@ describe("assets-api pure helpers", () => {
       sizeBytes: 1234,
       titulo: null,
       descripcion: "marca",
-      uploadedByUserId: "u-1",
       createdAt: "2026-07-11T10:00:00Z",
     });
   });

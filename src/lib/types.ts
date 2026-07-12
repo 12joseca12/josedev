@@ -411,6 +411,5 @@ export type ClientAssetDTO = {
   sizeBytes: number;
   titulo: string | null;
   descripcion: string | null;
-  uploadedByUserId: string | null;
   createdAt: string;
 };

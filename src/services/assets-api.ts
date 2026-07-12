@@ -14,9 +14,18 @@ export type ClientAssetRow = {
   size_bytes: number;
   titulo: string | null;
   descripcion: string | null;
-  uploaded_by_user_id: string | null;
   created_at: string;
 };
+
+/**
+ * Columnas devueltas al cliente. NO incluye `uploaded_by_user_id`: es un
+ * identificador interno de `auth.users` (para filas source='admin' sería el uid
+ * del admin) que la UI no usa — enumeramos en vez de `select("*")` para no
+ * filtrarlo en la respuesta. La columna sigue existiendo en la tabla (la usan la
+ * RLS de borrado vía `private.asset_uploader_of` y `on_asset_insert`).
+ */
+const ASSET_COLUMNS =
+  "id, client_id, source, storage_path, file_name, mime_type, size_bytes, titulo, descripcion, created_at";
 
 export function buildAssetStoragePath(clientId: string, assetId: string): string {
   return `clients/${clientId}/${assetId}`;
@@ -33,7 +42,6 @@ export function mapAssetRow(row: ClientAssetRow): ClientAssetDTO {
     sizeBytes: row.size_bytes,
     titulo: row.titulo,
     descripcion: row.descripcion,
-    uploadedByUserId: row.uploaded_by_user_id,
     createdAt: row.created_at,
   };
 }
@@ -48,7 +56,7 @@ export async function listAssets(clientId: string): Promise<FetchResult<ClientAs
   const supabase = getSupabaseSSRBrowserClient();
   const { data, error } = await supabase
     .from("client_assets")
-    .select("*")
+    .select(ASSET_COLUMNS)
     .eq("client_id", clientId)
     .order("created_at", { ascending: false });
 
@@ -109,7 +117,7 @@ export async function uploadAsset(input: UploadAssetInput): Promise<FetchResult<
       descripcion: input.descripcion,
       uploaded_by_user_id: user.id,
     })
-    .select("*")
+    .select(ASSET_COLUMNS)
     .single();
 
   if (insertError) {
@@ -133,10 +141,17 @@ export async function deleteAsset(asset: ClientAssetDTO): Promise<FetchResult<vo
   return { ok: true, data: undefined };
 }
 
-/** URL firmada de corta duración (120s) para ver/descargar un asset del bucket privado. */
+/**
+ * URL firmada de corta duración (120s) para descargar un asset del bucket
+ * privado. `download: true` fuerza `Content-Disposition: attachment`, así el
+ * navegador descarga el archivo en vez de renderizarlo inline — neutraliza el
+ * vector de SVG/HTML con script servido desde el origen de storage.
+ */
 export async function createAssetSignedUrl(storagePath: string): Promise<FetchResult<string>> {
   const supabase = getSupabaseSSRBrowserClient();
-  const { data, error } = await supabase.storage.from("client-assets").createSignedUrl(storagePath, 120);
+  const { data, error } = await supabase.storage
+    .from("client-assets")
+    .createSignedUrl(storagePath, 120, { download: true });
 
   if (error) return { ok: false, message: error.message };
   return { ok: true, data: data.signedUrl };
