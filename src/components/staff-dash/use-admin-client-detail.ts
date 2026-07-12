@@ -2,7 +2,15 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-import type { ClientDTO, ClientPackExtraDTO, ClientTaskCommentDTO, ClientTaskDTO, PackExtraDTO } from "@/lib/types";
+import type {
+  ClientAssetDTO,
+  ClientDTO,
+  ClientPackExtraDTO,
+  ClientTaskCommentDTO,
+  ClientTaskDTO,
+  PackExtraDTO,
+} from "@/lib/types";
+import { listAssets } from "@/services/assets-api";
 import { getClient, listComments, listPack, listPackExtras, listTasks } from "@/services/clients-api";
 
 type AdminClientDetailState =
@@ -17,6 +25,7 @@ type AdminClientDetailState =
       commentsByTask: Map<string, ClientTaskCommentDTO[]>;
       extras: ClientPackExtraDTO[];
       catalogExtras: PackExtraDTO[];
+      assets: ClientAssetDTO[];
     };
 
 async function fetchAdminClientDetail(clientId: string): Promise<AdminClientDetailState> {
@@ -25,14 +34,21 @@ async function fetchAdminClientDetail(clientId: string): Promise<AdminClientDeta
   const client = clientResult.data;
   if (!client) return { status: "not-found" };
 
-  const [tasksResult, generalCommentsResult, extrasResult, catalogExtrasResult] = await Promise.all([
+  const [tasksResult, generalCommentsResult, extrasResult, catalogExtrasResult, assetsResult] = await Promise.all([
     listTasks(client.id),
     listComments(client.id, undefined),
     listPack(client.id),
     listPackExtras(),
+    listAssets(client.id),
   ]);
 
-  if (!tasksResult.ok || !generalCommentsResult.ok || !extrasResult.ok || !catalogExtrasResult.ok) {
+  if (
+    !tasksResult.ok ||
+    !generalCommentsResult.ok ||
+    !extrasResult.ok ||
+    !catalogExtrasResult.ok ||
+    !assetsResult.ok
+  ) {
     return { status: "error" };
   }
 
@@ -57,6 +73,7 @@ async function fetchAdminClientDetail(clientId: string): Promise<AdminClientDeta
     commentsByTask,
     extras: extrasResult.data,
     catalogExtras: catalogExtrasResult.data.filter((extra) => extra.activo),
+    assets: assetsResult.data,
   };
 }
 

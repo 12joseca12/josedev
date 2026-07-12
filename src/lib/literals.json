@@ -1138,7 +1138,11 @@
     "addExtraPlaceholder": "Elegí un extra del catálogo…",
     "addExtraGratisLabel": "Gratis (incluido sin costo)",
     "addExtraSubmit": "Agregar",
-    "toastExtraAdded": "Extra agregado."
+    "toastExtraAdded": "Extra agregado.",
+    "assetsSectionTitle": "Archivos",
+    "emptyAssets": "Sin archivos todavía.",
+    "toastAssetUploaded": "Archivo subido.",
+    "toastAssetDeleted": "Archivo eliminado."
   },
   "adminPacks": {
     "metadataTitle": "Packs · Admin · Jose Dev",
