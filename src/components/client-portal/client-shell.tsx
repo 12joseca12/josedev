@@ -19,6 +19,7 @@ function navItemsFor(locale: Locale): NavItem[] {
     { href: `/${locale}/area-clientes/proyecto`, labelKey: "clientPortal.navProyecto" },
     { href: `/${locale}/area-clientes/tareas`, labelKey: "clientPortal.navTareas" },
     { href: `/${locale}/area-clientes/pack`, labelKey: "clientPortal.navPack" },
+    { href: `/${locale}/area-clientes/assets`, labelKey: "clientPortal.navAssets" },
     { href: `/${locale}/perfil`, labelKey: "clientPortal.navPerfil" },
   ];
 }

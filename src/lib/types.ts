@@ -394,3 +394,22 @@ export type EmulatorStatusDTO = {
 };
 
 export type EmulatorDemoView = "preview" | "preparing" | "emulator";
+
+// -----------------------------------------------------------------------------
+// Client file assets (Fase 3b)
+// -----------------------------------------------------------------------------
+
+export type ClientAssetSource = "client" | "admin";
+
+export type ClientAssetDTO = {
+  id: string;
+  clientId: string;
+  source: ClientAssetSource;
+  storagePath: string;
+  fileName: string;
+  mimeType: string;
+  sizeBytes: number;
+  titulo: string | null;
+  descripcion: string | null;
+  createdAt: string;
+};

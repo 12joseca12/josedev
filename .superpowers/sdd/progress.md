@@ -26,3 +26,26 @@ ALL CONTENT WS (1-6) DONE. Next: WS7 cleanup (retire unused Material palette + c
 WS7 Part A: complete (staff-auth login/onboarding + scroll-progress + root skip-link migrated to dash-*; subagent stalled on disk, orchestrator finished). WHOLE SITE = 0 Material-semantic refs (grep-verified). staff-auth dark-locked (dark wrapper).
 WS7 Part B DEFERRED: remove dead Material token DEFS from stylesVariables.ts + cyan effects from getGlobalUiCss() — do when disk healthy (needs build+visual; removing defs risks silent Tailwind class break uncatchable by tsc/test). Harmless dead code meanwhile.
 4b content + migration COMPLETE. Remaining: visual pass (disk-blocked) + Part B (deferred) + merge to main.
+
+---
+# Fase 3b — Assets / Supabase Storage (subagent-driven)
+BASE = 01dc22a
+Plan: docs/superpowers/plans/2026-07-11-fase3b-assets-storage.md · Branch: fase-3b-assets
+Running Tasks 1-2 only this session (pure/Jest); STOP before Task 3 (prod Supabase migration) for user OK.
+Task 1: complete (commits 01dc22a..0fc20d8, review clean — spec ✅, quality Approved, 0 issues)
+Task 2: complete (commits 0fc20d8..e83cf3e, review clean — spec ✅, quality Approved, 0 issues; both named risks verified)
+STOPPED before Task 3 (prod Supabase migration) per user instruction — awaiting OK.
+Task 3: complete (commits e83cf3e..8a52bf9 — migration+bucket+2-layer RLS+trigger APPLIED to prod, notify Edge Fn v3 deployed). Review found 1 Critical (DELETE layers disagreed) → FIXED (asset_uploader_of helper + storage DELETE realigned + storage_path CHECK), re-review Approved. get_advisors clean.
+  MINOR for final review: (a) private.asset_uploader_of + client_id_of are RPC-callable to authenticated with arbitrary arg (accepted pattern, UUIDs non-enumerable); (b) notify copy strings differ from brief prose (kept clearer wording).
+  COUPLING for Task 4: uploadAsset MUST pass id:assetId explicitly (same uuid as path) — DB CHECK client_assets_storage_path_scope enforces storage_path='clients/'||client_id||'/'||id. Relying on gen_random_uuid() default would violate the CHECK.
+Task 4: complete (commit 8a52bf9..8568369, review Approved). Storage wrappers mirror clients-api (FetchResult, getSupabaseSSRBrowserClient, auth.getUser). CHECK coupling + delete-ordering correct + documented inline.
+  MINOR for final review: (a) select("*") vs enumerated columns (clients-api enumerates); (b) deleteAsset returns {ok:false} if storage object already missing → UI retry could stall — handle gracefully in Task 5/6.
+Task 5: complete (commit 8568369..efe5a57, review Approved). Client UI /area-clientes/assets: use-my-assets hook, assets-client, page, client-shell nav, clientPortal.* literals es+en. build 46/46, 145 tests, dash-* only, a11y OK.
+  MINOR for final review: (a) download button no in-flight guard (double-click → 2 signed-url/window.open); (b) native file input not visually reset after upload (cosmetic).
+Task 6: CODE ONLY this session (admin assets UI). Live e2e verification (Step 4-5: throwaway accounts, RLS isolation, Resend) DEFERRED to user — needs real accounts + running app.
+Task 6: complete (code portion; commit efe5a57..06c1e49, review Approved). Admin assets section in admin-cliente-detail + use-admin-client-detail fetch. source:'admin' upload, delete on all rows, build 46/46, 145 tests. Only the 2 pre-accepted cosmetic Minors carried over.
+ALL 6 TASKS CODE-COMPLETE + reviewed. DB migration live in prod. PENDING: final whole-branch review; then USER live e2e verification (throwaway accounts, RLS isolation, Resend); then merge decision.
+ACCUMULATED MINORS for final review: T3(a) asset_uploader_of/client_id_of RPC-callable (accepted pattern, non-enum UUIDs); T4(a) select("*") vs enumerated cols; T4(b)+T5+T6 deleteAsset {ok:false} if object gone; download button no in-flight guard (client+admin); native file input not visually reset after upload (client+admin).
+FINAL whole-branch review (opus): Ready to merge AFTER live verification. Two-layer RLS coherent/non-bypassable. Found 1 Important cross-task (orphan-cleanup RLS-denied for clients — comment corrected in follow-up commit; orphan bounded + deferred admin sweep per spec) + 2 Minors (svg-inline-script vector; uploaded_by_user_id exposed to client via select("*")). None merge-blocking. All 5 prior Minors: defer.
+3b CODE-COMPLETE (Tasks 1-6) + reviewed + migration live in prod. NOT merged (branch fase-3b-assets). PENDING: USER live e2e verification; product decisions (SVG handling; uid-exposure via enumerated cols); merge.
+B applied (commit c2bce1c): SVG→force-download {download:true}; uid→enumerate columns, dropped uploadedByUserId from DTO. typecheck+6 tests+build 46/46. Branch fase-3b-assets now 9 commits (0fc20d8..c2bce1c). Remaining: USER live e2e verification, then merge.

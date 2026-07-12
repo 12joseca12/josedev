@@ -6,9 +6,12 @@ import { DashModal } from "@/components/staff-dash/dash-modal";
 import { DashToastViewport, useDashToasts } from "@/components/staff-dash/dash-toast";
 import { useAdminClientDetail } from "@/components/staff-dash/use-admin-client-detail";
 import { phaseLabel, phaseOrder } from "@/lib/client-portal/phases";
+import { isAllowedMime, isWithinSize } from "@/lib/assets-config";
 import { formatLeadMonto } from "@/lib/leads-kanban";
 import { parseMoney } from "@/lib/money";
 import type {
+  ClientAssetDTO,
+  ClientAssetSource,
   ClientPackExtraDTO,
   ClientPackExtraEstado,
   ClientTaskDTO,
@@ -16,6 +19,7 @@ import type {
   Locale,
   ProjectPhase,
 } from "@/lib/types";
+import { createAssetSignedUrl, deleteAsset, uploadAsset } from "@/services/assets-api";
 import {
   addExtra,
   createTask,
@@ -63,6 +67,11 @@ const EXTRA_ESTADO_TONE_CLASS: Record<ClientPackExtraEstado, string> = {
   rechazado: "border-dash-error text-dash-error",
 };
 
+const ASSET_SOURCE_LITERAL_KEY: Record<ClientAssetSource, string> = {
+  client: "clientPortal.assetSourceClient",
+  admin: "clientPortal.assetSourceAdmin",
+};
+
 type ModalState =
   | { kind: "reject"; extra: ClientPackExtraDTO }
   | { kind: "pipeline"; extra: ClientPackExtraDTO }
@@ -75,6 +84,13 @@ function formatCommentDate(iso: string, locale: Locale): string {
     hour: "2-digit",
     minute: "2-digit",
   });
+}
+
+/** Formato legible simple (B/KB/MB) — mismo criterio que `AssetsClient` (client-portal); no hay helper compartido. */
+function formatAssetFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 export function AdminClienteDetailClient({ locale, clientId }: Props) {
@@ -93,6 +109,9 @@ export function AdminClienteDetailClient({ locale, clientId }: Props) {
   const [addExtraGratis, setAddExtraGratis] = useState(true);
   const [addExtraMonto, setAddExtraMonto] = useState("");
   const [approveMontoByExtra, setApproveMontoByExtra] = useState<Record<string, string>>({});
+  const [assetFile, setAssetFile] = useState<File | null>(null);
+  const [assetTitulo, setAssetTitulo] = useState("");
+  const [assetDescripcion, setAssetDescripcion] = useState("");
 
   const phaseSelectId = useId();
   const taskTituloId = useId();
@@ -101,6 +120,9 @@ export function AdminClienteDetailClient({ locale, clientId }: Props) {
   const accessEmailId = useId();
   const addExtraSelectId = useId();
   const addExtraMontoId = useId();
+  const assetFileId = useId();
+  const assetTituloId = useId();
+  const assetDescripcionId = useId();
 
   const catalogExtraById = useMemo(() => {
     if (state.status !== "ready") return new Map<string, { nombre: string; precio: number | null }>();
@@ -130,7 +152,7 @@ export function AdminClienteDetailClient({ locale, clientId }: Props) {
     );
   }
 
-  const { client, tasks, generalComments, commentsByTask, extras, catalogExtras } = state;
+  const { client, tasks, generalComments, commentsByTask, extras, catalogExtras, assets } = state;
 
   async function runAction(action: () => Promise<{ ok: boolean; message?: string }>, toastOkKey: string) {
     setBusy(true);
@@ -212,6 +234,50 @@ export function AdminClienteDetailClient({ locale, clientId }: Props) {
       }
       return result;
     }, "adminClienteDetail.toastExtraAdded");
+  }
+
+  function onSubmitAsset(event: FormEvent) {
+    event.preventDefault();
+    if (!assetFile) return;
+
+    // Validación temprana (feedback inmediato) — el bucket + un CHECK en DB son el gate real.
+    if (!isAllowedMime(assetFile.type)) {
+      pushToast("error", t(locale, "clientPortal.uploadErrorMime"));
+      return;
+    }
+    if (!isWithinSize(assetFile.size)) {
+      pushToast("error", t(locale, "clientPortal.uploadErrorSize"));
+      return;
+    }
+
+    void runAction(async () => {
+      const result = await uploadAsset({
+        clientId: client.id,
+        source: "admin",
+        file: assetFile,
+        titulo: assetTitulo.trim() || null,
+        descripcion: assetDescripcion.trim() || null,
+      });
+      if (result.ok) {
+        setAssetFile(null);
+        setAssetTitulo("");
+        setAssetDescripcion("");
+      }
+      return result;
+    }, "adminClienteDetail.toastAssetUploaded");
+  }
+
+  async function onDownloadAsset(asset: ClientAssetDTO) {
+    const result = await createAssetSignedUrl(asset.storagePath);
+    if (result.ok) {
+      window.open(result.data, "_blank", "noopener,noreferrer");
+    } else {
+      pushToast("error", t(locale, "adminClienteDetail.actionError"));
+    }
+  }
+
+  async function onDeleteAsset(asset: ClientAssetDTO) {
+    await runAction(() => deleteAsset(asset), "adminClienteDetail.toastAssetDeleted");
   }
 
   async function onApproveDirect(extra: ClientPackExtraDTO) {
@@ -580,6 +646,105 @@ export function AdminClienteDetailClient({ locale, clientId }: Props) {
             className={`self-start min-h-11 ${primaryButtonClass}`}
           >
             {t(locale, "adminClienteDetail.addExtraSubmit")}
+          </button>
+        </form>
+      </section>
+
+      {/* Archivos */}
+      <section className="mb-6 rounded-xl border border-dash-border bg-dash-surface p-4">
+        <h2 className="mb-3 font-dash-mono text-[11px] font-medium uppercase tracking-widest text-dash-muted">
+          {t(locale, "adminClienteDetail.assetsSectionTitle")}
+        </h2>
+
+        {assets.length === 0 ? (
+          <p className="mb-3 text-[13px] text-dash-muted">{t(locale, "adminClienteDetail.emptyAssets")}</p>
+        ) : (
+          <ul className="mb-4 flex flex-col gap-3">
+            {assets.map((asset) => (
+              <li
+                key={asset.id}
+                className="flex flex-col gap-3 rounded-lg border border-dash-border bg-dash-bg p-3 sm:flex-row sm:items-center sm:justify-between"
+              >
+                <div className="min-w-0">
+                  <p className="truncate text-[13px] font-medium text-dash-text">{asset.titulo || asset.fileName}</p>
+                  {asset.titulo ? <p className="truncate text-[12px] text-dash-muted">{asset.fileName}</p> : null}
+                  {asset.descripcion ? (
+                    <p className="mt-1 text-[13px] leading-snug text-dash-muted">{asset.descripcion}</p>
+                  ) : null}
+                  <p className="mt-1 font-dash-data text-[11px] tabular-nums text-dash-muted">
+                    {formatAssetFileSize(asset.sizeBytes)} · {t(locale, ASSET_SOURCE_LITERAL_KEY[asset.source])}
+                  </p>
+                </div>
+                <div className="flex shrink-0 items-center gap-2">
+                  <button
+                    type="button"
+                    disabled={busy}
+                    onClick={() => void onDownloadAsset(asset)}
+                    aria-label={`${t(locale, "clientPortal.downloadLabel")}: ${asset.fileName}`}
+                    className={secondaryButtonClass}
+                  >
+                    {t(locale, "clientPortal.downloadLabel")}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={busy}
+                    onClick={() => void onDeleteAsset(asset)}
+                    aria-label={`${t(locale, "clientPortal.deleteLabel")}: ${asset.fileName}`}
+                    className={dangerButtonClass}
+                  >
+                    {t(locale, "clientPortal.deleteLabel")}
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <form onSubmit={onSubmitAsset} className="flex flex-col gap-2 border-t border-dash-border pt-3">
+          <label
+            htmlFor={assetFileId}
+            className="font-dash-mono text-[10px] font-medium uppercase tracking-widest text-dash-muted"
+          >
+            {t(locale, "clientPortal.assetFileLabel")}
+          </label>
+          <input
+            id={assetFileId}
+            type="file"
+            onChange={(event) => setAssetFile(event.target.files?.[0] ?? null)}
+            className="block w-full text-[13px] text-dash-text file:mr-3 file:rounded-lg file:border file:border-dash-border file:bg-dash-bg file:px-3 file:py-1.5 file:text-[13px] file:text-dash-text"
+          />
+          <label
+            htmlFor={assetTituloId}
+            className="font-dash-mono text-[10px] font-medium uppercase tracking-widest text-dash-muted"
+          >
+            {t(locale, "clientPortal.assetTituloLabel")}
+          </label>
+          <input
+            id={assetTituloId}
+            type="text"
+            value={assetTitulo}
+            onChange={(event) => setAssetTitulo(event.target.value)}
+            className="min-h-11 rounded-lg border border-dash-border bg-dash-bg px-3 py-2 text-[13px] text-dash-text transition-colors focus:border-dash-accent focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dash-accent"
+          />
+          <label
+            htmlFor={assetDescripcionId}
+            className="font-dash-mono text-[10px] font-medium uppercase tracking-widest text-dash-muted"
+          >
+            {t(locale, "clientPortal.assetDescripcionLabel")}
+          </label>
+          <textarea
+            id={assetDescripcionId}
+            value={assetDescripcion}
+            onChange={(event) => setAssetDescripcion(event.target.value)}
+            rows={2}
+            className="resize-y rounded-lg border border-dash-border bg-dash-bg px-3 py-2 text-[13px] text-dash-text transition-colors focus:border-dash-accent focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dash-accent"
+          />
+          <button
+            type="submit"
+            disabled={busy || !assetFile}
+            className={`self-start min-h-11 ${primaryButtonClass}`}
+          >
+            {t(locale, "clientPortal.uploadSubmit")}
           </button>
         </form>
       </section>
