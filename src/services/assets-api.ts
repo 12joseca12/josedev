@@ -71,8 +71,13 @@ export type UploadAssetInput = {
  * exactamente `clients/{client_id}/{id}` — confiar en el default
  * `gen_random_uuid()` de la DB generaría un id distinto al del path ya subido
  * y el INSERT violaría el constraint. Si el INSERT falla después de subir el
- * archivo, se intenta borrar el objeto ya subido (best-effort) para no dejar
- * huérfanos en el bucket.
+ * archivo, se intenta borrar el objeto (best-effort). OJO: para un CLIENTE ese
+ * remove lo deniega la RLS de `storage.objects` — su policy de DELETE resuelve
+ * al uploader vía `private.asset_uploader_of(storage_path)`, que devuelve NULL
+ * porque la fila nunca llegó a insertarse → el objeto puede quedar huérfano en
+ * la carpeta del propio cliente (acotado por el límite del bucket). Para el
+ * ADMIN sí funciona (la policy tiene rama admin). Los huérfanos de cliente se
+ * limpian con el barrido admin puntual que contempla el spec (fuera de 3b).
  */
 export async function uploadAsset(input: UploadAssetInput): Promise<FetchResult<ClientAssetDTO>> {
   if (!isAllowedMime(input.file.type)) return { ok: false, message: "mime-not-allowed" };
