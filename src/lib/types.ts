@@ -413,3 +413,21 @@ export type ClientAssetDTO = {
   descripcion: string | null;
   createdAt: string;
 };
+
+// -----------------------------------------------------------------------------
+// Internal commission ledger (Fase 3c)
+// -----------------------------------------------------------------------------
+
+export type CommissionEstado = "pending" | "paid" | "reversed";
+
+export type CommissionEntryDTO = {
+  id: string;
+  leadId: string;
+  closerUserId: string;
+  montoBase: number;
+  comisionPct: number;
+  commissionAmount: number;
+  estado: CommissionEstado;
+  paidAt: string | null;
+  createdAt: string;
+};
