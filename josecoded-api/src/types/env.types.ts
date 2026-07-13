@@ -28,6 +28,11 @@ export type Env = {
    */
   WORKER_TIMEOUT_MS?: string;
 
+  /**
+   * Optional: timeout ms for /ai/chat proxy to worker (default 30000).
+   */
+  AI_CHAT_TIMEOUT_MS?: string;
+
   /** UUIDs separados por coma con permisos de moderación en el foro (mock). */
   FORUM_ADMIN_USER_IDS?: string;
 
