@@ -11,7 +11,7 @@
 ## Global Constraints
 
 - Supabase project ref `nrgrmymsjtgayzejtawa` (auto-pauses ~1wk idle → `restore_project` + poll before migrating).
-- **This migration EDITS the verified Fase 2 financial trigger `private.leads_financial_integrity` — do NOT change its existing total_ganado/close/monto-guard behavior; only ADD the ledger writes + the paid-reversal block.**
+- **This migration EDITS the verified Fase 2 financial trigger `private.leads_financial_integrity`.** Keep the close/monto-guard behavior and the total_ganado accumulator (chosen over deriving from the ledger — total_ganado is closer-facing in `closer-kanban-client.tsx`, the ledger is admin-only). ONE intentional behavior change is allowed and expected: the reversal now subtracts the ledger entry's SNAPSHOT amount from the credited closer, instead of Fase 2's recompute against the current `comision`/`assigned_staff_id` (which drifts if either changed post-close). Everything else stays.
 - SECURITY DEFINER functions in schema `private`; `set search_path = public`; `revoke all ... from public, anon, authenticated`.
 - RLS policies use `(select auth.uid())`, never bare `auth.uid()`; FK columns get a covering index; merge same-role/action policies (avoid multiple_permissive_policies).
 - Run `get_advisors(security)` AND `(performance)` after every migration.
@@ -120,18 +120,22 @@ export function mapCommissionRow(row: CommissionRow): CommissionEntryDTO {
   };
 }
 
-/** Suma pagado/pendiente por closer. 'reversed' se ignora (no cuenta como deuda ni pago). */
+/** Suma pagado/pendiente por closer. 'reversed' se ignora (no cuenta como deuda ni pago).
+ *  Acumula en CENTAVOS enteros para evitar drift de float (0.1+0.2) y reconciliar exacto. */
 export function summarizeByCloser(
   entries: CommissionEntryDTO[],
 ): Map<string, { paid: number; pending: number }> {
-  const out = new Map<string, { paid: number; pending: number }>();
+  const cents = new Map<string, { paid: number; pending: number }>();
   for (const e of entries) {
     if (e.estado === "reversed") continue;
-    const acc = out.get(e.closerUserId) ?? { paid: 0, pending: 0 };
-    if (e.estado === "paid") acc.paid += e.commissionAmount;
-    else acc.pending += e.commissionAmount;
-    out.set(e.closerUserId, acc);
+    const acc = cents.get(e.closerUserId) ?? { paid: 0, pending: 0 };
+    const c = Math.round(e.commissionAmount * 100);
+    if (e.estado === "paid") acc.paid += c;
+    else acc.pending += c;
+    cents.set(e.closerUserId, acc);
   }
+  const out = new Map<string, { paid: number; pending: number }>();
+  for (const [k, v] of cents) out.set(k, { paid: v.paid / 100, pending: v.pending / 100 });
   return out;
 }
 ```
@@ -196,12 +200,16 @@ create policy "commission select admin" on public.commission_entries
   for select to authenticated
   using (private.staff_role_of((select auth.uid())) = 'admin');
 
--- UPDATE admin: SOLO pending→paid (marcar pagada). `using` en pending hace inmutable lo ya paid/reversed.
+-- UPDATE admin: SOLO pending→paid (marcar pagada). `using` en pending hace inmutable lo ya
+-- paid/reversed. `paid_at is not null` en el check evita marcar 'paid' sin fecha (P2-4).
+-- NOTA (P2-4): esta policy no congela las columnas snapshot (monto_base/commission_amount/
+-- comision_pct/closer_user_id) durante el UPDATE — es admin-only y la app solo setea
+-- estado+paid_at; el column-freeze duro (trigger) queda como hardening diferido (P3).
 drop policy if exists "commission mark paid admin" on public.commission_entries;
 create policy "commission mark paid admin" on public.commission_entries
   for update to authenticated
   using (private.staff_role_of((select auth.uid())) = 'admin' and estado = 'pending')
-  with check (private.staff_role_of((select auth.uid())) = 'admin' and estado = 'paid');
+  with check (private.staff_role_of((select auth.uid())) = 'admin' and estado = 'paid' and paid_at is not null);
 
 -- 3) Extender el trigger financiero de Fase 2 (mantiene total_ganado; añade el ledger + bloqueo si paid).
 create or replace function private.leads_financial_integrity()
@@ -212,7 +220,7 @@ set search_path = public
 as $$
 declare
   closer_comision numeric(5, 2);
-  commission_amount numeric(10, 2);
+  v_commission_amount numeric(10, 2);  -- NO nombrar igual que la columna commission_amount (P1-1: ambigüedad)
   v_entry_id uuid;
   v_estado text;
   v_amount numeric(10, 2);
@@ -226,12 +234,12 @@ begin
     if new.assigned_staff_id is not null then
       select comision into closer_comision from public.staff_members where user_id = new.assigned_staff_id;
       if closer_comision is not null then
-        commission_amount := round(new.monto * closer_comision / 100, 2);
-        update public.staff_members set total_ganado = total_ganado + commission_amount
+        v_commission_amount := round(new.monto * closer_comision / 100, 2);
+        update public.staff_members set total_ganado = total_ganado + v_commission_amount
           where user_id = new.assigned_staff_id;
         insert into public.commission_entries
           (lead_id, closer_user_id, monto_base, comision_pct, commission_amount)
-          values (new.id, new.assigned_staff_id, new.monto, closer_comision, commission_amount);
+          values (new.id, new.assigned_staff_id, new.monto, closer_comision, v_commission_amount);
       end if;
     end if;
     return new;
@@ -247,14 +255,18 @@ begin
   -- la entrada) — más consistente que el recompute de Fase 2 contra old.assigned_staff_id
   -- + comision actual (que driftea si la comisión o el asignado cambiaron post-cierre).
   if old.estado = 'cerrado' and new.estado is distinct from 'cerrado' then
+    -- FOR UPDATE serializa contra "marcar pagada" (que bloquea esta misma fila) →
+    -- cierra el TOCTOU (P1-3) donde una comisión pagada en paralelo podría revertirse.
     select id, estado, commission_amount, closer_user_id
       into v_entry_id, v_estado, v_amount, v_closer
-      from public.commission_entries where lead_id = new.id and estado in ('pending', 'paid') limit 1;
+      from public.commission_entries where lead_id = new.id and estado in ('pending', 'paid')
+      limit 1 for update;
     if v_estado = 'paid' then
       raise exception 'No se puede revertir el cierre del lead %: la comisión ya fue pagada al closer. Resolvé el pago primero.', new.id;
     end if;
     if v_entry_id is not null then
-      update public.commission_entries set estado = 'reversed' where id = v_entry_id;
+      update public.commission_entries set estado = 'reversed'
+        where id = v_entry_id and estado = 'pending';
       update public.staff_members set total_ganado = total_ganado - v_amount
         where user_id = v_closer;
     end if;
@@ -266,6 +278,21 @@ end;
 $$;
 revoke all on function private.leads_financial_integrity() from public, anon, authenticated;
 -- El trigger trg_leads_financial_integrity ya existe (Fase 2); create or replace no lo recrea.
+
+-- 4) Backfill (P1-2): entradas 'pending' para leads YA cerrados antes de esta migración,
+--    para que el reporte reconcilie (ganado incluye históricos) y la reversión de un
+--    lead histórico descuente bien. Snapshot con la comision ACTUAL (la de-cierre no se
+--    guardó). Idempotente (not-exists + índice único parcial). En prod hoy: 0 leads
+--    cerrados → no-op; correcto para el futuro y otros entornos.
+insert into public.commission_entries (lead_id, closer_user_id, monto_base, comision_pct, commission_amount)
+select l.id, l.assigned_staff_id, l.monto, s.comision, round(l.monto * s.comision / 100, 2)
+from public.leads l
+join public.staff_members s on s.user_id = l.assigned_staff_id
+where l.estado = 'cerrado' and l.monto is not null and s.comision is not null
+  and not exists (
+    select 1 from public.commission_entries ce
+    where ce.lead_id = l.id and ce.estado in ('pending', 'paid')
+  );
 ```
 
 - [ ] **Step 4: Apply** via `apply_migration` name `commission_entries`. Expected: success.
@@ -290,7 +317,7 @@ git commit -m "feat(3c): commission_entries ledger + trigger extension + admin R
 - Consumes: `mapCommissionRow`, `CommissionRow` (Task 1); `getSupabaseSSRBrowserClient`; `FetchResult` (read `leads-api.ts`).
 - Produces:
   - `listCommissions(): Promise<FetchResult<CommissionEntryDTO[]>>` — select all `commission_entries` (RLS returns only for admin) ordered `created_at desc`, map rows.
-  - `markCommissionPaid(id: string): Promise<FetchResult<void>>` — `update({ estado: "paid", paid_at: new Date().toISOString() }).eq("id", id).eq("estado", "pending")`; RLS enforces admin + the pending→paid transition. Check `error`; if the update matched 0 rows (already paid/reversed or not admin), return `{ ok: false, message: "not-updatable" }`.
+  - `markCommissionPaid(id: string): Promise<FetchResult<void>>` — `update({ estado: "paid", paid_at: new Date().toISOString() }).eq("id", id).eq("estado", "pending").select()`; RLS enforces admin + the pending→paid transition. Check `error` first; then (P3-8) inspect the returned rows — supabase-js does NOT surface an affected-row count without `.select()`, so an RLS/estado miss affects 0 rows with NO error. If `!data || data.length === 0`, return `{ ok: false, message: "not-updatable" }` (already paid/reversed, or not admin).
   - For the per-project view's display names, also fetch the joined lead/client + closer labels: either a Postgres view/embedded select (`select("*, leads(...), ...")`) or a second query mapped client-side. Decide during implementation by reading how `leads-api.ts` joins staff/lead names; mirror it. Keep the joined display shape in a small `CommissionRowView` type in this file (base DTO + `closerName: string | null` + `leadLabel: string | null`).
 
 - [ ] **Step 1: Read `src/services/leads-api.ts`** for the FetchResult helper, browser-client usage, and its join-for-names convention (it already resolves staff/lead labels). Mirror exactly.
@@ -355,3 +382,30 @@ With `pnpm start` + a throwaway admin and a closer with a `comision` set:
 - Task 2 edits a verified financial trigger — after applying, Step-6 live checks (esp. #4, the paid-reversal block) are the real gate; do NOT declare 3c done on tsc/build alone.
 - `total_ganado` stays the "total earned" (pending+paid); marking paid must NOT change it (a common mistake — paid is still earned).
 - The mark-paid mutation is RLS-gated (admin, pending→paid). No service-role needed. `using estado='pending'` makes `paid`/`reversed` rows immutable via this policy.
+- The Task 4 Step-6 reversal live checks (#3 pending, #4 paid-blocked) also catch a regression of P1-1 (an ambiguous-variable reversal would error) — treat any reversal error as a P1-1 recurrence.
+
+## NOT in scope (deferred, with rationale)
+- Online payment / Stripe / Bizum / client-facing invoices — descoped this phase (too complex for the need).
+- Closer-facing view of their own commission ledger — the closer keeps `total_ganado` (accrued); per-entry pending/paid stays admin-only (no new closer RLS).
+- Hard column-freeze on `paid` rows (trigger enforcing snapshot immutability) — admin-only surface; `paid_at is not null` check is the light guard; freeze is a P3 hardening follow-up.
+- Deriving `total_ganado` from the ledger (dropping the accumulator) — considered (outside voice) and rejected (D2): it's closer-facing, ledger is admin-only.
+- Un-marking a paid commission, partial payments, PDF/export, tax/IVA, multi-currency.
+
+## What already exists (reused, not rebuilt)
+- `private.leads_financial_integrity` (Fase 2) — EXTENDED, not replaced (keeps close/monto-guard/total_ganado).
+- `staff_members.total_ganado` / `.comision`, `leads.monto`/`.estado`/`.assigned_staff_id` — reused as the money source of truth + snapshot inputs.
+- `private.staff_role_of`, `proxy.ts` `/admin/*` guard, `leads-api.ts` (`FetchResult`, browser client, name-join), staff-dash admin table pattern — reused for the service + UI.
+
+## GSTACK REVIEW REPORT
+
+| Review | Trigger | Why | Runs | Status | Findings |
+|--------|---------|-----|------|--------|----------|
+| Eng Review | `/plan-eng-review` | Architecture & tests (required) | 1 | issues_found → all folded | 9 findings (3×P1, 3×P2, 3×P3), 0 critical gaps left |
+
+**Outside voice (Opus subagent):** caught 9 concrete defects the section review missed. P1-1: local var `commission_amount` collides with the column in the reversal `SELECT ... INTO` → `variable_conflict=error` aborts every reversal (fixed: renamed `v_commission_amount`). P1-2: no backfill for pre-existing closed leads → reversal skips the `total_ganado` decrement + report can't reconcile (fixed: idempotent backfill; prod has 0 closed leads today so it's a no-op now). P1-3: TOCTOU between mark-paid and reversal could reverse a `paid` commission and remove money (fixed: `FOR UPDATE` + `estado='pending'` guard). P2/P3: `paid_at`-not-null check, integer-cent aggregation, `.select()` for 0-row detection, documented reversal-semantics change — all folded.
+
+**CROSS-MODEL:** one tension — outside voice argued `total_ganado` is redundant with the ledger (drop it, derive everything, killing the drift class). Resolved by the user (D2): KEEP `total_ganado` — it's closer-facing (`closer-kanban-client.tsx:220`) and the ledger is admin-only RLS; fix the drift bugs (P1-1/P1-3) instead of removing a live feature.
+
+**VERDICT:** ENG CLEARED — plan hardened (9 findings folded), ready to implement.
+
+NO UNRESOLVED DECISIONS
