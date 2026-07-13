@@ -9,10 +9,10 @@ import { devWorkerProxyRoutes } from './modules/dev-worker-proxy.routes';
 import { v1Routes } from './modules/v1.routes';
 import { parseEnv } from './config/env';
 import {
-  fixedWindowRateLimit,
   requestId,
   securityHeaders,
 } from './middlewares/security.middleware';
+import { nativeRateLimit } from './middlewares/native-rate-limit.middleware';
 import { fail } from './utils/api-response';
 
 const app = new Hono<{ Bindings: Env }>();
@@ -41,11 +41,8 @@ app.use('*', async (c, next) => {
   return corsMiddleware(c, next);
 });
 
-// Basic abuse protection for expensive endpoints.
-app.use(
-  '/ai/*',
-  fixedWindowRateLimit({ limit: 20, windowMs: 60_000, keyPrefix: 'ai' }),
-);
+// Basic abuse protection for expensive endpoints (native Cloudflare binding, cross-isolate).
+app.use('/ai/*', nativeRateLimit((env) => env.AI_RATE_LIMITER, { keyPrefix: 'ai' }));
 
 app.route('/', healthRoutes);
 app.route('/', systemRoutes);

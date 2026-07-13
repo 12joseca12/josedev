@@ -58,4 +58,7 @@ export type Env = {
 
   /** URL pública del API para callbacks n8n (p. ej. https://api.tudominio.com). */
   PUBLIC_API_BASE_URL?: string;
+
+  /** Binding nativo de Cloudflare Rate Limiting para /ai/*. Ausente en dev local. */
+  AI_RATE_LIMITER?: { limit(opts: { key: string }): Promise<{ success: boolean }> };
 };
