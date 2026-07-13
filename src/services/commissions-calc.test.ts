@@ -25,4 +25,15 @@ describe("commissions-calc", () => {
     expect(s.get("c1")).toEqual({ paid: 100, pending: 50 });
     expect(s.get("c2")).toEqual({ paid: 0, pending: 30 });
   });
+
+  it("sums in integer cents (would drift with naive float +=)", () => {
+    // 0.1 + 0.2 === 0.30000000000000004 con floats; en centavos da 0.3 exacto.
+    const rows = [
+      entry({ id: "a", closerUserId: "c9", commissionAmount: 0.1, estado: "pending" }),
+      entry({ id: "b", closerUserId: "c9", commissionAmount: 0.2, estado: "pending" }),
+      entry({ id: "c", closerUserId: "c9", commissionAmount: 0.1, estado: "paid" }),
+    ];
+    const s = summarizeByCloser(rows);
+    expect(s.get("c9")).toEqual({ paid: 0.1, pending: 0.3 });
+  });
 });
