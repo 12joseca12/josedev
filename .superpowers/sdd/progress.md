@@ -49,3 +49,14 @@ ACCUMULATED MINORS for final review: T3(a) asset_uploader_of/client_id_of RPC-ca
 FINAL whole-branch review (opus): Ready to merge AFTER live verification. Two-layer RLS coherent/non-bypassable. Found 1 Important cross-task (orphan-cleanup RLS-denied for clients — comment corrected in follow-up commit; orphan bounded + deferred admin sweep per spec) + 2 Minors (svg-inline-script vector; uploaded_by_user_id exposed to client via select("*")). None merge-blocking. All 5 prior Minors: defer.
 3b CODE-COMPLETE (Tasks 1-6) + reviewed + migration live in prod. NOT merged (branch fase-3b-assets). PENDING: USER live e2e verification; product decisions (SVG handling; uid-exposure via enumerated cols); merge.
 B applied (commit c2bce1c): SVG→force-download {download:true}; uid→enumerate columns, dropped uploadedByUserId from DTO. typecheck+6 tests+build 46/46. Branch fase-3b-assets now 9 commits (0fc20d8..c2bce1c). Remaining: USER live e2e verification, then merge.
+
+---
+# Fase 3c — Comisiones internas (subagent-driven)
+BASE = 56f36c8
+Plan: docs/superpowers/plans/2026-07-12-fase3c-comisiones-internas.md (eng-reviewed, 9 findings folded) · Branch: fase-3c-comisiones
+Running Task 1 only this session (pure/Jest); STOP before Task 2 (prod migration on the financial trigger) for user OK.
+Task 1: complete (commits 56f36c8..572363d, review Approved; added drift test for the cents fix). 3 tests, suite green.
+STOPPED before Task 2 (prod migration on the financial trigger private.leads_financial_integrity) per user instruction — awaiting OK.
+Task 2: complete (commit 572363d..015d7d1 — commission_entries + RLS + trigger extension APPLIED to prod). Review Approved: all 4 eng-review fixes (P1-1 renamed var, P1-3 FOR UPDATE+estado guard, P2-4 paid_at check, P1-2 backfill) verified live. get_advisors clean.
+  IMPORTANT follow-up (reviewer, before real payouts): no column-freeze on mark-paid — admin UPDATE could rewrite commission_amount/closer_user_id while flipping to paid. Documented-deferred (plan NOT-in-scope, P3 hardening). Add a BEFORE UPDATE column-freeze trigger before commissions are paid through this table.
+STOPPED before Task 3/4 (UI + live verification) per user instruction — awaiting OK. Branch fase-3c-comisiones: 3 commits (19095b1..015d7d1).
