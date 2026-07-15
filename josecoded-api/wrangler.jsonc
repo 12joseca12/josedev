@@ -1,5 +1,6 @@
 {
     "name": "josecoded-api",
+    "account_id": "d26022a34346cb759178a720bace386d",
     "main": "src/index.ts",
     "compatibility_date": "2026-05-03",
     "vars": {
