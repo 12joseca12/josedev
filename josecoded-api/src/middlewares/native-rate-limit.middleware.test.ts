@@ -27,4 +27,13 @@ describe('nativeRateLimit', () => {
       .request('http://x/ai/ping', { headers: { 'cf-connecting-ip': '1.1.1.1' } });
     expect(res.status).toBe(200);
   });
+
+  it('responde 503 fail-closed cuando el binding lanza error', async () => {
+    const res = await appWith({ limit: async () => { throw new Error('binding unavailable'); } })
+      .request('http://x/ai/ping', { headers: { 'cf-connecting-ip': '1.1.1.1' } });
+    expect(res.status).toBe(503);
+    expect(res.headers.get('retry-after')).toBeTruthy();
+    const body = await res.json();
+    expect(body).toMatchObject({ ok: false, error: { code: 'rate_limited', message: 'Too many requests' } });
+  });
 });

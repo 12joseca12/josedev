@@ -19,7 +19,15 @@ export function nativeRateLimit(
     const limiter = getLimiter(c.env);
     if (!limiter) return next();
     const key = `${opts.keyPrefix}:${getClientId(c)}`;
-    const { success } = await limiter.limit({ key });
+    let success: boolean;
+    try {
+      ({ success } = await limiter.limit({ key }));
+    } catch {
+      // Fail-closed: si el binding del rate limiter falla, bloqueamos para
+      // proteger el LLM auto-hospedado en vez de dejar pasar (fail-open).
+      c.header('Retry-After', '60');
+      return c.json(fail('rate_limited', 'Too many requests'), 503);
+    }
     if (!success) {
       c.header('Retry-After', '60');
       return c.json(fail('rate_limited', 'Too many requests'), 429);
