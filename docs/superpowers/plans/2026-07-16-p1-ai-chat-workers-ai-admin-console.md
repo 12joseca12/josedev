@@ -256,6 +256,10 @@ export async function generateAdminReply(
 
 **Endpoints:** `GET /conversations`, `GET /conversations/:id/messages`, `POST /conversations/:id/messages` (`{content}`), `POST /conversations/:id/ai` (`{enabled}`), `POST /conversations/:id/read`. Todos admin-only.
 
+**Fixes foldeados en esta tarea (del review de Task 4):**
+- **BLOCKER — `ensureConversation`:** hoy inserta `{ user_id, admin_id }` pero la columna real es `assigned_staff_id` (NOT NULL) — `admin_id` NO existe (verificado en prod). Toda conversación nueva falla. Arreglar a `.insert({ user_id: userId, assigned_staff_id: adminId })`. Añadir/ajustar test del store que cubra el insert con la columna correcta.
+- **`getConversationFlags` fail-CLOSED:** cambiar el fallback de error de `aiEnabled=true` a `aiEnabled=false` (en takeover, ante un error de lectura la IA NO debe responder; la notificación igual se dispara). Añadir un test del path de error (getConversationFlags rechaza → pipeline NO llama a la IA, sí notifica).
+
 - [ ] **Step 1:** Leer `admin-chat.pg-store.ts` completo + `v1.routes.ts` + el patrón de role-check (`resolveSuperuser`) para mirror.
 - [ ] **Step 2 (TDD):** Tests de las queries de store (mock del cliente Supabase como en `admin-chat.pg-store.test.ts`) — al menos `listConversationsForAdmin` (cálculo de `unread`) y `insertAdminMessage` (`sender_role='admin'`).
 - [ ] **Step 3:** Implementar store + schemas + rutas + role-check + montaje.
