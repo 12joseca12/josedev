@@ -26,18 +26,16 @@
 Embeber el contexto de conocimiento (`.md`) como un módulo TS en el gateway, para que Workers AI lo use en el edge sin depender del worker/Ollama **ni de R2** (R2 requiere habilitación con términos/billing en el dashboard — se evita). El contenido es estático y pequeño (~5 archivos, ~10-30KB); actualizarlo = redeploy (raro).
 
 **Files:**
-- Create: `josecoded-api/src/knowledge/` con un `.md` por archivo: `terminal-chat.md`, `about.md`, `services.md`, `faq.md`, `tone.md` (contenido real provisto por el usuario desde Omen `/srv/josecoded-data/knowledge`).
-- Create: `josecoded-api/src/services/knowledge.ts` (importa los `.md` como texto y expone `getKnowledgeContext`).
+- ✅ YA CREADO por el controlador: `josecoded-api/src/knowledge/knowledge.json` — `{ "<file>.md": "<contenido>" }` con los 5 archivos reales (traídos de Omen). Es la fuente embebida (editar el JSON = actualizar el knowledge; requiere redeploy).
+- Create: `josecoded-api/src/services/knowledge.ts` (importa el JSON y expone `getKnowledgeContext`).
 - Create: `josecoded-api/src/services/knowledge.test.ts`
 
-**Nota de bundling:** los `.md` se importan como string. Con esbuild/wrangler, usar `import txt from '../knowledge/about.md'` requiere una rule de loader (`text`/`raw`). Confirmar en Step 1 el mecanismo soportado por el build de wrangler vigente; alternativa robusta sin config: escribir el contenido como constantes string en `knowledge-content.ts` (un `export const ABOUT = \`...\`` por archivo) generado desde los `.md`. Elegir el más simple que compile.
+**Mecanismo (resuelto):** embeber vía **import de JSON** (`import data from '../knowledge/knowledge.json'`). JSON funciona igual en jest (ts-jest, `resolveJsonModule`) y en el build de wrangler/esbuild, y auto-escapa el contenido (incluido el backtick de `` `MEETING_PICKER` ``) — evita loaders de texto y problemas de escape. Confirmar que `resolveJsonModule` está activo en el `tsconfig` del gateway (Step 1).
 
 **Interfaces:**
 - Produces: `getKnowledgeContext(files?: string[], maxLen?: number): string` — **pura, síncrona, sin `env`** (el contenido está embebido). Concatena `--- <file> ---\n<contenido>` de los `files` pedidos, corta a `maxLen` (default 14_000, como `adminChat` hoy). Default files = `['terminal-chat.md','about.md','services.md','faq.md','tone.md']`.
 
-- [ ] **Step 1: Confirmar el mecanismo de bundling** de texto en el build de wrangler vigente (loader `text` para `import '*.md'`, o constantes string). Usar la skill `wrangler`/`workers-best-practices`. Elegir el que compile sin fricción y aplicarlo en los steps siguientes.
-
-- [ ] **Step 2: Colocar el contenido real** de los 5 `.md` en `josecoded-api/src/knowledge/` (el usuario los provee; el controlador los pega en el brief).
+- [ ] **Step 1: Confirmar `resolveJsonModule`** en `josecoded-api/tsconfig.json` (activarlo si falta). El contenido ya está en `knowledge.json` (controlador). No hace falta loader de texto.
 
 - [ ] **Step 3: Escribir el test que falla** — `josecoded-api/src/services/knowledge.test.ts`:
 
@@ -66,18 +64,12 @@ describe('getKnowledgeContext (embebido)', () => {
 
 - [ ] **Step 3b: Correr y verificar que falla** — `pnpm -C josecoded-api test -- knowledge` → FAIL (módulo inexistente).
 
-- [ ] **Step 4: Implementar** `josecoded-api/src/services/knowledge.ts` (según el mecanismo del Step 1; ejemplo con constantes):
+- [ ] **Step 4: Implementar** `josecoded-api/src/services/knowledge.ts`:
 
 ```ts
-import { TERMINAL_CHAT } from '../knowledge/terminal-chat.md';   // o import de constantes
-// ...map de nombre → contenido
-const KNOWLEDGE: Record<string, string> = {
-  'terminal-chat.md': TERMINAL_CHAT,
-  'about.md': ABOUT,
-  'services.md': SERVICES,
-  'faq.md': FAQ,
-  'tone.md': TONE,
-};
+import knowledgeData from '../knowledge/knowledge.json';
+
+const KNOWLEDGE = knowledgeData as Record<string, string>;
 const DEFAULT_FILES = ['terminal-chat.md', 'about.md', 'services.md', 'faq.md', 'tone.md'];
 const DEFAULT_MAX = 14_000;
 
