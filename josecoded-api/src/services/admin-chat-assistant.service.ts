@@ -1,6 +1,11 @@
 import type { Env } from '../types/env.types';
 import { generateAdminReply } from './ai-reply';
-import { insertAssistantMessage } from './admin-chat.pg-store';
+import {
+  getConversationFlags,
+  getRecentHistory,
+  insertAssistantMessage,
+} from './admin-chat.pg-store';
+import { notifyAdminOfNewMessage } from './admin-chat-notify.service';
 
 export type AssistantReplyPlan = {
   reply: string;
@@ -63,8 +68,9 @@ export async function applyAssistantReply(
 }
 
 /**
- * Pipeline del chat: Workers AI (edge, con knowledge embebido) → fallback local.
- * n8n no es necesario para este flujo.
+ * Pipeline del chat: gate `ai_enabled` por conversación → Workers AI (edge, con
+ * knowledge embebido + historial reciente) → fallback local. El admin se notifica
+ * SIEMPRE (IA on o off) por el camino Telegram/n8n existente (P1 Task 4 / spec §9).
  */
 export async function runAssistantPipeline(
   env: Env,
@@ -76,12 +82,39 @@ export async function runAssistantPipeline(
     text: string;
   },
 ): Promise<void> {
+  let aiEnabled = true;
   try {
+    ({ aiEnabled } = await getConversationFlags(env, input.conversationId));
+  } catch (e) {
+    console.warn(
+      JSON.stringify({
+        scope: 'admin-chat',
+        action: 'conversation-flags-failed',
+        hint: 'No se pudo leer ai_enabled; se asume true (comportamiento previo al gate de P1 Task 4)',
+        conversationId: input.conversationId,
+        message: e instanceof Error ? e.message : 'unknown',
+      }),
+    );
+  }
+
+  // Notificar SIEMPRE al admin (IA on u off) — best-effort, nunca bloquea el pipeline.
+  await notifyAdminOfNewMessage(env, {
+    conversationId: input.conversationId,
+    userId: input.userId,
+    userEmail: input.userEmail,
+    text: input.text,
+    aiEnabled,
+  });
+
+  if (!aiEnabled) {
+    // IA apagada para esta conversación: Jose responde desde la consola admin.
+    return;
+  }
+
+  try {
+    const history = await getRecentHistory(env, input.conversationId, input.messageId, 8);
     const { content, showMeetingPicker } = await generateAdminReply(env, {
-      // TODO(P1 follow-up documentado): ventana de historial reciente. Por ahora
-      // se pasa vacío — `generateAdminReply` ya resuelve con el turno actual del
-      // usuario y el knowledge embebido; ver runAssistantPipeline en admin-chat-assistant.service.ts.
-      history: [],
+      history,
       userText: input.text,
     });
 

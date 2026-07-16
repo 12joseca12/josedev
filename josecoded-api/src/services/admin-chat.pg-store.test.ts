@@ -167,3 +167,182 @@ describe('resolveSuperuserId', () => {
     await expect(resolveSuperuserId(baseEnv)).rejects.toThrow(/Superuser not found/);
   });
 });
+
+type QueryResult = { data: unknown; error: unknown };
+
+function makeFlagsAndHistoryClient(opts: {
+  conversationsSelect?: QueryResult;
+  messagesSelect?: QueryResult;
+}) {
+  return {
+    from: (table: string) => {
+      if (table === 'admin_chat_conversations') {
+        return {
+          select: () => ({
+            eq: () => ({
+              maybeSingle: () =>
+                Promise.resolve(opts.conversationsSelect ?? { data: null, error: null }),
+            }),
+          }),
+        };
+      }
+      if (table === 'admin_chat_messages') {
+        return {
+          select: () => ({
+            eq: () => ({
+              order: () => ({
+                limit: () => Promise.resolve(opts.messagesSelect ?? { data: [], error: null }),
+              }),
+            }),
+          }),
+        };
+      }
+      throw new Error(`unexpected table in test double: ${table}`);
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test double, shape-compatible only where used
+  } as any;
+}
+
+describe('getConversationFlags', () => {
+  it('returns aiEnabled=true when the column is true', async () => {
+    jest.resetModules();
+    jest.doMock('./supabase.service', () => ({
+      DEFAULT_ADMIN_SUPERUSER_EMAIL: 'sanchezgaricajosecarlos12@gmail.com',
+      createSupabaseServiceClient: jest.fn(() =>
+        makeFlagsAndHistoryClient({ conversationsSelect: { data: { ai_enabled: true }, error: null } }),
+      ),
+    }));
+    const { getConversationFlags } = await import('./admin-chat.pg-store');
+    const flags = await getConversationFlags(baseEnv, 'conv-1');
+    expect(flags).toEqual({ aiEnabled: true });
+  });
+
+  it('returns aiEnabled=false when the column is false', async () => {
+    jest.resetModules();
+    jest.doMock('./supabase.service', () => ({
+      DEFAULT_ADMIN_SUPERUSER_EMAIL: 'sanchezgaricajosecarlos12@gmail.com',
+      createSupabaseServiceClient: jest.fn(() =>
+        makeFlagsAndHistoryClient({ conversationsSelect: { data: { ai_enabled: false }, error: null } }),
+      ),
+    }));
+    const { getConversationFlags } = await import('./admin-chat.pg-store');
+    const flags = await getConversationFlags(baseEnv, 'conv-1');
+    expect(flags).toEqual({ aiEnabled: false });
+  });
+
+  it('throws when the query errors', async () => {
+    jest.resetModules();
+    jest.doMock('./supabase.service', () => ({
+      DEFAULT_ADMIN_SUPERUSER_EMAIL: 'sanchezgaricajosecarlos12@gmail.com',
+      createSupabaseServiceClient: jest.fn(() =>
+        makeFlagsAndHistoryClient({ conversationsSelect: { data: null, error: new Error('boom') } }),
+      ),
+    }));
+    const { getConversationFlags } = await import('./admin-chat.pg-store');
+    await expect(getConversationFlags(baseEnv, 'conv-1')).rejects.toThrow('boom');
+  });
+});
+
+describe('getRecentHistory', () => {
+  it('excludes excludeMessageId and maps admin/assistant sender_role to assistant, chronologically', async () => {
+    jest.resetModules();
+    // Rows as the DB would return them (most-recent first, DESC) — mirrors what
+    // getRecentMessagesForPrompt fetches before it reverses to chronological order.
+    const descRows = [
+      {
+        id: 'm4',
+        conversation_id: 'conv-1',
+        sender_role: 'user',
+        sender_id: 'user-1',
+        content: 'current turn (just inserted)',
+        message_type: 'text',
+        metadata: {},
+        created_at: '2026-01-01T00:00:03Z',
+      },
+      {
+        id: 'm3',
+        conversation_id: 'conv-1',
+        sender_role: 'admin',
+        sender_id: 'admin-1',
+        content: 'manual admin reply',
+        message_type: 'text',
+        metadata: {},
+        created_at: '2026-01-01T00:00:02Z',
+      },
+      {
+        id: 'm2',
+        conversation_id: 'conv-1',
+        sender_role: 'assistant',
+        sender_id: 'admin-1',
+        content: 'hi there',
+        message_type: 'text',
+        metadata: {},
+        created_at: '2026-01-01T00:00:01Z',
+      },
+      {
+        id: 'm1',
+        conversation_id: 'conv-1',
+        sender_role: 'user',
+        sender_id: 'user-1',
+        content: 'hola',
+        message_type: 'text',
+        metadata: {},
+        created_at: '2026-01-01T00:00:00Z',
+      },
+    ];
+    jest.doMock('./supabase.service', () => ({
+      DEFAULT_ADMIN_SUPERUSER_EMAIL: 'sanchezgaricajosecarlos12@gmail.com',
+      createSupabaseServiceClient: jest.fn(() =>
+        makeFlagsAndHistoryClient({ messagesSelect: { data: descRows, error: null } }),
+      ),
+    }));
+    const { getRecentHistory } = await import('./admin-chat.pg-store');
+    const history = await getRecentHistory(baseEnv, 'conv-1', 'm4', 8);
+
+    expect(history).toEqual([
+      { role: 'user', content: 'hola' },
+      { role: 'assistant', content: 'hi there' },
+      { role: 'assistant', content: 'manual admin reply' },
+    ]);
+    expect(history.some((h) => h.content.includes('current turn'))).toBe(false);
+  });
+
+  it('respects the limit after excluding the current turn', async () => {
+    jest.resetModules();
+    // 9 rows DESC (limit+1 = 8+1): newest is the just-inserted user turn, then 8 older
+    // messages — after exclusion exactly `limit` (8) should remain, oldest dropped.
+    const descRows = Array.from({ length: 9 }, (_, i) => {
+      const idx = 8 - i; // 8 (newest) .. 0 (oldest)
+      return {
+        id: `m${idx}`,
+        conversation_id: 'conv-1',
+        sender_role: idx % 2 === 0 ? 'user' : 'assistant',
+        sender_id: idx % 2 === 0 ? 'user-1' : 'admin-1',
+        content: `msg-${idx}`,
+        message_type: 'text',
+        metadata: {},
+        created_at: `2026-01-01T00:00:${String(idx).padStart(2, '0')}Z`,
+      };
+    });
+    jest.doMock('./supabase.service', () => ({
+      DEFAULT_ADMIN_SUPERUSER_EMAIL: 'sanchezgaricajosecarlos12@gmail.com',
+      createSupabaseServiceClient: jest.fn(() =>
+        makeFlagsAndHistoryClient({ messagesSelect: { data: descRows, error: null } }),
+      ),
+    }));
+    const { getRecentHistory } = await import('./admin-chat.pg-store');
+    const history = await getRecentHistory(baseEnv, 'conv-1', 'm8', 8);
+
+    expect(history).toHaveLength(8);
+    expect(history.map((h) => h.content)).toEqual([
+      'msg-0',
+      'msg-1',
+      'msg-2',
+      'msg-3',
+      'msg-4',
+      'msg-5',
+      'msg-6',
+      'msg-7',
+    ]);
+  });
+});

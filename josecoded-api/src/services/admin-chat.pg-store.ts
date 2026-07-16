@@ -167,6 +167,44 @@ export async function getRecentMessagesForPrompt(
   return (data as MessageRow[]).map(mapMessage).reverse();
 }
 
+/** Lee flags de la conversación relevantes para el pipeline IA (P1 Task 4). */
+export async function getConversationFlags(
+  env: Env,
+  conversationId: string,
+): Promise<{ aiEnabled: boolean }> {
+  const supabase = createSupabaseServiceClient(env);
+  const { data, error } = await supabase
+    .from('admin_chat_conversations')
+    .select('ai_enabled')
+    .eq('id', conversationId)
+    .maybeSingle();
+
+  if (error) throw error;
+  return { aiEnabled: (data?.ai_enabled ?? true) as boolean };
+}
+
+/**
+ * Últimos `limit` mensajes de la conversación en orden cronológico, EXCLUYENDO
+ * `excludeMessageId` (el turno `user` recién insertado, para no duplicarlo en el
+ * prompt) y mapeando `sender_role` a los roles del modelo: `user` → `user`,
+ * cualquier otro valor (`assistant`, `admin` desde la consola, etc.) → `assistant`.
+ */
+export async function getRecentHistory(
+  env: Env,
+  conversationId: string,
+  excludeMessageId: string,
+  limit = 8,
+): Promise<{ role: 'user' | 'assistant'; content: string }[]> {
+  const recent = await getRecentMessagesForPrompt(env, conversationId, limit + 1);
+  return recent
+    .filter((m) => m.id !== excludeMessageId)
+    .slice(-limit)
+    .map((m) => ({
+      role: (m.senderRole === 'user' ? 'user' : 'assistant') as 'user' | 'assistant',
+      content: m.content,
+    }));
+}
+
 export async function getThread(env: Env, userId: string): Promise<AdminChatThreadDTO> {
   const conversationId = await ensureConversation(env, userId);
   const supabase = createSupabaseServiceClient(env);
