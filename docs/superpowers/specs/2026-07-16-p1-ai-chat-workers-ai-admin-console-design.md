@@ -91,7 +91,7 @@ Bajo `/api/v1/admin-chat/admin/*`, protegidos por `requireUser` + chequeo de rol
 
 ## 9. Notificaciones
 
-Reusar el camino existente (Telegram/n8n): cuando llega un mensaje `user` y (a) la IA está apagada, o (b) siempre — decidir en el plan — notificar al admin para que no dependa de tener la consola abierta. Mantener el `POST /n8n/inbound` existente si se sigue usando Telegram para responder; la consola es un canal adicional, no un reemplazo obligatorio.
+Reusar el camino existente (Telegram/n8n): **notificar SIEMPRE al admin cuando llega un mensaje `user`**, con la IA encendida o apagada (decisión del usuario) — para que Jose no dependa de tener la consola abierta. Con IA on, el aviso es informativo (la IA ya respondió); con IA off, es el disparador para que responda él. Mantener el `POST /n8n/inbound` existente si se sigue usando Telegram para responder; la consola es un canal adicional, no un reemplazo obligatorio.
 
 ## 10. Fuera de alcance (P1)
 
@@ -105,7 +105,6 @@ Reusar el camino existente (Telegram/n8n): cuando llega un mensaje `user` y (a) 
 
 - Modelo exacto de Workers AI (verificar catálogo vigente) y parámetros (max_tokens, temperature).
 - Trigger vs capa-app para `last_message_at`.
-- Si notificar SIEMPRE por Telegram o solo con IA apagada.
 - Cuántos mensajes de historial enviar al modelo (ventana de contexto vs coste).
 - Nombre del bucket R2 y estructura de los `.md` de knowledge.
 
