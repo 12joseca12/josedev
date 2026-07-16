@@ -16,112 +16,86 @@
 - **Idiom migraciones (del ADR):** enums vía `text check`; SECURITY DEFINER → `private` con `set search_path=public` + `revoke ... from public,anon,authenticated`; RLS `(select auth.uid())`; índice que cubra cada FK; políticas del mismo rol/acción se fusionan.
 - **Admin = rol admin:** resolver por `staff_members.role='admin'` / `ADMIN_SUPERUSER_ID` (patrón existente en `admin-chat.pg-store.ts` / `proxy.ts`). Endpoints admin re-chequean rol además de la RLS.
 - **Diseño UI:** tokens `dash-*` (light/dark ya resueltos), a11y (badges con texto accesible, no solo color), i18n es/en en `src/lib/literals.json` + `literalsEn.json`, responsive.
-- **Cloudflare bindings:** confirmar la sintaxis vigente de los bindings `ai` y `r2_buckets` en `wrangler.jsonc` y las firmas de runtime (`env.AI.run(...)`, `env.<BUCKET>.get(...)`) contra la doc actual antes de implementar (usar la skill `cloudflare`/`workers-best-practices`). Los snippets de abajo reflejan lo conocido a la fecha; ajustar si difiere.
-- Prerrequisitos que provee el usuario: crear el bucket R2 y (si hace falta) confirmar el binding AI en su cuenta (`wrangler` ya está logueado, token con `ai (write)`).
+- **Cloudflare bindings:** confirmar la sintaxis vigente del binding `ai` en `wrangler.jsonc` y la firma de runtime (`env.AI.run(...)`) contra la doc actual antes de implementar (usar la skill `cloudflare`/`workers-best-practices`). Los snippets reflejan lo conocido a la fecha; ajustar si difiere. **R2 se descartó** (requiere habilitación con términos/billing en el dashboard) — el knowledge va embebido (Task 1).
+- Prerrequisito del usuario: proveer el contenido real de los 5 `.md` de knowledge (desde Omen `/srv/josecoded-data/knowledge`). El binding AI ya está disponible (`wrangler` logueado, token con `ai (write)`).
 
 ---
 
-### Task 1: R2 knowledge bucket + lector con cache
+### Task 1: Knowledge embebido en el Worker (sin R2)
 
-Mover el contexto de conocimiento (`.md`) a R2 para que el gateway (Workers AI) lo lea en el edge, sin depender del worker/Ollama.
+Embeber el contexto de conocimiento (`.md`) como un módulo TS en el gateway, para que Workers AI lo use en el edge sin depender del worker/Ollama **ni de R2** (R2 requiere habilitación con términos/billing en el dashboard — se evita). El contenido es estático y pequeño (~5 archivos, ~10-30KB); actualizarlo = redeploy (raro).
 
 **Files:**
-- Modify: `josecoded-api/wrangler.jsonc` (binding `r2_buckets`)
-- Modify: `josecoded-api/src/types/env.types.ts` (tipar el binding R2)
-- Create: `josecoded-api/src/services/knowledge-r2.ts`
-- Create: `josecoded-api/src/services/knowledge-r2.test.ts`
-- Create: `josecoded-api/knowledge/` (copia de los `.md` a subir: `terminal-chat.md`, `about.md`, `services.md`, `faq.md`, `tone.md`) — origen: `josecoded-worker` (`/srv/josecoded-data/knowledge`), o el repo si están versionados.
+- Create: `josecoded-api/src/knowledge/` con un `.md` por archivo: `terminal-chat.md`, `about.md`, `services.md`, `faq.md`, `tone.md` (contenido real provisto por el usuario desde Omen `/srv/josecoded-data/knowledge`).
+- Create: `josecoded-api/src/services/knowledge.ts` (importa los `.md` como texto y expone `getKnowledgeContext`).
+- Create: `josecoded-api/src/services/knowledge.test.ts`
+
+**Nota de bundling:** los `.md` se importan como string. Con esbuild/wrangler, usar `import txt from '../knowledge/about.md'` requiere una rule de loader (`text`/`raw`). Confirmar en Step 1 el mecanismo soportado por el build de wrangler vigente; alternativa robusta sin config: escribir el contenido como constantes string en `knowledge-content.ts` (un `export const ABOUT = \`...\`` por archivo) generado desde los `.md`. Elegir el más simple que compile.
 
 **Interfaces:**
-- Consumes: `env.KNOWLEDGE_BUCKET` — binding R2 `{ get(key: string): Promise<{ text(): Promise<string> } | null> }`.
-- Produces: `getKnowledgeContext(env: Env, files?: string[], maxLen?: number): Promise<string>` — lee los `.md` de R2, concatena `--- <file> ---\n<contenido>`, corta a `maxLen` (default 14_000, como `adminChat` hoy), cache in-memory con TTL 60s por combinación `files|maxLen`. Default files = `['terminal-chat.md','about.md','services.md','faq.md','tone.md']`.
+- Produces: `getKnowledgeContext(files?: string[], maxLen?: number): string` — **pura, síncrona, sin `env`** (el contenido está embebido). Concatena `--- <file> ---\n<contenido>` de los `files` pedidos, corta a `maxLen` (default 14_000, como `adminChat` hoy). Default files = `['terminal-chat.md','about.md','services.md','faq.md','tone.md']`.
 
-- [ ] **Step 1: Confirmar sintaxis del binding R2** contra la doc vigente (`wrangler.jsonc` `r2_buckets: [{ binding, bucket_name }]`; runtime `env.KNOWLEDGE_BUCKET.get(key)` → `R2ObjectBody | null` con `.text()`). Ajustar los pasos si difiere.
+- [ ] **Step 1: Confirmar el mecanismo de bundling** de texto en el build de wrangler vigente (loader `text` para `import '*.md'`, o constantes string). Usar la skill `wrangler`/`workers-best-practices`. Elegir el que compile sin fricción y aplicarlo en los steps siguientes.
 
-- [ ] **Step 2: Crear el bucket + subir los `.md` (usuario/wrangler)**
+- [ ] **Step 2: Colocar el contenido real** de los 5 `.md` en `josecoded-api/src/knowledge/` (el usuario los provee; el controlador los pega en el brief).
 
-```bash
-cd josecoded-api
-pnpm exec wrangler r2 bucket create josecoded-knowledge
-# Subir cada archivo (desde una copia local de los .md):
-pnpm exec wrangler r2 object put josecoded-knowledge/terminal-chat.md --file knowledge/terminal-chat.md
-# ...idem about.md, services.md, faq.md, tone.md
-```
-
-- [ ] **Step 3: Escribir el test que falla** — `josecoded-api/src/services/knowledge-r2.test.ts`:
+- [ ] **Step 3: Escribir el test que falla** — `josecoded-api/src/services/knowledge.test.ts`:
 
 ```ts
-import { getKnowledgeContext } from './knowledge-r2';
-import type { Env } from '../types/env.types';
+import { getKnowledgeContext } from './knowledge';
 
-function bucketWith(map: Record<string, string>) {
-  return { get: async (k: string) => (k in map ? { text: async () => map[k] } : null) };
-}
-
-describe('getKnowledgeContext (R2)', () => {
-  it('concatena los .md presentes con encabezado por archivo', async () => {
-    const env = { KNOWLEDGE_BUCKET: bucketWith({ 'about.md': 'Soy Jose', 'faq.md': 'FAQ' }) } as unknown as Env;
-    const ctx = await getKnowledgeContext(env, ['about.md', 'faq.md']);
+describe('getKnowledgeContext (embebido)', () => {
+  it('concatena los archivos pedidos con encabezado por archivo', () => {
+    const ctx = getKnowledgeContext(['about.md']);
     expect(ctx).toContain('--- about.md ---');
-    expect(ctx).toContain('Soy Jose');
-    expect(ctx).toContain('--- faq.md ---');
+    expect(ctx.length).toBeGreaterThan(0);
   });
 
-  it('ignora archivos ausentes sin romper', async () => {
-    const env = { KNOWLEDGE_BUCKET: bucketWith({ 'about.md': 'x' }) } as unknown as Env;
-    const ctx = await getKnowledgeContext(env, ['about.md', 'missing.md']);
-    expect(ctx).toContain('x');
-    expect(ctx).not.toContain('missing.md');
-  });
-
-  it('corta a maxLen', async () => {
-    const env = { KNOWLEDGE_BUCKET: bucketWith({ 'a.md': 'x'.repeat(100) }) } as unknown as Env;
-    const ctx = await getKnowledgeContext(env, ['a.md'], 20);
+  it('corta a maxLen', () => {
+    const ctx = getKnowledgeContext(['about.md'], 20);
     expect(ctx.length).toBeLessThanOrEqual(20);
+  });
+
+  it('usa los 5 archivos por defecto', () => {
+    const ctx = getKnowledgeContext();
+    expect(ctx).toContain('--- about.md ---');
+    expect(ctx).toContain('--- faq.md ---');
   });
 });
 ```
 
-- [ ] **Step 3b: Correr y verificar que falla** — `pnpm -C josecoded-api test -- knowledge-r2` → FAIL (módulo inexistente).
+- [ ] **Step 3b: Correr y verificar que falla** — `pnpm -C josecoded-api test -- knowledge` → FAIL (módulo inexistente).
 
-- [ ] **Step 4: Implementar** `josecoded-api/src/services/knowledge-r2.ts`:
+- [ ] **Step 4: Implementar** `josecoded-api/src/services/knowledge.ts` (según el mecanismo del Step 1; ejemplo con constantes):
 
 ```ts
-import type { Env } from '../types/env.types';
-
+import { TERMINAL_CHAT } from '../knowledge/terminal-chat.md';   // o import de constantes
+// ...map de nombre → contenido
+const KNOWLEDGE: Record<string, string> = {
+  'terminal-chat.md': TERMINAL_CHAT,
+  'about.md': ABOUT,
+  'services.md': SERVICES,
+  'faq.md': FAQ,
+  'tone.md': TONE,
+};
 const DEFAULT_FILES = ['terminal-chat.md', 'about.md', 'services.md', 'faq.md', 'tone.md'];
 const DEFAULT_MAX = 14_000;
-const TTL_MS = 60_000;
 
-let cache: { key: string; expiresAt: number; ctx: string } | undefined;
-
-export async function getKnowledgeContext(
-  env: Env,
-  files: string[] = DEFAULT_FILES,
-  maxLen: number = DEFAULT_MAX,
-): Promise<string> {
-  const key = `${files.join('|')}:${maxLen}`;
-  if (cache && cache.key === key && cache.expiresAt > Date.now()) return cache.ctx;
-
-  const parts = await Promise.all(
-    files.map(async (name) => {
-      const obj = await env.KNOWLEDGE_BUCKET.get(name);
-      if (!obj) return '';
-      const text = (await obj.text()).trim();
+export function getKnowledgeContext(files: string[] = DEFAULT_FILES, maxLen: number = DEFAULT_MAX): string {
+  return files
+    .map((name) => {
+      const text = (KNOWLEDGE[name] ?? '').trim();
       return text ? `--- ${name} ---\n${text}` : '';
-    }),
-  );
-  const ctx = parts.filter(Boolean).join('\n\n').slice(0, maxLen);
-  cache = { key, expiresAt: Date.now() + TTL_MS, ctx };
-  return ctx;
+    })
+    .filter(Boolean)
+    .join('\n\n')
+    .slice(0, maxLen);
 }
 ```
 
-- [ ] **Step 5: Binding + tipo.** En `wrangler.jsonc` añadir `"r2_buckets": [{ "binding": "KNOWLEDGE_BUCKET", "bucket_name": "josecoded-knowledge" }]`. En `env.types.ts` añadir a `Env`: `KNOWLEDGE_BUCKET: { get(key: string): Promise<{ text(): Promise<string> } | null> };`
+- [ ] **Step 5: Test + typecheck** — `pnpm -C josecoded-api test -- knowledge && pnpm -C josecoded-api typecheck` → PASS.
 
-- [ ] **Step 6: Test + typecheck** — `pnpm -C josecoded-api test -- knowledge-r2 && pnpm -C josecoded-api typecheck` → PASS.
-
-- [ ] **Step 7: Commit** — `feat(api): R2 knowledge bucket + cached reader for Workers AI context`
+- [ ] **Step 6: Commit** — `feat(api): embed admin-chat knowledge context in the Worker (no R2)`
 
 ---
 
@@ -183,7 +157,7 @@ describe('generateAdminReply', () => {
 
 ```ts
 import type { Env } from '../types/env.types';
-import { getKnowledgeContext } from './knowledge-r2';
+import { getKnowledgeContext } from './knowledge';
 
 const SYSTEM_PROMPT = `Eres el asistente del administrador en el chat del portfolio josecoded.
 Respondes en nombre del administrador (Jose Dev): servicios, stack, plazos orientativos y encaje del proyecto.
@@ -209,7 +183,7 @@ export async function generateAdminReply(
   env: Env,
   input: { history: { role: 'user' | 'assistant'; content: string }[]; userText: string },
 ): Promise<{ content: string; showMeetingPicker: boolean }> {
-  const knowledge = await getKnowledgeContext(env);
+  const knowledge = getKnowledgeContext();
   const messages = buildAdminChatMessages(knowledge, input.history, input.userText);
   const model = env.AI_CHAT_MODEL ?? DEFAULT_MODEL;
   const out = await env.AI.run(model, { messages });
