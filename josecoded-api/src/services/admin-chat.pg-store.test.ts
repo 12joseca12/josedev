@@ -346,3 +346,486 @@ describe('getRecentHistory', () => {
     ]);
   });
 });
+
+describe('ensureConversation', () => {
+  it('inserts assigned_staff_id (NOT admin_id) when creating a new conversation', async () => {
+    jest.resetModules();
+    let insertPayload: unknown;
+    jest.doMock('./supabase.service', () => ({
+      DEFAULT_ADMIN_SUPERUSER_EMAIL: 'sanchezgaricajosecarlos12@gmail.com',
+      createSupabaseServiceClient: jest.fn(() => ({
+        from: (table: string) => {
+          if (table === 'admin_chat_conversations') {
+            return {
+              select: () => ({
+                eq: () => ({
+                  maybeSingle: () => Promise.resolve({ data: null, error: null }),
+                }),
+              }),
+              insert: (payload: unknown) => {
+                insertPayload = payload;
+                return {
+                  select: () => ({
+                    single: () => Promise.resolve({ data: { id: 'new-conv-id' }, error: null }),
+                  }),
+                };
+              },
+            };
+          }
+          throw new Error(`unexpected table in test double: ${table}`);
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test double
+      })) as any,
+    }));
+    const { ensureConversation } = await import('./admin-chat.pg-store');
+    // ADMIN_SUPERUSER_ID set so resolveSuperuserId short-circuits without needing
+    // staff_members mocks — isolates this test to the ensureConversation insert shape.
+    const id = await ensureConversation({ ...baseEnv, ADMIN_SUPERUSER_ID: 'admin-user-id' }, 'user-123');
+
+    expect(id).toBe('new-conv-id');
+    expect(insertPayload).toEqual({ user_id: 'user-123', assigned_staff_id: 'admin-user-id' });
+    expect(insertPayload).not.toHaveProperty('admin_id');
+  });
+
+  it('returns the existing conversation id without inserting', async () => {
+    jest.resetModules();
+    const insertSpy = jest.fn();
+    jest.doMock('./supabase.service', () => ({
+      DEFAULT_ADMIN_SUPERUSER_EMAIL: 'sanchezgaricajosecarlos12@gmail.com',
+      createSupabaseServiceClient: jest.fn(() => ({
+        from: (table: string) => {
+          if (table === 'admin_chat_conversations') {
+            return {
+              select: () => ({
+                eq: () => ({
+                  maybeSingle: () => Promise.resolve({ data: { id: 'existing-conv-id' }, error: null }),
+                }),
+              }),
+              insert: insertSpy,
+            };
+          }
+          throw new Error(`unexpected table in test double: ${table}`);
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test double
+      })) as any,
+    }));
+    const { ensureConversation } = await import('./admin-chat.pg-store');
+    const id = await ensureConversation({ ...baseEnv, ADMIN_SUPERUSER_ID: 'admin-user-id' }, 'user-123');
+
+    expect(id).toBe('existing-conv-id');
+    expect(insertSpy).not.toHaveBeenCalled();
+  });
+});
+
+describe('assertAdmin', () => {
+  it('resolves when staff_members.role is admin', async () => {
+    jest.resetModules();
+    jest.doMock('./supabase.service', () => ({
+      DEFAULT_ADMIN_SUPERUSER_EMAIL: 'sanchezgaricajosecarlos12@gmail.com',
+      createSupabaseServiceClient: jest.fn(() => ({
+        from: (table: string) => {
+          if (table === 'staff_members') {
+            return {
+              select: () => ({
+                eq: () => ({
+                  maybeSingle: () => Promise.resolve({ data: { role: 'admin' }, error: null }),
+                }),
+              }),
+            };
+          }
+          throw new Error(`unexpected table in test double: ${table}`);
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test double
+      })) as any,
+    }));
+    const { assertAdmin } = await import('./admin-chat.pg-store');
+    await expect(assertAdmin(baseEnv, { id: 'admin-1' })).resolves.toBeUndefined();
+  });
+
+  it('rejects with AdminAccessDeniedError when the role is not admin', async () => {
+    jest.resetModules();
+    jest.doMock('./supabase.service', () => ({
+      DEFAULT_ADMIN_SUPERUSER_EMAIL: 'sanchezgaricajosecarlos12@gmail.com',
+      createSupabaseServiceClient: jest.fn(() => ({
+        from: (table: string) => {
+          if (table === 'staff_members') {
+            return {
+              select: () => ({
+                eq: () => ({
+                  maybeSingle: () => Promise.resolve({ data: { role: 'closer' }, error: null }),
+                }),
+              }),
+            };
+          }
+          throw new Error(`unexpected table in test double: ${table}`);
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test double
+      })) as any,
+    }));
+    const { assertAdmin, AdminAccessDeniedError } = await import('./admin-chat.pg-store');
+    await expect(assertAdmin(baseEnv, { id: 'closer-1' })).rejects.toBeInstanceOf(AdminAccessDeniedError);
+  });
+
+  it('rejects with AdminAccessDeniedError when the user has no staff_members row', async () => {
+    jest.resetModules();
+    jest.doMock('./supabase.service', () => ({
+      DEFAULT_ADMIN_SUPERUSER_EMAIL: 'sanchezgaricajosecarlos12@gmail.com',
+      createSupabaseServiceClient: jest.fn(() => ({
+        from: (table: string) => {
+          if (table === 'staff_members') {
+            return {
+              select: () => ({
+                eq: () => ({
+                  maybeSingle: () => Promise.resolve({ data: null, error: null }),
+                }),
+              }),
+            };
+          }
+          throw new Error(`unexpected table in test double: ${table}`);
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test double
+      })) as any,
+    }));
+    const { assertAdmin, AdminAccessDeniedError } = await import('./admin-chat.pg-store');
+    await expect(assertAdmin(baseEnv, { id: 'unknown-user' })).rejects.toBeInstanceOf(AdminAccessDeniedError);
+  });
+});
+
+/** Builder para `admin_chat_messages` en `listConversationsForAdmin`: distingue la
+ *  consulta de "último mensaje" (select 'content, created_at') de la de "unread"
+ *  (select 'id') por las columnas pedidas, y usa el primer `.eq('conversation_id', …)`
+ *  para elegir la fila configurada por conversación. */
+function makeAdminMessagesTable(responses: {
+  lastMessageByConv: Record<string, QueryResult>;
+  unreadByConv: Record<string, QueryResult>;
+}) {
+  return (cols: string) => {
+    let conversationId: string | undefined;
+    const chain = {
+      eq: (_col: string, val: string) => {
+        conversationId = conversationId ?? val;
+        return chain;
+      },
+      gt: () => chain,
+      order: () => chain,
+      limit: () => chain,
+      maybeSingle: () => {
+        const source = cols === 'id' ? responses.unreadByConv : responses.lastMessageByConv;
+        return Promise.resolve((conversationId && source[conversationId]) ?? { data: null, error: null });
+      },
+    };
+    return chain;
+  };
+}
+
+describe('listConversationsForAdmin', () => {
+  it('computes unread from sender_role=user vs admin_last_read_at and orders by last_message_at desc', async () => {
+    jest.resetModules();
+    const conversationsRows = [
+      {
+        id: 'conv-unread',
+        user_id: 'user-1',
+        ai_enabled: true,
+        admin_last_read_at: '2026-01-01T00:00:00Z',
+        last_message_at: '2026-01-02T00:00:00Z',
+      },
+      {
+        id: 'conv-read',
+        user_id: 'user-2',
+        ai_enabled: false,
+        admin_last_read_at: '2026-01-05T00:00:00Z',
+        last_message_at: '2026-01-01T00:00:00Z',
+      },
+      {
+        id: 'conv-never-read',
+        user_id: 'user-3',
+        ai_enabled: true,
+        admin_last_read_at: null,
+        last_message_at: '2025-12-31T00:00:00Z',
+      },
+    ];
+
+    const lastMessageByConv: Record<string, QueryResult> = {
+      'conv-unread': { data: { content: 'hola necesito ayuda', created_at: '2026-01-02T00:00:00Z' }, error: null },
+      'conv-read': { data: { content: 'gracias', created_at: '2026-01-01T00:00:00Z' }, error: null },
+      'conv-never-read': { data: { content: 'primer mensaje', created_at: '2025-12-31T00:00:00Z' }, error: null },
+    };
+    // conv-never-read: admin_last_read_at is null -> threshold is epoch, so any user
+    // message counts as unread.
+    const unreadByConv: Record<string, QueryResult> = {
+      'conv-unread': { data: { id: 'msg-x' }, error: null },
+      'conv-read': { data: null, error: null },
+      'conv-never-read': { data: { id: 'msg-y' }, error: null },
+    };
+    const emailByUserId: Record<string, string> = {
+      'user-1': 'user1@example.com',
+      'user-2': 'user2@example.com',
+      'user-3': 'user3@example.com',
+    };
+
+    jest.doMock('./supabase.service', () => ({
+      DEFAULT_ADMIN_SUPERUSER_EMAIL: 'sanchezgaricajosecarlos12@gmail.com',
+      createSupabaseServiceClient: jest.fn(() => ({
+        from: (table: string) => {
+          if (table === 'admin_chat_conversations') {
+            return {
+              select: () => ({
+                order: () => Promise.resolve({ data: conversationsRows, error: null }),
+              }),
+            };
+          }
+          if (table === 'admin_chat_messages') {
+            return { select: makeAdminMessagesTable({ lastMessageByConv, unreadByConv }) };
+          }
+          throw new Error(`unexpected table in test double: ${table}`);
+        },
+        schema: (name: string) => {
+          if (name !== 'auth') throw new Error(`unexpected schema in test double: ${name}`);
+          return {
+            from: (table: string) => {
+              if (table !== 'users') throw new Error(`unexpected schema table in test double: ${table}`);
+              return {
+                select: () => ({
+                  eq: (_col: string, val: string) => ({
+                    maybeSingle: () =>
+                      Promise.resolve(
+                        emailByUserId[val]
+                          ? { data: { email: emailByUserId[val] }, error: null }
+                          : { data: null, error: null },
+                      ),
+                  }),
+                }),
+              };
+            },
+          };
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test double
+      })) as any,
+    }));
+
+    const { listConversationsForAdmin } = await import('./admin-chat.pg-store');
+    const result = await listConversationsForAdmin(baseEnv);
+
+    expect(result).toEqual([
+      {
+        id: 'conv-unread',
+        userId: 'user-1',
+        userEmail: 'user1@example.com',
+        lastMessagePreview: 'hola necesito ayuda',
+        lastMessageAt: '2026-01-02T00:00:00Z',
+        aiEnabled: true,
+        unread: true,
+      },
+      {
+        id: 'conv-read',
+        userId: 'user-2',
+        userEmail: 'user2@example.com',
+        lastMessagePreview: 'gracias',
+        lastMessageAt: '2026-01-01T00:00:00Z',
+        aiEnabled: false,
+        unread: false,
+      },
+      {
+        id: 'conv-never-read',
+        userId: 'user-3',
+        userEmail: 'user3@example.com',
+        lastMessagePreview: 'primer mensaje',
+        lastMessageAt: '2025-12-31T00:00:00Z',
+        aiEnabled: true,
+        unread: true,
+      },
+    ]);
+  });
+
+  it('returns an empty array when there are no conversations', async () => {
+    jest.resetModules();
+    jest.doMock('./supabase.service', () => ({
+      DEFAULT_ADMIN_SUPERUSER_EMAIL: 'sanchezgaricajosecarlos12@gmail.com',
+      createSupabaseServiceClient: jest.fn(() => ({
+        from: (table: string) => {
+          if (table === 'admin_chat_conversations') {
+            return {
+              select: () => ({
+                order: () => Promise.resolve({ data: [], error: null }),
+              }),
+            };
+          }
+          throw new Error(`unexpected table in test double: ${table}`);
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test double
+      })) as any,
+    }));
+    const { listConversationsForAdmin } = await import('./admin-chat.pg-store');
+    await expect(listConversationsForAdmin(baseEnv)).resolves.toEqual([]);
+  });
+});
+
+describe('insertAdminMessage', () => {
+  it('inserts with sender_role=admin and returns the mapped DTO', async () => {
+    jest.resetModules();
+    let insertPayload: unknown;
+    jest.doMock('./supabase.service', () => ({
+      DEFAULT_ADMIN_SUPERUSER_EMAIL: 'sanchezgaricajosecarlos12@gmail.com',
+      createSupabaseServiceClient: jest.fn(() => ({
+        from: (table: string) => {
+          if (table === 'admin_chat_messages') {
+            return {
+              insert: (payload: unknown) => {
+                insertPayload = payload;
+                return {
+                  select: () => ({
+                    single: () =>
+                      Promise.resolve({
+                        data: {
+                          id: 'msg-admin-1',
+                          conversation_id: 'conv-1',
+                          sender_role: 'admin',
+                          sender_id: 'admin-1',
+                          content: 'Hola, soy Jose',
+                          message_type: 'text',
+                          metadata: {},
+                          created_at: '2026-01-01T00:00:00Z',
+                        },
+                        error: null,
+                      }),
+                  }),
+                };
+              },
+            };
+          }
+          throw new Error(`unexpected table in test double: ${table}`);
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test double
+      })) as any,
+    }));
+
+    const { insertAdminMessage } = await import('./admin-chat.pg-store');
+    const message = await insertAdminMessage(baseEnv, {
+      conversationId: 'conv-1',
+      adminId: 'admin-1',
+      content: 'Hola, soy Jose',
+    });
+
+    expect(insertPayload).toMatchObject({
+      conversation_id: 'conv-1',
+      sender_role: 'admin',
+      sender_id: 'admin-1',
+      content: 'Hola, soy Jose',
+    });
+    expect(message.senderRole).toBe('admin');
+    expect(message.id).toBe('msg-admin-1');
+  });
+});
+
+describe('setConversationAiEnabled', () => {
+  it('updates ai_enabled for the conversation', async () => {
+    jest.resetModules();
+    let updatePayload: unknown;
+    let eqCall: [string, unknown] | undefined;
+    jest.doMock('./supabase.service', () => ({
+      DEFAULT_ADMIN_SUPERUSER_EMAIL: 'sanchezgaricajosecarlos12@gmail.com',
+      createSupabaseServiceClient: jest.fn(() => ({
+        from: (table: string) => {
+          if (table === 'admin_chat_conversations') {
+            return {
+              update: (payload: unknown) => {
+                updatePayload = payload;
+                return {
+                  eq: (col: string, val: unknown) => {
+                    eqCall = [col, val];
+                    return Promise.resolve({ data: null, error: null });
+                  },
+                };
+              },
+            };
+          }
+          throw new Error(`unexpected table in test double: ${table}`);
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test double
+      })) as any,
+    }));
+
+    const { setConversationAiEnabled } = await import('./admin-chat.pg-store');
+    await setConversationAiEnabled(baseEnv, 'conv-1', false);
+
+    expect(updatePayload).toEqual({ ai_enabled: false });
+    expect(eqCall).toEqual(['id', 'conv-1']);
+  });
+});
+
+describe('markConversationRead', () => {
+  it('sets admin_last_read_at to a fresh timestamp', async () => {
+    jest.resetModules();
+    let updatePayload: { admin_last_read_at?: string } | undefined;
+    jest.doMock('./supabase.service', () => ({
+      DEFAULT_ADMIN_SUPERUSER_EMAIL: 'sanchezgaricajosecarlos12@gmail.com',
+      createSupabaseServiceClient: jest.fn(() => ({
+        from: (table: string) => {
+          if (table === 'admin_chat_conversations') {
+            return {
+              update: (payload: { admin_last_read_at?: string }) => {
+                updatePayload = payload;
+                return {
+                  eq: () => Promise.resolve({ data: null, error: null }),
+                };
+              },
+            };
+          }
+          throw new Error(`unexpected table in test double: ${table}`);
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test double
+      })) as any,
+    }));
+
+    const { markConversationRead } = await import('./admin-chat.pg-store');
+    const before = Date.now();
+    await markConversationRead(baseEnv, 'conv-1');
+    const after = Date.now();
+
+    expect(updatePayload?.admin_last_read_at).toBeDefined();
+    const ts = new Date(updatePayload!.admin_last_read_at as string).getTime();
+    expect(ts).toBeGreaterThanOrEqual(before);
+    expect(ts).toBeLessThanOrEqual(after);
+  });
+});
+
+describe('getConversationMessagesForAdmin', () => {
+  it('returns messages for the conversation in chronological order', async () => {
+    jest.resetModules();
+    const row = {
+      id: 'm1',
+      conversation_id: 'conv-1',
+      sender_role: 'user',
+      sender_id: 'user-1',
+      content: 'hola',
+      message_type: 'text',
+      metadata: {},
+      created_at: '2026-01-01T00:00:00Z',
+    };
+    jest.doMock('./supabase.service', () => ({
+      DEFAULT_ADMIN_SUPERUSER_EMAIL: 'sanchezgaricajosecarlos12@gmail.com',
+      createSupabaseServiceClient: jest.fn(() => ({
+        from: (table: string) => {
+          if (table === 'admin_chat_messages') {
+            return {
+              select: () => ({
+                eq: () => ({
+                  order: () => ({
+                    limit: () => Promise.resolve({ data: [row], error: null }),
+                  }),
+                }),
+              }),
+            };
+          }
+          throw new Error(`unexpected table in test double: ${table}`);
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test double
+      })) as any,
+    }));
+
+    const { getConversationMessagesForAdmin } = await import('./admin-chat.pg-store');
+    const messages = await getConversationMessagesForAdmin(baseEnv, 'conv-1');
+    expect(messages).toHaveLength(1);
+    expect(messages[0]).toMatchObject({ id: 'm1', senderRole: 'user', content: 'hola' });
+  });
+});

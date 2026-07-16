@@ -149,4 +149,38 @@ describe('runAssistantPipeline', () => {
     expect(typeof payload.content).toBe('string');
     expect(payload.content.length).toBeGreaterThan(0);
   });
+
+  it('fail-closed: getConversationFlags rejects -> does NOT call the AI, but DOES notify (aiEnabled=false)', async () => {
+    jest.resetModules();
+    const notifySpy = jest.fn().mockResolvedValue(undefined);
+    const generateSpy = jest.fn();
+    const getRecentHistorySpy = jest.fn();
+    const insertAssistantMessageSpy = jest.fn().mockResolvedValue({});
+
+    jest.doMock('./admin-chat.pg-store', () => ({
+      getConversationFlags: jest.fn().mockRejectedValue(new Error('read error (possible RLS/network blip)')),
+      getRecentHistory: getRecentHistorySpy,
+      insertAssistantMessage: insertAssistantMessageSpy,
+    }));
+    jest.doMock('./ai-reply', () => ({ generateAdminReply: generateSpy }));
+    jest.doMock('./admin-chat-notify.service', () => ({ notifyAdminOfNewMessage: notifySpy }));
+
+    const { runAssistantPipeline } = await import('./admin-chat-assistant.service');
+    await runAssistantPipeline(baseEnv, baseInput);
+
+    // Fail-closed: on a flags-read error the AI must NOT reply (a human takeover may
+    // be in progress) — but the admin notification still fires unconditionally.
+    expect(generateSpy).not.toHaveBeenCalled();
+    expect(getRecentHistorySpy).not.toHaveBeenCalled();
+    expect(insertAssistantMessageSpy).not.toHaveBeenCalled();
+
+    expect(notifySpy).toHaveBeenCalledTimes(1);
+    expect(notifySpy).toHaveBeenCalledWith(
+      baseEnv,
+      expect.objectContaining({
+        conversationId: baseInput.conversationId,
+        aiEnabled: false,
+      }),
+    );
+  });
 });

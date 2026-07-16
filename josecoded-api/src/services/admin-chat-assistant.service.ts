@@ -82,7 +82,11 @@ export async function runAssistantPipeline(
     text: string;
   },
 ): Promise<void> {
-  let aiEnabled = true;
+  // Fail-CLOSED (P1 Task 5 fix): si no se puede leer `ai_enabled`, la IA NO responde.
+  // Ante un error de lectura puede haber un takeover humano en curso (admin apagó la
+  // IA); contestar igual arriesga pisar al admin. La notificación sigue disparándose
+  // siempre, así que Jose se entera del mensaje aunque la IA se quede callada.
+  let aiEnabled = false;
   try {
     ({ aiEnabled } = await getConversationFlags(env, input.conversationId));
   } catch (e) {
@@ -90,7 +94,7 @@ export async function runAssistantPipeline(
       JSON.stringify({
         scope: 'admin-chat',
         action: 'conversation-flags-failed',
-        hint: 'No se pudo leer ai_enabled; se asume true (comportamiento previo al gate de P1 Task 4)',
+        hint: 'No se pudo leer ai_enabled; se asume false (fail-closed) para no responder durante un posible takeover humano',
         conversationId: input.conversationId,
         message: e instanceof Error ? e.message : 'unknown',
       }),
