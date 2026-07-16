@@ -226,13 +226,14 @@ export async function generateAdminReply(
 
 **Interfaces:**
 - Produces: `getConversationFlags(env, conversationId): Promise<{ aiEnabled: boolean }>` (lee `ai_enabled`).
-- Comportamiento: en `runAssistantPipeline`, tras insertar el mensaje `user`: (1) **notificar SIEMPRE** al admin (Telegram/n8n existente) — con IA on o off; (2) si `getConversationFlags(...).aiEnabled` → generar y guardar respuesta IA (Task 2); si no → NO generar (Jose responderá desde la consola).
+- Produces/usa: `getRecentHistory(env, conversationId, excludeMessageId, limit=8): Promise<{ role:'user'|'assistant'; content:string }[]>` — últimos N mensajes de la conversación en orden cronológico, EXCLUYENDO el mensaje del usuario recién insertado (`excludeMessageId`) y mapeando `sender_role` (`user`→user, `assistant`/`admin`→assistant) a los roles del modelo. (Reusar/adaptar el `getRecentMessagesForPrompt` existente si sirve.)
+- Comportamiento: en `runAssistantPipeline`, tras insertar el mensaje `user`: (1) **notificar SIEMPRE** al admin (Telegram/n8n existente) — con IA on o off; (2) si `getConversationFlags(...).aiEnabled` → generar y guardar respuesta IA **con historial real** (`generateAdminReply(env, { history: getRecentHistory(...), userText })`, en vez de `[]`); si no → NO generar (Jose responderá desde la consola).
 
-- [ ] **Step 1:** Leer `admin-chat-n8n.service.ts` + `admin-chat-assistant.service.ts` para ubicar el punto de orquestación y la notificación existente.
-- [ ] **Step 2 (TDD):** Test — con `aiEnabled=false`, el pipeline NO llama a `generateAdminReply` pero SÍ notifica; con `true`, llama a ambos. (Inyectar/mocks de flags + AI + notify.)
-- [ ] **Step 3:** Implementar el gate + asegurar la notificación incondicional.
+- [ ] **Step 1:** Leer `admin-chat-n8n.service.ts` + `admin-chat-assistant.service.ts` + `admin-chat.pg-store.ts` (`getRecentMessagesForPrompt`) para ubicar la orquestación, la notificación existente, y cómo leer historial sin duplicar el turno actual.
+- [ ] **Step 2 (TDD):** Tests — (a) con `aiEnabled=false`, el pipeline NO llama a `generateAdminReply` pero SÍ notifica; con `true`, llama a ambos; (b) `getRecentHistory` excluye el `excludeMessageId` y mapea roles (`admin`→assistant). (Mocks de flags + store + AI + notify.)
+- [ ] **Step 3:** Implementar el gate + notificación incondicional + el paso de historial real a `generateAdminReply` (memoria de conversación — decisión del usuario, ya no `[]`).
 - [ ] **Step 4:** Test + typecheck + suite verde.
-- [ ] **Step 5: Commit** — `feat(api): respect ai_enabled toggle + always notify admin on user message`
+- [ ] **Step 5: Commit** — `feat(api): ai_enabled gate + always-notify + real conversation history for AI replies`
 
 ---
 
