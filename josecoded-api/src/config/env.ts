@@ -27,6 +27,18 @@ const envSchema = z.object({
   N8N_CHAT_WEBHOOK_URL: z.string().url().optional(),
   N8N_CHAT_WEBHOOK_SECRET: z.string().min(8).optional(),
   PUBLIC_API_BASE_URL: z.string().url().optional(),
+  AI_CHAT_MODEL: z.string().min(1).optional(),
+  // Binding nativo de Cloudflare (objeto con `.run()`, no un string): sin esta entrada
+  // zod lo eliminaría del env parseado (modo "strip" por defecto) y `env.AI.run(...)`
+  // fallaría en runtime pese a compilar bien. Opcional (como AI_RATE_LIMITER): puede
+  // faltar en tests o en local sin el binding; `generateAdminReply` falla explícito
+  // si falta y el pipeline de admin-chat cae al fallback local.
+  AI: z
+    .custom<Env['AI']>(
+      (v) => typeof v === 'object' && v !== null && typeof (v as { run?: unknown }).run === 'function',
+      { message: 'Falta el binding AI (Workers AI). Configura "ai": { "binding": "AI" } en wrangler.jsonc' },
+    )
+    .optional(),
 }).refine(
   (data) => Boolean(data.SUPABASE_ANON_KEY?.trim() || data.SUPABASE_PUBLISHABLE_KEY?.trim()),
   {
