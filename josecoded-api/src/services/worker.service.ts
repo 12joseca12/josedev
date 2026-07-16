@@ -37,10 +37,6 @@ function buildWorkerRequestHeaders(env: Env, hasBody: boolean): Record<string, s
   if (hasBody) {
     headers['Content-Type'] = 'application/json';
   }
-  // ngrok free: sin esto el fetch server-side puede recibir HTML interstitial en vez de JSON.
-  if (env.WORKER_URL.includes('ngrok')) {
-    headers['ngrok-skip-browser-warning'] = 'true';
-  }
   return headers;
 }
 

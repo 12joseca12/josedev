@@ -17,6 +17,7 @@ const envSchema = z.object({
   FORUM_MODERATION_DISABLED: z.enum(['true', 'false']).optional(),
   DEV_API_KEY: z.string().min(10).optional(),
   WORKER_TIMEOUT_MS: z.string().regex(/^\d+$/).optional(),
+  AI_CHAT_TIMEOUT_MS: z.string().regex(/^\d+$/).optional(),
   FORUM_ADMIN_USER_IDS: z.string().optional(),
   ADMIN_SUPERUSER_EMAIL: z.string().email().optional(),
   ADMIN_SUPERUSER_ID: z.string().uuid().optional(),

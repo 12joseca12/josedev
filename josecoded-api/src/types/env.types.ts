@@ -28,6 +28,11 @@ export type Env = {
    */
   WORKER_TIMEOUT_MS?: string;
 
+  /**
+   * Optional: timeout ms for /ai/chat proxy to worker (default 30000).
+   */
+  AI_CHAT_TIMEOUT_MS?: string;
+
   /** UUIDs separados por coma con permisos de moderación en el foro (mock). */
   FORUM_ADMIN_USER_IDS?: string;
 
@@ -53,4 +58,7 @@ export type Env = {
 
   /** URL pública del API para callbacks n8n (p. ej. https://api.tudominio.com). */
   PUBLIC_API_BASE_URL?: string;
+
+  /** Binding nativo de Cloudflare Rate Limiting para /ai/*. Ausente en dev local. */
+  AI_RATE_LIMITER?: { limit(opts: { key: string }): Promise<{ success: boolean }> };
 };

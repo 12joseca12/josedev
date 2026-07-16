@@ -5,6 +5,7 @@ node_modules
 /.pnp
 .pnp.*
 josecoded-api/.wrangler
+josecoded-api/dist
 .yarn/*
 !.yarn/patches
 !.yarn/plugins

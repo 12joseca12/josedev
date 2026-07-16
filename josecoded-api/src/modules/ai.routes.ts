@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import type { Env } from '../types/env.types';
-import { callWorker, toUpstreamFail } from '../services/worker.service';
+import { callWorker, toUpstreamFail, upstreamHttpStatus } from '../services/worker.service';
+import { resolveAiChatTimeoutMs } from '../services/ai-timeout';
 import { aiChatSchema } from '../schemas/ai.schema';
 import { ok, fail } from '../utils/api-response';
 
@@ -20,9 +21,11 @@ aiRoutes.post('/ai/chat', async (c) => {
     const data = await callWorker<unknown>(c.env, '/ai/chat', {
       method: 'POST',
       body: parsed.data,
+      timeoutMs: resolveAiChatTimeoutMs(c.env),
     });
     return c.json(ok(data));
   } catch (e) {
-    return c.json(toUpstreamFail(e), 502);
+    const status = upstreamHttpStatus(e);
+    return c.json(toUpstreamFail(e), status as 401 | 409 | 502 | 504 | 408);
   }
 });
