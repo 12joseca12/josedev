@@ -371,8 +371,10 @@ async function resolveUserEmail(
   supabase: ReturnType<typeof createSupabaseServiceClient>,
   userId: string,
 ): Promise<string> {
-  const { data } = await supabase.schema('auth').from('users').select('email').eq('id', userId).maybeSingle();
-  return (data?.email as string | undefined) ?? '';
+  // PostgREST no expone el schema `auth`, así que `.schema('auth').from('users')`
+  // devolvía siempre vacío. La forma correcta con service-role es la GoTrue Admin API.
+  const { data } = await supabase.auth.admin.getUserById(userId);
+  return data?.user?.email ?? '';
 }
 
 /**

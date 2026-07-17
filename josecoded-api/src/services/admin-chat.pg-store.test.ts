@@ -579,25 +579,15 @@ describe('listConversationsForAdmin', () => {
           }
           throw new Error(`unexpected table in test double: ${table}`);
         },
-        schema: (name: string) => {
-          if (name !== 'auth') throw new Error(`unexpected schema in test double: ${name}`);
-          return {
-            from: (table: string) => {
-              if (table !== 'users') throw new Error(`unexpected schema table in test double: ${table}`);
-              return {
-                select: () => ({
-                  eq: (_col: string, val: string) => ({
-                    maybeSingle: () =>
-                      Promise.resolve(
-                        emailByUserId[val]
-                          ? { data: { email: emailByUserId[val] }, error: null }
-                          : { data: null, error: null },
-                      ),
-                  }),
-                }),
-              };
-            },
-          };
+        auth: {
+          admin: {
+            getUserById: (val: string) =>
+              Promise.resolve(
+                emailByUserId[val]
+                  ? { data: { user: { id: val, email: emailByUserId[val] } }, error: null }
+                  : { data: { user: null }, error: null },
+              ),
+          },
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test double
       })) as any,
