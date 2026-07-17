@@ -210,6 +210,36 @@ export type AdminChatThreadDTO = {
 };
 
 // -----------------------------------------------------------------------------
+// Admin chat console (P1 Task 6, `/admin/chats` — josecoded-api gateway REST,
+// no RLS directo). Tipos separados de los de arriba porque `senderRole` acá
+// incluye `"admin"` (respuesta manual desde la consola) y no `"system"`.
+// -----------------------------------------------------------------------------
+
+export type AdminChatConsoleSenderRole = "user" | "assistant" | "admin";
+
+export type AdminChatConsoleMessageDTO = {
+  id: string;
+  conversationId: string;
+  senderRole: AdminChatConsoleSenderRole;
+  senderId: string | null;
+  content: string;
+  messageType: AdminChatMessageType;
+  metadata: AdminChatMeetingMetadata | Record<string, unknown>;
+  createdAt: string;
+};
+
+/** Fila resumen para la consola admin — una por conversación (`GET .../admin/conversations`). */
+export type AdminConversationSummaryDTO = {
+  id: string;
+  userId: string;
+  userEmail: string;
+  lastMessagePreview: string;
+  lastMessageAt: string;
+  aiEnabled: boolean;
+  unread: boolean;
+};
+
+// -----------------------------------------------------------------------------
 // Leads / CRM (Supabase `leads`, `staff_members` — Capa 2, RLS por rol)
 // -----------------------------------------------------------------------------
 

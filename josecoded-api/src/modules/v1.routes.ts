@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import type { Env } from '../types/env.types';
 import { ok } from '../utils/api-response';
+import { adminChatAdminRoutes } from './admin-chat-admin.routes';
 import { adminChatRoutes } from './admin-chat.routes';
 import { forumRoutes } from './forum.routes';
 import { protectedV1Routes } from './v1-protected.routes';
@@ -19,5 +20,6 @@ v1Routes.get('/health', (c) => {
 });
 
 v1Routes.route('/forum', forumRoutes);
+v1Routes.route('/admin-chat/admin', adminChatAdminRoutes);
 v1Routes.route('/admin-chat', adminChatRoutes);
 v1Routes.route('/', protectedV1Routes);

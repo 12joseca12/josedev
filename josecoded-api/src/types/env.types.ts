@@ -61,4 +61,20 @@ export type Env = {
 
   /** Binding nativo de Cloudflare Rate Limiting para /ai/*. Ausente en dev local. */
   AI_RATE_LIMITER?: { limit(opts: { key: string }): Promise<{ success: boolean }> };
+
+  /**
+   * Binding nativo de Cloudflare Workers AI (respuesta del admin-chat).
+   * Opcional como `AI_RATE_LIMITER`: ausente en tests/env que no lo configuran;
+   * `generateAdminReply` (ai-reply.ts) falla explícito si falta y el pipeline
+   * cae al fallback local.
+   */
+  AI?: {
+    run(
+      model: string,
+      opts: { messages: { role: string; content: string }[] },
+    ): Promise<{ response?: string }>;
+  };
+
+  /** Modelo Workers AI para el admin-chat (default `@cf/meta/llama-3.3-70b-instruct-fp8-fast`). */
+  AI_CHAT_MODEL?: string;
 };

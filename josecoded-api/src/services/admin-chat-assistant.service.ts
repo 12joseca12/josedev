@@ -1,10 +1,11 @@
 import type { Env } from '../types/env.types';
-import type { AdminChatMessageDTO } from '../types/admin-chat.types';
-import { callWorker, UpstreamError } from './worker.service';
+import { generateAdminReply } from './ai-reply';
 import {
-  getRecentMessagesForPrompt,
+  getConversationFlags,
+  getRecentHistory,
   insertAssistantMessage,
 } from './admin-chat.pg-store';
+import { notifyAdminOfNewMessage } from './admin-chat-notify.service';
 
 export type AssistantReplyPlan = {
   reply: string;
@@ -19,11 +20,7 @@ const STACK_HINT =
 
 const GREETING_HINT = /^(hola|buenas|hey|hi|hello|buenos\s+d[ií]as|buenas\s+tardes|buenas\s+noches)\b/i;
 
-const DEFAULT_ADMIN_CHAT_WORKER_PATH = '/ai/admin-chat';
-const ADMIN_CHAT_NUM_PREDICT = 420;
-const ADMIN_CHAT_WORKER_TIMEOUT_MS = 60_000;
-
-/** Respuesta local si el worker no está disponible. */
+/** Respuesta local si Workers AI falla o no responde. */
 export function fallbackAssistantPlan(text: string): AssistantReplyPlan {
   const normalized = text.trim();
 
@@ -58,109 +55,6 @@ export function fallbackAssistantPlan(text: string): AssistantReplyPlan {
   };
 }
 
-export function buildAdminChatWorkerMessage(input: {
-  userEmail: string;
-  text: string;
-  history: AdminChatMessageDTO[];
-}): string {
-  const historyLines = input.history
-    .filter((m) => m.content.trim())
-    .map((m) => {
-      const role = m.senderRole === 'user' ? 'VISITANTE' : 'ADMIN';
-      return `${role}: ${m.content.trim().slice(0, 900)}`;
-    })
-    .join('\n');
-
-  return [
-    'Modo: chat terminal del portfolio (visitante ↔ administrador José Dev).',
-    'El worker ya tiene contexto de conocimiento del administrador en el system prompt; úsalo.',
-    `Email visitante: ${input.userEmail || 'no indicado'}`,
-    '',
-    '--- Historial reciente ---',
-    historyLines || '(sin mensajes previos)',
-    '',
-    '--- Nuevo mensaje del visitante ---',
-    input.text.trim(),
-    '',
-    'Responde en el idioma del visitante, breve y profesional.',
-    'Si pide reunión, llamada o asesoría extensa en directo, añade una línea final exacta: MEETING_PICKER',
-  ].join('\n');
-}
-
-/** Extrae texto del worker (`{ ok, data: { content } }` o anidado vía gateway). */
-export function extractWorkerChatContent(payload: unknown): string | null {
-  if (!payload || typeof payload !== 'object') return null;
-  const root = payload as Record<string, unknown>;
-
-  const readContent = (node: unknown): string | null => {
-    if (!node || typeof node !== 'object') return null;
-    const obj = node as Record<string, unknown>;
-    if (typeof obj.content === 'string' && obj.content.trim()) return obj.content.trim();
-    if (obj.ok === true && obj.data) return readContent(obj.data);
-    return null;
-  };
-
-  return readContent(root);
-}
-
-function resolveMeetingPicker(userText: string, assistantText: string): boolean {
-  if (/\bMEETING_PICKER\b/i.test(assistantText)) return true;
-  return MEETING_HINT.test(userText);
-}
-
-function stripMeetingMarker(text: string): string {
-  return text.replace(/\n?\s*MEETING_PICKER\s*$/i, '').trim();
-}
-
-function workerPath(env: Env): string {
-  const custom = env.ADMIN_CHAT_WORKER_PATH?.trim();
-  return custom && custom.startsWith('/') ? custom : DEFAULT_ADMIN_CHAT_WORKER_PATH;
-}
-
-async function callAdminChatWorker(
-  env: Env,
-  message: string,
-): Promise<string | null> {
-  const path = workerPath(env);
-  const timeoutMs = env.ADMIN_CHAT_WORKER_TIMEOUT_MS
-    ? Number(env.ADMIN_CHAT_WORKER_TIMEOUT_MS)
-    : ADMIN_CHAT_WORKER_TIMEOUT_MS;
-
-  try {
-    const raw = await callWorker<unknown>(env, path, {
-      method: 'POST',
-      body: { message, numPredict: ADMIN_CHAT_NUM_PREDICT },
-      timeoutMs: Number.isFinite(timeoutMs) && timeoutMs > 0 ? timeoutMs : ADMIN_CHAT_WORKER_TIMEOUT_MS,
-    });
-    return extractWorkerChatContent(raw);
-  } catch (e) {
-    const base = {
-      scope: 'admin-chat',
-      action: 'worker-failed',
-      path,
-      workerUrl: env.WORKER_URL,
-    };
-    if (e instanceof UpstreamError) {
-      console.warn(
-        JSON.stringify({
-          ...base,
-          status: e.status,
-          message: e.message,
-          data: e.data,
-        }),
-      );
-    } else {
-      console.warn(
-        JSON.stringify({
-          ...base,
-          message: e instanceof Error ? e.message : 'unknown',
-        }),
-      );
-    }
-    return null;
-  }
-}
-
 export async function applyAssistantReply(
   env: Env,
   payload: { conversationId: string; reply: string; showMeetingPicker?: boolean },
@@ -174,8 +68,9 @@ export async function applyAssistantReply(
 }
 
 /**
- * Pipeline del chat: worker IA (Ollama + knowledge) → fallback local.
- * n8n no es necesario para este flujo.
+ * Pipeline del chat: gate `ai_enabled` por conversación → Workers AI (edge, con
+ * knowledge embebido + historial reciente) → fallback local. El admin se notifica
+ * SIEMPRE (IA on o off) por el camino Telegram/n8n existente (P1 Task 4 / spec §9).
  */
 export async function runAssistantPipeline(
   env: Env,
@@ -187,31 +82,71 @@ export async function runAssistantPipeline(
     text: string;
   },
 ): Promise<void> {
-  const history = await getRecentMessagesForPrompt(env, input.conversationId, 14);
-  const prompt = buildAdminChatWorkerMessage({
-    userEmail: input.userEmail,
-    text: input.text,
-    history,
-  });
-
-  const workerContent = await callAdminChatWorker(env, prompt);
-  if (!workerContent) {
+  // Fail-CLOSED (P1 Task 5 fix): si no se puede leer `ai_enabled`, la IA NO responde.
+  // Ante un error de lectura puede haber un takeover humano en curso (admin apagó la
+  // IA); contestar igual arriesga pisar al admin. La notificación sigue disparándose
+  // siempre, así que Jose se entera del mensaje aunque la IA se quede callada.
+  let aiEnabled = false;
+  try {
+    ({ aiEnabled } = await getConversationFlags(env, input.conversationId));
+  } catch (e) {
     console.warn(
       JSON.stringify({
         scope: 'admin-chat',
-        action: 'using-fallback',
-        hint: 'Revisa WORKER_URL, WORKER_INTERNAL_TOKEN (= BACKEND_INTERNAL_TOKEN) y que el túnel ngrok esté activo',
+        action: 'conversation-flags-failed',
+        hint: 'No se pudo leer ai_enabled; se asume false (fail-closed) para no responder durante un posible takeover humano',
+        conversationId: input.conversationId,
+        message: e instanceof Error ? e.message : 'unknown',
       }),
     );
   }
-  if (workerContent) {
-    const showMeetingPicker = resolveMeetingPicker(input.text, workerContent);
-    await applyAssistantReply(env, {
-      conversationId: input.conversationId,
-      reply: stripMeetingMarker(workerContent),
-      showMeetingPicker,
-    });
+
+  // Notificar SIEMPRE al admin (IA on u off) — best-effort, nunca bloquea el pipeline.
+  await notifyAdminOfNewMessage(env, {
+    conversationId: input.conversationId,
+    userId: input.userId,
+    userEmail: input.userEmail,
+    text: input.text,
+    aiEnabled,
+  });
+
+  if (!aiEnabled) {
+    // IA apagada para esta conversación: Jose responde desde la consola admin.
     return;
+  }
+
+  try {
+    const history = await getRecentHistory(env, input.conversationId, input.messageId, 8);
+    const { content, showMeetingPicker } = await generateAdminReply(env, {
+      history,
+      userText: input.text,
+    });
+
+    if (content) {
+      await applyAssistantReply(env, {
+        conversationId: input.conversationId,
+        reply: content,
+        showMeetingPicker,
+      });
+      return;
+    }
+
+    console.warn(
+      JSON.stringify({
+        scope: 'admin-chat',
+        action: 'empty-ai-reply',
+        hint: 'env.AI.run devolvió una respuesta vacía; usando fallback local',
+      }),
+    );
+  } catch (e) {
+    console.warn(
+      JSON.stringify({
+        scope: 'admin-chat',
+        action: 'ai-reply-failed',
+        hint: 'Revisa el binding AI (Workers AI) en wrangler.jsonc y AI_CHAT_MODEL',
+        message: e instanceof Error ? e.message : 'unknown',
+      }),
+    );
   }
 
   const plan = fallbackAssistantPlan(input.text);

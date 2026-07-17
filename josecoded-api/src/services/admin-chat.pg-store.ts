@@ -3,6 +3,7 @@ import type {
   AdminChatMessageDTO,
   AdminChatMeetingMetadata,
   AdminChatThreadDTO,
+  AdminConversationSummaryDTO,
 } from '../types/admin-chat.types';
 import {
   createSupabaseServiceClient,
@@ -126,6 +127,36 @@ export async function resolveSuperuserId(env: Env): Promise<string> {
   );
 }
 
+/** Lanzada por `assertAdmin` cuando el usuario autenticado no tiene `role='admin'` en `staff_members`. */
+export class AdminAccessDeniedError extends Error {
+  constructor(message = 'Admin role required') {
+    super(message);
+    this.name = 'AdminAccessDeniedError';
+  }
+}
+
+/**
+ * Re-chequeo de rol para la consola admin (P1 Task 5). El gateway escribe con
+ * service-role (bypasea RLS), así que las rutas admin-only deben re-verificar el rol
+ * ellas mismas en vez de confiar solo en RLS — mirror del patrón `staff_role_of`
+ * usado en las policies (`private.staff_role_of(uid) = 'admin'`), pero consultado
+ * directamente contra `staff_members` porque el service client no pasa por PostgREST
+ * con el JWT del usuario.
+ */
+export async function assertAdmin(env: Env, user: { id: string }): Promise<void> {
+  const supabase = createSupabaseServiceClient(env);
+  const { data, error } = await supabase
+    .from('staff_members')
+    .select('role')
+    .eq('user_id', user.id)
+    .maybeSingle();
+
+  if (error) throw error;
+  if ((data?.role as string | undefined) !== 'admin') {
+    throw new AdminAccessDeniedError();
+  }
+}
+
 export async function ensureConversation(env: Env, userId: string): Promise<string> {
   const adminId = await resolveSuperuserId(env);
   const supabase = createSupabaseServiceClient(env);
@@ -140,7 +171,9 @@ export async function ensureConversation(env: Env, userId: string): Promise<stri
 
   const { data: created, error } = await supabase
     .from('admin_chat_conversations')
-    .insert({ user_id: userId, admin_id: adminId })
+    // `assigned_staff_id` es la columna NOT NULL real (verificado en prod P1 Task 5);
+    // `admin_id` no existe — usarla rompía el insert en cada conversación nueva.
+    .insert({ user_id: userId, assigned_staff_id: adminId })
     .select('id')
     .single();
 
@@ -165,6 +198,44 @@ export async function getRecentMessagesForPrompt(
 
   if (error) throw error;
   return (data as MessageRow[]).map(mapMessage).reverse();
+}
+
+/** Lee flags de la conversación relevantes para el pipeline IA (P1 Task 4). */
+export async function getConversationFlags(
+  env: Env,
+  conversationId: string,
+): Promise<{ aiEnabled: boolean }> {
+  const supabase = createSupabaseServiceClient(env);
+  const { data, error } = await supabase
+    .from('admin_chat_conversations')
+    .select('ai_enabled')
+    .eq('id', conversationId)
+    .maybeSingle();
+
+  if (error) throw error;
+  return { aiEnabled: (data?.ai_enabled ?? true) as boolean };
+}
+
+/**
+ * Últimos `limit` mensajes de la conversación en orden cronológico, EXCLUYENDO
+ * `excludeMessageId` (el turno `user` recién insertado, para no duplicarlo en el
+ * prompt) y mapeando `sender_role` a los roles del modelo: `user` → `user`,
+ * cualquier otro valor (`assistant`, `admin` desde la consola, etc.) → `assistant`.
+ */
+export async function getRecentHistory(
+  env: Env,
+  conversationId: string,
+  excludeMessageId: string,
+  limit = 8,
+): Promise<{ role: 'user' | 'assistant'; content: string }[]> {
+  const recent = await getRecentMessagesForPrompt(env, conversationId, limit + 1);
+  return recent
+    .filter((m) => m.id !== excludeMessageId)
+    .slice(-limit)
+    .map((m) => ({
+      role: (m.senderRole === 'user' ? 'user' : 'assistant') as 'user' | 'assistant',
+      content: m.content,
+    }));
 }
 
 export async function getThread(env: Env, userId: string): Promise<AdminChatThreadDTO> {
@@ -280,4 +351,145 @@ export async function scheduleMeetingOnMessage(
 
   if (error || !updated) throw error ?? new Error('Failed to update meeting');
   return mapMessage(updated as MessageRow);
+}
+
+// ---------------------------------------------------------------------------
+// Consola admin (P1 Task 5)
+// ---------------------------------------------------------------------------
+
+type ConversationRow = {
+  id: string;
+  user_id: string;
+  ai_enabled: boolean;
+  admin_last_read_at: string | null;
+  last_message_at: string;
+};
+
+const EPOCH = '1970-01-01T00:00:00.000Z';
+
+async function resolveUserEmail(
+  supabase: ReturnType<typeof createSupabaseServiceClient>,
+  userId: string,
+): Promise<string> {
+  // PostgREST no expone el schema `auth`, así que `.schema('auth').from('users')`
+  // devolvía siempre vacío. La forma correcta con service-role es la GoTrue Admin API.
+  const { data } = await supabase.auth.admin.getUserById(userId);
+  return data?.user?.email ?? '';
+}
+
+/**
+ * Lista de conversaciones para la consola admin, ordenada por `last_message_at desc`.
+ * `unread` = existe un mensaje `sender_role='user'` posterior a `admin_last_read_at`
+ * (o a epoch si la conversación nunca se leyó).
+ */
+export async function listConversationsForAdmin(env: Env): Promise<AdminConversationSummaryDTO[]> {
+  const supabase = createSupabaseServiceClient(env);
+
+  const { data: conversations, error } = await supabase
+    .from('admin_chat_conversations')
+    .select('id, user_id, ai_enabled, admin_last_read_at, last_message_at')
+    .order('last_message_at', { ascending: false });
+
+  if (error) throw error;
+  if (!conversations?.length) return [];
+
+  const rows = conversations as ConversationRow[];
+
+  return Promise.all(
+    rows.map(async (row) => {
+      const readThreshold = row.admin_last_read_at ?? EPOCH;
+
+      const [{ data: lastMessage }, { data: unreadRow }, userEmail] = await Promise.all([
+        supabase
+          .from('admin_chat_messages')
+          .select('content, created_at')
+          .eq('conversation_id', row.id)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle(),
+        supabase
+          .from('admin_chat_messages')
+          .select('id')
+          .eq('conversation_id', row.id)
+          .eq('sender_role', 'user')
+          .gt('created_at', readThreshold)
+          .limit(1)
+          .maybeSingle(),
+        resolveUserEmail(supabase, row.user_id),
+      ]);
+
+      return {
+        id: row.id,
+        userId: row.user_id,
+        userEmail,
+        lastMessagePreview: (lastMessage?.content as string | undefined) ?? '',
+        lastMessageAt: row.last_message_at,
+        aiEnabled: row.ai_enabled,
+        unread: Boolean(unreadRow),
+      };
+    }),
+  );
+}
+
+export async function getConversationMessagesForAdmin(
+  env: Env,
+  conversationId: string,
+): Promise<AdminChatMessageDTO[]> {
+  const supabase = createSupabaseServiceClient(env);
+  const { data, error } = await supabase
+    .from('admin_chat_messages')
+    .select('*')
+    .eq('conversation_id', conversationId)
+    .order('created_at', { ascending: true })
+    .limit(200);
+
+  if (error) throw error;
+  return (data as MessageRow[]).map(mapMessage);
+}
+
+/** Mensaje enviado por el admin desde la consola — `sender_role='admin'`; NO dispara IA. */
+export async function insertAdminMessage(
+  env: Env,
+  input: { conversationId: string; adminId: string; content: string },
+): Promise<AdminChatMessageDTO> {
+  const supabase = createSupabaseServiceClient(env);
+  const { data, error } = await supabase
+    .from('admin_chat_messages')
+    .insert({
+      conversation_id: input.conversationId,
+      sender_role: 'admin',
+      sender_id: input.adminId,
+      content: input.content,
+      message_type: 'text',
+      metadata: {},
+    })
+    .select('*')
+    .single();
+
+  if (error || !data) throw error ?? new Error('Failed to insert admin message');
+  return mapMessage(data as MessageRow);
+}
+
+export async function setConversationAiEnabled(
+  env: Env,
+  conversationId: string,
+  enabled: boolean,
+): Promise<void> {
+  const supabase = createSupabaseServiceClient(env);
+  const { error } = await supabase
+    .from('admin_chat_conversations')
+    .update({ ai_enabled: enabled })
+    .eq('id', conversationId);
+
+  if (error) throw error;
+}
+
+export async function markConversationRead(env: Env, conversationId: string): Promise<void> {
+  const supabase = createSupabaseServiceClient(env);
+  const { error } = await supabase
+    .from('admin_chat_conversations')
+    .update({ admin_last_read_at: new Date().toISOString() })
+    .eq('id', conversationId);
+
+  if (error) throw error;
 }
