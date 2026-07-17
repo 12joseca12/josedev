@@ -22,6 +22,7 @@ function navItemsFor(section: DashSection, locale: Locale): NavItem[] {
     return [
       { href: `/${locale}/admin/leads`, labelKey: "staffLeads.navAdminLeads" },
       { href: `/${locale}/admin/clientes`, labelKey: "staffLeads.navAdminClientes" },
+      { href: `/${locale}/admin/chats`, labelKey: "staffLeads.navAdminChats" },
       { href: `/${locale}/admin/packs`, labelKey: "staffLeads.navAdminPacks" },
       { href: `/${locale}/admin/finanzas`, labelKey: "staffLeads.navAdminFinanzas" },
     ];
