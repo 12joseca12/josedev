@@ -54,7 +54,7 @@ export function useAdminChats() {
   }, []);
 
   const loadThread = useCallback(async (conversationId: string) => {
-    setThreadState({ status: "loading" });
+    setThreadState((s) => (s.status === "ready" ? s : { status: "loading" }));
     const res = await getMessages(conversationId);
     if (!res.ok) {
       setThreadState({ status: "error" });
@@ -82,11 +82,14 @@ export function useAdminChats() {
     void loadList();
   }, [loadList, reloadKey]);
 
-  // Hilo abierto.
+  // Hilo abierto. No depende de `reloadKey`: un `reload()` (p.ej. tras `markRead`
+  // o para refrescar la lista después de responder) sólo debe refrescar la
+  // lista. El hilo se refresca explícitamente vía `reloadThread()`/Realtime,
+  // para no duplicar el fetch del mismo hilo en cada `reload()`.
   useEffect(() => {
     if (!activeConversationId) return;
     void loadThread(activeConversationId);
-  }, [activeConversationId, loadThread, reloadKey]);
+  }, [activeConversationId, loadThread]);
 
   // Realtime + fallback polling.
   useEffect(() => {
