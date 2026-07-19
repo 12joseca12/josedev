@@ -16,20 +16,9 @@ test('GET /api/v1/health returns ok', async () => {
   expect(json.ok).toBe(true);
 });
 
-test('POST /ai/chat validates body (unversioned)', async () => {
-  const res = await app.request(
-    'http://localhost/ai/chat',
-    {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ message: '' }),
-    },
-    baseEnv,
-  );
-  expect(res.status).toBe(400);
-  const json = (await res.json()) as { ok: boolean; error?: { code?: string } };
-  expect(json.ok).toBe(false);
-  expect(json.error?.code).toBe('invalid_request');
+test('GET /ai/chat is gone (removed dead route)', async () => {
+  const res = await app.request('http://localhost/ai/chat', { method: 'POST' }, baseEnv);
+  expect(res.status).toBe(404);
 });
 
 test('dev proxy is disabled in production', async () => {

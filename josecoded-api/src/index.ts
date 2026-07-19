@@ -4,7 +4,6 @@ import type { Env } from './types/env.types';
 import { healthRoutes } from './modules/health.routes';
 import { systemRoutes } from './modules/system.routes';
 import { emulatorRoutes } from './modules/emulator.routes';
-import { aiRoutes } from './modules/ai.routes';
 import { devWorkerProxyRoutes } from './modules/dev-worker-proxy.routes';
 import { v1Routes } from './modules/v1.routes';
 import { parseEnv } from './config/env';
@@ -42,12 +41,11 @@ app.use('*', async (c, next) => {
 });
 
 // Basic abuse protection for expensive endpoints (native Cloudflare binding, cross-isolate).
-app.use('/ai/*', nativeRateLimit((env) => env.AI_RATE_LIMITER, { keyPrefix: 'ai' }));
+app.use('/demo/android/*', nativeRateLimit((env) => env.EMULATOR_RATE_LIMITER, { keyPrefix: 'emu' }));
 
 app.route('/', healthRoutes);
 app.route('/', systemRoutes);
 app.route('/', emulatorRoutes);
-app.route('/', aiRoutes);
 app.route('/', devWorkerProxyRoutes);
 app.route('/api/v1', v1Routes);
 

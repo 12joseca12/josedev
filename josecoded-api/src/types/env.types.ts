@@ -62,6 +62,9 @@ export type Env = {
   /** Binding nativo de Cloudflare Rate Limiting para /ai/*. Ausente en dev local. */
   AI_RATE_LIMITER?: { limit(opts: { key: string }): Promise<{ success: boolean }> };
 
+  /** Binding nativo de Cloudflare Rate Limiting para /demo/android/* (emulador público). Ausente en dev local. */
+  EMULATOR_RATE_LIMITER?: { limit(opts: { key: string }): Promise<{ success: boolean }> };
+
   /**
    * Binding nativo de Cloudflare Workers AI (respuesta del admin-chat).
    * Opcional como `AI_RATE_LIMITER`: ausente en tests/env que no lo configuran;
