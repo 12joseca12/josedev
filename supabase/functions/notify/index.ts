@@ -28,6 +28,15 @@ interface NotifyPayload {
 const EMAIL_FROM = "josedev <no-reply@josedev.com>";
 
 Deno.serve(async (req) => {
+  // P3 M1: shared-secret auth (la invoca la DB vía private.notify_event, que manda
+  // el header x-notify-secret desde Vault). Rollout no-disruptivo: solo se enforcea
+  // cuando NOTIFY_SHARED_SECRET está seteado en el env de la función; si no, pasa
+  // (para no romper notificaciones antes de configurar el secreto).
+  const expectedSecret = Deno.env.get("NOTIFY_SHARED_SECRET");
+  if (expectedSecret && req.headers.get("x-notify-secret") !== expectedSecret) {
+    return new Response("unauthorized", { status: 401 });
+  }
+
   let body: NotifyPayload;
   try {
     body = await req.json();
