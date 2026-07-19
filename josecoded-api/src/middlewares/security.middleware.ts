@@ -89,10 +89,23 @@ export const securityHeaders: MiddlewareHandler = async (c, next) => {
   c.header('permissions-policy', 'geolocation=(), microphone=(), camera=()');
 };
 
+/**
+ * Guards the dev-only SSRF-shaped worker proxy (`/api/dev/worker/*`).
+ *
+ * IMPORTANT (P8): production deployments MUST run with `API_MODE=production`.
+ * This guard 404s outright unless `API_MODE === 'development'`, so shipping
+ * the wrong mode is the only way this proxy becomes reachable in prod.
+ *
+ * Fails CLOSED: if we're in development mode but no `DEV_API_KEY` is
+ * configured, requests are denied rather than allowed through. The previous
+ * behavior (`if (!env.DEV_API_KEY) return next()`) let anyone hit the proxy
+ * unauthenticated whenever the key was merely unset, which combined with a
+ * misconfigured `API_MODE` could leave the proxy open in prod.
+ */
 export const devApiKeyGuard: MiddlewareHandler = async (c, next) => {
   const env = parseEnv(c.env);
   if (env.API_MODE !== 'development') return c.json(fail('not_found', 'Not found'), 404);
-  if (!env.DEV_API_KEY) return next();
+  if (!env.DEV_API_KEY) return c.json(fail('forbidden', 'Dev proxy is not configured'), 403);
 
   const provided = c.req.header('x-dev-api-key')?.trim();
   if (!provided) return c.json(fail('unauthorized', 'Missing dev api key'), 401);
