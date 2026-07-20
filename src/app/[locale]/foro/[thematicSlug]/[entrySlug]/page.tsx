@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { ForumThreadView } from "@/components/forum/forum-thread-view";
+import { buildAlternates } from "@/lib/seo/alternates";
 import { resolveLocaleParam, t } from "@/services/literals";
 import { forumEntryTitle, forumFetchEntryDetail, forumIsApiConfigured } from "@/services/forum-api";
 
@@ -18,14 +19,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { locale: rawLocale, thematicSlug, entrySlug } = await params;
   const locale = resolveLocaleParam(rawLocale);
   const titleBase = t(locale, "screens.forum.metadataTitle");
+  const alternates = buildAlternates(locale, `/foro/${thematicSlug}/${entrySlug}`);
   if (!forumIsApiConfigured()) {
-    return { title: titleBase, description: t(locale, "screens.forum.metadataDescription") };
+    return { title: titleBase, description: t(locale, "screens.forum.metadataDescription"), alternates };
   }
   const detail = await forumFetchEntryDetail(thematicSlug, entrySlug);
   const entryTitle = detail ? forumEntryTitle(detail.entry, (key) => t(locale, key)) : entrySlug;
   return {
     title: `${entryTitle} · ${titleBase}`,
     description: t(locale, "screens.forum.metadataDescription"),
+    alternates,
   };
 }
 

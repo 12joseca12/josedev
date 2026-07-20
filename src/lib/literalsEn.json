@@ -1,7 +1,7 @@
 {
   "app": {
     "metadata": {
-      "title": "Full Stack · Mobile · Architecture",
+      "title": "Jose Dev",
       "description": "Portfolio: high-performance web and mobile engineering, clean code, and scalable infrastructure."
     }
   },
@@ -75,7 +75,7 @@
   },
   "screens": {
     "sobreMi": {
-      "metadataTitle": "About me · Technical stack · Jose Dev",
+      "metadataTitle": "About me · Technical stack",
       "metadataDescription": "Technical stack portfolio: mobile apps, modern web, backend, data, quality, and operations.",
       "title": "About me"
     },
@@ -799,7 +799,7 @@
     }
   },
   "profilePage": {
-    "metadataTitle": "Profile · Jose Dev",
+    "metadataTitle": "Profile",
     "metadataDescription": "Your account and sign-in details.",
     "h1": "Profile",
     "name": "Name",
@@ -809,7 +809,7 @@
     "signingOut": "Signing out…"
   },
   "clientAreaPage": {
-    "metadataTitle": "Client area · Jose Dev",
+    "metadataTitle": "Client area",
     "metadataDescription": "Private space for clients.",
     "h1": "Client area"
   },
@@ -830,14 +830,14 @@
     "closeDialog": "Close",
     "noProjectTitle": "You don't have an active project yet",
     "noProjectBody": "Once your project starts, you'll see the status of each phase here.",
-    "proyectoMetadataTitle": "My project · Jose Dev",
+    "proyectoMetadataTitle": "My project",
     "proyectoMetadataDescription": "Status and phases of your project.",
     "proyectoH1": "My project",
     "proyectoSubtitle": "Phase tracking — where your project stands right now.",
     "phaseDone": "Done",
     "phaseCurrent": "In progress",
     "phasePending": "Pending",
-    "tareasMetadataTitle": "My tasks · Jose Dev",
+    "tareasMetadataTitle": "My tasks",
     "tareasMetadataDescription": "Tasks for your project and comments.",
     "tareasH1": "Tasks",
     "tareasSubtitle": "Status of each task and conversation with the team.",
@@ -853,7 +853,7 @@
     "commentSubmit": "Send",
     "commentSending": "Sending…",
     "toastCommentSent": "Comment sent.",
-    "packMetadataTitle": "My pack · Jose Dev",
+    "packMetadataTitle": "My pack",
     "packMetadataDescription": "Contracted pack and available extras.",
     "packH1": "Pack",
     "packSubtitle": "What your pack includes and the extras available.",
@@ -869,7 +869,7 @@
     "availableExtrasSubtitle": "Add an extra to your pack whenever you want.",
     "emptyAvailableExtras": "No new extras available right now.",
     "requestExtra": "Request",
-    "assetsMetadataTitle": "My files · Jose Dev",
+    "assetsMetadataTitle": "My files",
     "assetsMetadataDescription": "Files shared with your project.",
     "assetsH1": "Files",
     "assetsSubtitle": "Upload files for your project and download what the team shared.",
@@ -891,7 +891,7 @@
     "toastAssetDeleted": "File deleted."
   },
   "auth": {
-    "metadataTitle": "Access · Jose Dev",
+    "metadataTitle": "Access",
     "metadataDescription": "Sign in or create an account to access the private area.",
     "backHome": "Back to home",
     "backHomeAria": "Return to the home page",
@@ -955,7 +955,7 @@
     "copyright": "© 2024 ARCHITECTURAL LOGIC. ALL RIGHTS RESERVED."
   },
   "staffAuth": {
-    "metadataTitle": "Staff login · Jose Dev",
+    "metadataTitle": "Staff login",
     "metadataDescription": "Internal access for admin and sales team.",
     "loginTitle": "Team access",
     "loginSubtitle": "Internal panel — admin and closers.",
@@ -984,9 +984,9 @@
     "onboardingComplete": "Done — heading to your panel…"
   },
   "staffLeads": {
-    "adminMetadataTitle": "Leads · Admin · Jose Dev",
+    "adminMetadataTitle": "Leads · Admin",
     "adminMetadataDescription": "Internal CRM — global lead view and reassignment.",
-    "closerMetadataTitle": "My leads · Jose Dev",
+    "closerMetadataTitle": "My leads",
     "closerMetadataDescription": "Closer lead board.",
     "shellBrand": "josedev",
     "shellBrandSuffix": "staff",
@@ -1057,7 +1057,7 @@
     "ariaLeadActions": "Lead actions"
   },
   "adminClientes": {
-    "metadataTitle": "Clients · Admin · Jose Dev",
+    "metadataTitle": "Clients · Admin",
     "metadataDescription": "Portal client list — phase, pack, and access.",
     "title": "Clients",
     "subtitle": "All clients with an active project — manage phase, tasks, and extras from the detail page.",
@@ -1075,7 +1075,7 @@
     "manageLink": "Manage"
   },
   "adminChats": {
-    "metadataTitle": "Chats · Admin · Jose Dev",
+    "metadataTitle": "Chats · Admin",
     "metadataDescription": "Chat console — reply as admin and control the AI per conversation.",
     "title": "Chats",
     "subtitle": "Live terminal-chat conversations — reply manually or let the AI answer.",
@@ -1108,7 +1108,7 @@
     "closeToast": "Dismiss notice"
   },
   "adminClienteDetail": {
-    "metadataTitle": "Client · Admin · Jose Dev",
+    "metadataTitle": "Client · Admin",
     "metadataDescription": "Project management — phase, tasks, comments, extras, and access.",
     "title": "Client",
     "subtitle": "Manage this client's project phase, tasks, comments, and extras.",
@@ -1180,7 +1180,7 @@
     "toastAssetDeleted": "File deleted."
   },
   "finanzas": {
-    "metadataTitle": "Finance · Admin · Jose Dev",
+    "metadataTitle": "Finance · Admin",
     "metadataDescription": "Internal commission ledger — pending and paid per closer.",
     "title": "Finance",
     "subtitle": "Internal commissions per closed project and a per-closer summary. Amounts are frozen when the lead closes.",
@@ -1211,7 +1211,7 @@
     "closeToast": "Close"
   },
   "adminPacks": {
-    "metadataTitle": "Packs · Admin · Jose Dev",
+    "metadataTitle": "Packs · Admin",
     "metadataDescription": "Pack template catalog and à la carte extras.",
     "title": "Packs",
     "subtitle": "Template and extras catalog — visible to clients based on \"active\".",

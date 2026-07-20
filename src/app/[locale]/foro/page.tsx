@@ -1,6 +1,8 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { buildAlternates } from "@/lib/seo/alternates";
 import { localizedHref, resolveLocaleParam, t } from "@/services/literals";
 import {
   forumEntryTitle,
@@ -22,6 +24,16 @@ type PageProps = {
   params: Promise<{ locale: string }>;
   searchParams: Promise<{ q?: string }>;
 };
+
+// P4 SEO fix (H3): this page previously had no `generateMetadata` at all, so
+// it inherited the root layout's blanket `alternates` — canonicalizing /foro
+// to the homepage. Title/description stay inherited from foro/layout.tsx.
+export async function generateMetadata({ params }: Pick<PageProps, "params">): Promise<Metadata> {
+  const locale = resolveLocaleParam((await params).locale);
+  return {
+    alternates: buildAlternates(locale, "/foro"),
+  };
+}
 
 export default async function ForumIndexPage({ params, searchParams }: PageProps) {
   const locale = resolveLocaleParam((await params).locale);

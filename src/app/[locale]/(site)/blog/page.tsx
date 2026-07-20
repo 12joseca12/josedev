@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { BlogListReveal } from "@/components/blog/blog-list-reveal";
+import { buildAlternates } from "@/lib/seo/alternates";
 import { getSupabasePublicServerClient } from "@/lib/supabase/server-public";
 import { localizedHref, resolveLocaleParam, t } from "@/services/literals";
 import { listPublishedBlogPosts } from "@/services/blog-posts";
@@ -15,10 +16,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: t(locale, "screens.blog.metadataTitle"),
     description: t(locale, "screens.blog.metadataDescription"),
-    alternates: {
-      canonical: `/${locale}/blog`,
-      languages: { es: "/es/blog", en: "/en/blog" },
-    },
+    alternates: buildAlternates(locale, "/blog"),
     openGraph: {
       title: t(locale, "screens.blog.metadataTitle"),
       description: t(locale, "screens.blog.metadataDescription"),

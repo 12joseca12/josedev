@@ -12,6 +12,10 @@ type Props = {
   locale: Locale;
 };
 
+// TODO(P6): self-host this case-study image under public/ instead of pointing
+// at a transient lh3.googleusercontent.com AI-generated-image CDN link — it
+// can expire at any time and adds a third-party connection for a mid-page LCP
+// candidate. Needs a real asset, out of scope for the P4 SEO pass.
 const CASE_IMG =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuA2j4C3jmaFfYemzyPdwB18bMpx4OQd1rAywCWB5Sh7mDNB5QS5tGg_u6Z13NKU0FKNlWOV6RBcFh0xKmGJXXVWkwH-qFlqyP41Xhdgr-YX11WeCteqK9L2iuciGeN7eSW_B9lq_VpALBDtrUyFAyKu81fG9LBb1WI9xGFWmhyxBWHlBcyCWQsRN5YgP29gOZ5gqh339u_ZIx-Sr4dC0EKwXF7gShMvFt8fJHhGu3y1z8aYFd3tQzHadJaV4H8pvDskk-MCEcM2jl7D";
 
