@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { SobreMiEngineeringShowcase, SobreMiStackPortfolio } from "@/components/sobre-mi";
+import { buildAlternates } from "@/lib/seo/alternates";
 import { resolveLocaleParam, t } from "@/services/literals";
 
 const catinfoSourceUrl = process.env.NEXT_PUBLIC_3CATINFO_REPO_URL?.trim() || null;
@@ -12,10 +13,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: t(locale, "screens.sobreMi.metadataTitle"),
     description: t(locale, "screens.sobreMi.metadataDescription"),
-    alternates: {
-      canonical: `/${locale}/sobre-mi`,
-      languages: { es: "/es/sobre-mi", en: "/en/sobre-mi" },
-    },
+    alternates: buildAlternates(locale, "/sobre-mi"),
     openGraph: {
       title: t(locale, "screens.sobreMi.metadataTitle"),
       description: t(locale, "screens.sobreMi.metadataDescription"),

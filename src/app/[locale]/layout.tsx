@@ -16,16 +16,28 @@ export function generateStaticParams(): { locale: Locale }[] {
   return SUPPORTED_LOCALES.map((locale) => ({ locale }));
 }
 
+// P4 SEO fix (M3): unknown locales (e.g. /fr) 404 instead of soft-rendering as
+// Spanish. `src/proxy.ts` already redirects any first path segment that isn't
+// a supported locale, so in practice `[locale]` should only ever be "es"/"en" —
+// this is defense-in-depth for direct/edge-cache hits that bypass that redirect.
+export const dynamicParams = false;
+
 export async function generateMetadata({ params }: Pick<LayoutProps, "params">): Promise<Metadata> {
   const locale = resolveLocaleParam((await params).locale);
   return {
-    title: t(locale, "app.metadata.title"),
-    description: t(locale, "app.metadata.description"),
-    robots: { index: true, follow: true },
-    alternates: {
-      canonical: `/${locale}`,
-      languages: { es: "/es", en: "/en" },
+    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://josecoded.com"),
+    title: {
+      default: t(locale, "app.metadata.title"),
+      template: "%s · Jose Dev",
     },
+    description: t(locale, "app.metadata.description"),
+    // No blanket `alternates` here on purpose (P4 SEO fix, H3): a layout-level
+    // `alternates` gets inherited wholesale by every page that doesn't define
+    // its own, which canonicalized /foro, blog articles, etc. to the homepage.
+    // Each indexable page sets its own via `buildAlternates` (src/lib/seo/alternates.ts).
+    // `robots` is intentionally omitted too — indexable is next/metadata's
+    // default, and declaring `index: true` here is what let admin/foro-new
+    // silently inherit "indexable" instead of the noindex their layouts set.
     openGraph: {
       title: t(locale, "app.metadata.title"),
       description: t(locale, "app.metadata.description"),

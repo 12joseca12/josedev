@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { ForumNewEntryForm } from "@/components/forum/forum-new-entry-form";
@@ -8,6 +9,13 @@ import { forumFetchThematics, forumIsApiConfigured } from "@/services/forum-api"
 // selector del formulario (ver forum-api.ts). Forzar dynamic evita que
 // `next build` dispare ese fetch en build-time al intentar prerenderizar.
 export const dynamic = "force-dynamic";
+
+// P4 SEO fix (H5): a create-post form has no search value and shouldn't be
+// indexed (it also has no stable content — the "page" is the same empty
+// form for everyone).
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 type PageProps = { params: Promise<{ locale: string }> };
 

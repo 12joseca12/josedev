@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { buildAlternates } from "@/lib/seo/alternates";
 import { resolveLocaleParam, t } from "@/services/literals";
 
 import { ServicesPageContent } from "@/components/services/services-page-content";
@@ -11,10 +12,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: t(locale, "screens.services.metadataTitle"),
     description: t(locale, "screens.services.metadataDescription"),
-    alternates: {
-      canonical: `/${locale}/services`,
-      languages: { es: "/es/services", en: "/en/services" },
-    },
+    alternates: buildAlternates(locale, "/services"),
     openGraph: {
       title: t(locale, "screens.services.metadataTitle"),
       description: t(locale, "screens.services.metadataDescription"),

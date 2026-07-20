@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { ForumEntriesListReveal } from "@/components/forum/forum-entries-list-reveal";
+import { buildAlternates } from "@/lib/seo/alternates";
 import { localizedHref, resolveLocaleParam, t } from "@/services/literals";
 import {
   forumFetchEntries,
@@ -33,6 +34,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: `${label} · ${titleBase}`,
     description: t(locale, "screens.forum.metadataDescription"),
+    alternates: buildAlternates(locale, `/foro/${thematicSlug}`),
   };
 }
 

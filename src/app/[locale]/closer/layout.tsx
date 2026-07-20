@@ -1,6 +1,14 @@
+import type { Metadata } from "next";
+
 import { dashFontVariables } from "@/components/staff-dash/dash-fonts";
 import { DashShell } from "@/components/staff-dash/dash-shell";
 import { resolveLocaleParam } from "@/services/literals";
+
+// P4 SEO fix (H5): noindex the whole /closer subtree at the layout level —
+// same rationale as admin/layout.tsx.
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 type CloserLayoutProps = {
   children: React.ReactNode;
