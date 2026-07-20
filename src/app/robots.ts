@@ -10,16 +10,23 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
+        // P4 SEO review fix: bare prefixes like "/*/admin" (no `$`) are
+        // unanchored substring-prefix matches — "/*/admin" also matches
+        // "/es/administracion". Section roots now use `$` (exact match) plus
+        // a trailing-slash pattern (subtree match) instead of one ambiguous
+        // bare-prefix entry. "/*/foro/new" is a single page (no children),
+        // so it gets a `$` anchor only — without it, it also matched
+        // "/es/foro/newsletter-tips" or any future slug starting with "new".
         disallow: [
-          "/*/admin",
+          "/*/admin$",
           "/*/admin/",
-          "/*/closer",
+          "/*/closer$",
           "/*/closer/",
-          "/*/area-clientes",
+          "/*/area-clientes$",
           "/*/area-clientes/",
-          "/*/staff",
+          "/*/staff$",
           "/*/staff/",
-          "/*/foro/new",
+          "/*/foro/new$",
         ],
       },
     ],

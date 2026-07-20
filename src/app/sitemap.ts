@@ -5,7 +5,9 @@ import { listPublishedBlogSlugs } from "@/services/blog-posts";
 import { getSupabasePublicServerClient } from "@/lib/supabase/server-public";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
+  // P4 SEO fix (review): must match the fallback in layout.tsx + robots.ts —
+  // an unset env var in prod used to leak localhost URLs into the sitemap.
+  const base = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://josecoded.com").replace(/\/$/, "");
   const entries: MetadataRoute.Sitemap = [];
 
   for (const locale of SUPPORTED_LOCALES) {

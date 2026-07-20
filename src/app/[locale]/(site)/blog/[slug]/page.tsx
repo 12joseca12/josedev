@@ -6,6 +6,7 @@ import { BlogArticleReveal } from "@/components/blog/blog-article-reveal";
 import { BlogMarkdown } from "@/components/blog/blog-markdown";
 import { BlogPostCard } from "@/components/blog/blog-post-card";
 import { BlogTagChips } from "@/components/blog/blog-tag-chips";
+import { buildAlternates } from "@/lib/seo/alternates";
 import { getSupabasePublicServerClient } from "@/lib/supabase/server-public";
 import type { Locale } from "@/lib/types";
 import { SUPPORTED_LOCALES, localizedHref, resolveLocaleParam, t } from "@/services/literals";
@@ -42,7 +43,10 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
     title: post.title,
     description,
     keywords: post.tags.length > 0 ? post.tags : undefined,
-    alternates: { canonical: `/${locale}/blog/${post.slug}` },
+    // P4 SEO review fix: use buildAlternates for es/en/x-default hreflang
+    // (was canonical-only, so flagship blog content had zero hreflang).
+    // Slug is encoded to match how sitemap.ts encodes blog slugs.
+    alternates: buildAlternates(locale, `/blog/${encodeURIComponent(post.slug)}`),
     openGraph: {
       title: post.title,
       description,
